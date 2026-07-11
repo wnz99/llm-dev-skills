@@ -1,4 +1,4 @@
-# claude-skills
+# LLM Development Skills
 
 A collection of Agent Skills for cross-model code review, debugging, validation, and focused clean-code refactoring. These skills target agents that support the [Agent Skills](https://agentskills.io/) format or can load `SKILL.md` folders.
 
@@ -20,20 +20,20 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 ### All skills
 
 ```bash
-npx skills add wnz99/claude-skills -g
+npx skills add wnz99/llm-dev-skills -g
 ```
 
 ### Individual skills
 
 ```bash
-npx skills add wnz99/claude-skills/llm-assist -g
-npx skills add wnz99/claude-skills/cross-review-pr -g
-npx skills add wnz99/claude-skills/code-reviewer -g
-npx skills add wnz99/claude-skills/clean-code-js -g
-npx skills add wnz99/claude-skills/clean-code-py -g
-npx skills add wnz99/claude-skills/clean-code-rust -g
-npx skills add wnz99/claude-skills/doc-review -g
-npx skills add wnz99/claude-skills/phased-implementation-review-loop -g
+npx skills add wnz99/llm-dev-skills/llm-assist -g
+npx skills add wnz99/llm-dev-skills/cross-review-pr -g
+npx skills add wnz99/llm-dev-skills/code-reviewer -g
+npx skills add wnz99/llm-dev-skills/clean-code-js -g
+npx skills add wnz99/llm-dev-skills/clean-code-py -g
+npx skills add wnz99/llm-dev-skills/clean-code-rust -g
+npx skills add wnz99/llm-dev-skills/doc-review -g
+npx skills add wnz99/llm-dev-skills/phased-implementation-review-loop -g
 ```
 
 Or manually copy any `skills/<name>/` directory to your agent's skills

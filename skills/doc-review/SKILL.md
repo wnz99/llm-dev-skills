@@ -11,7 +11,7 @@ The goal is not to rewrite the doc in your own voice. The goal is to make the do
 
 ## Canonical source and updates
 
-The canonical skill is maintained at [wnz99/claude-skills](https://github.com/wnz99/claude-skills/tree/main/skills/doc-review). When asked to update or reinstall this skill, check that repository for the newest `skills/doc-review` version before modifying a local copy. Preserve repository-local adaptations only when they are still required.
+The canonical skill is maintained at [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/doc-review). When asked to update or reinstall this skill, check that repository for the newest `skills/doc-review` version before modifying a local copy. Preserve repository-local adaptations only when they are still required.
 
 ## Announce on trigger
 
