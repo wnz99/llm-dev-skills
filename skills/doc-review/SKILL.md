@@ -1,6 +1,6 @@
 ---
 name: doc-review
-description: Review and refresh an existing documentation file (runbook, README, AGENTS.md/CLAUDE.md, architecture doc, ADR, setup guide, API doc, etc.) against the live codebase to remove stale info, correct inaccurate claims, fill in missing pieces, and reorganize sections. Use whenever the user asks to "review docs", "update this doc", "check if this doc is still accurate", "audit a runbook", "is the README up to date?", "bring this doc in line with the code", "verify documentation against the codebase", or points at any markdown/MDX/rst file in `docs/`, `README.md`, `AGENTS.md`, `CLAUDE.md`, `.planning/`, `runbooks/`, or similar and asks for a freshness/correctness pass. Strongly prefer this skill over ad hoc rewrites — it enforces an evidence-based review where every change is backed by a citation to the live code. For authoring a brand-new doc from scratch, prefer `write-docs` instead. For regenerating a fixed set of project-template docs (GSD), prefer `gsd-docs-update`.
+description: Review and refresh an existing documentation file (runbook, README, AGENTS.md/CLAUDE.md, architecture doc, ADR, setup guide, API doc, etc.) against the live codebase and its documentation format to remove stale information, correct inaccurate claims, fill gaps, and keep documents properly structured, linked, and organized. Use whenever the user asks to review, update, audit, or verify documentation in `docs/`, a governed knowledge bundle, `README.md`, `AGENTS.md`, `CLAUDE.md`, `.planning/`, or `runbooks/`. Strongly prefer this skill over ad hoc rewrites. For a brand-new doc, prefer `write-docs`, but still apply local corpus format and placement rules. For fixed template-driven docs, prefer `gsd-docs-update`.
 ---
 
 # Doc Review
@@ -8,6 +8,10 @@ description: Review and refresh an existing documentation file (runbook, README,
 A structured workflow for auditing one documentation file against the live codebase, then producing a precise, evidence-backed update.
 
 The goal is not to rewrite the doc in your own voice. The goal is to make the doc match reality with the smallest, best-justified set of changes — so it stays trustworthy for the next person who relies on it.
+
+## Canonical source and updates
+
+The canonical skill is maintained at [wnz99/claude-skills](https://github.com/wnz99/claude-skills/tree/main/skills/doc-review). When asked to update or reinstall this skill, check that repository for the newest `skills/doc-review` version before modifying a local copy. Preserve repository-local adaptations only when they are still required.
 
 ## Announce on trigger
 
@@ -43,6 +47,7 @@ If the user has not named a specific file, ask which one — this skill is per-d
 4. **Distinguish stale from opinionated.** A claim that contradicts the code is stale. A claim that's a design recommendation or convention is opinion — leave it unless the user signals otherwise. When in doubt, ask.
 5. **Respect repo-local conventions.** Before editing, read the nearest `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, or root `README.md` for any house rules (commit format, branch model, doc style, allowed commands). The doc's own repo is the source of truth — your generic instincts are not.
 6. **Don't break the contract silently.** If the doc is referenced from indexes, sibling docs, CI, or other tooling, note any structural changes (renamed sections, removed anchors) so callers can be updated.
+7. **Treat the documentation corpus as a contract.** A repository may define OKF or another format, required frontmatter, reserved filenames, local document types, indexes, or placement rules. Metadata, location, index membership, and cross-links are correctness concerns when the corpus says they are.
 
 ## Workflow
 
@@ -64,6 +69,8 @@ Capture them as a checklist (use a TODO list for non-trivial docs). Each item wi
 
 Also note the doc's **conventions in passing**: heading depth, code-fence languages used, list markers (`-` vs `*`), callout style, tone. You'll match these when editing.
 
+Record the corpus context too: containing directory, parent indexes, inbound links, frontmatter, reserved filename status, and any local authoring standard.
+
 ### Step 2 — Read repo-local guidance
 
 Before grepping the codebase, read:
@@ -73,6 +80,10 @@ Before grepping the codebase, read:
 - The repo's `README.md` if you don't already know the project layout
 
 These often encode rules that override your defaults — preferred commands, branch model, supported package managers, doc style, what's out of scope. Do not skip this for unfamiliar repos.
+
+For a target inside a documentation tree, walk from the repository root toward the target and read applicable authoring and navigation files. Look for local `AGENTS.md`/`CLAUDE.md`, documentation standards, `index.md`, YAML frontmatter on sibling concepts, reserved filenames, and a declared format/version such as `okf_version`.
+
+For an OKF bundle, follow its local profile first, then its referenced specification. Distinguish concept documents from reserved index/log files; check parseable frontmatter and a non-empty `type` on concepts; preserve unknown metadata; verify concept placement and IDs; inspect directory indexes; and validate Markdown cross-links. Do not impose concept frontmatter on a reserved file unless the governing OKF version permits it.
 
 ### Step 3 — Map the doc to the codebase
 
@@ -95,8 +106,10 @@ Bucket every checkable claim into one of:
 - **AMBIGUOUS** — partially right, or right but missing important nuance
 - **UNVERIFIABLE** — can't find the code/config; flag for the user
 - **MISSING** — code exposes something material that the doc never mentions
+- **NONCONFORMANT** — the document violates its corpus format or local authoring standard
+- **MISPLACED** — the concept belongs elsewhere or uses a reserved/generic filename under corpus rules
 
-Only **STALE**, **OUTDATED**, **AMBIGUOUS**, and **MISSING** items become edits. **UNVERIFIABLE** items become questions for the user, not silent edits.
+Only **STALE**, **OUTDATED**, **AMBIGUOUS**, **MISSING**, **NONCONFORMANT**, and approved **MISPLACED** items become edits. **UNVERIFIABLE** items become questions for the user. A move or rename can change a format-defined concept ID, so report its downstream impact.
 
 ### Step 5 — Produce a review report *before* editing
 
@@ -107,7 +120,7 @@ Show the user a compact report and get explicit go-ahead before changing the fil
 
 ## Summary
 - N claims checked
-- N stale, N outdated, N missing, N unverifiable
+- N stale, N outdated, N missing, N nonconformant/misplaced, N unverifiable
 - Overall verdict: <fresh | mostly fresh, minor drift | significant drift | substantially out of date>
 
 ## Findings
@@ -126,6 +139,9 @@ Show the user a compact report and get explicit go-ahead before changing the fil
 ## Structural suggestions (optional)
 <Only if reorganization would materially improve the doc. Otherwise omit this section.>
 
+## Corpus conformance (when applicable)
+<Frontmatter, type, filename, placement, index membership, internal links, and format-specific checks.>
+
 ## Open questions
 <UNVERIFIABLE items and any judgment calls that need the user's input.>
 ```
@@ -139,6 +155,8 @@ Once the user approves (explicitly or by saying "go ahead"), apply the edits wit
 - **One finding, one edit** where possible — keeps the diff reviewable.
 - **Quote real commands and paths verbatim** — copy them from the source files you cited, don't retype from memory.
 - **Update cross-references.** If you rename a heading the doc links to, fix the anchor. If another doc links to this one, mention it in the final summary so the user can decide whether to follow up.
+- **Keep the corpus navigable.** When adding, splitting, moving, or renaming a concept, update its containing index, affected parent indexes, and inbound links in the same change. Create a directory index when the local format requires one.
+- **Generate conforming documents.** If an approved review produces a new or split document, choose its location and filename from local corpus rules, add required metadata and body structure, and register it in the appropriate index.
 - **Preserve formatting conventions.** Match the doc's existing style for code fences, list markers, callouts, and heading levels. If the doc uses `bash` fences, don't switch to `sh`.
 - **Don't add filler.** No "this document describes…" intros, no "in conclusion" outros, no decorative emoji, no AI-tells. Match the doc's existing tone.
 - **Do not touch unrelated content.** Whitespace-only churn and tone rewrites are out of scope unless the user asked for them.
@@ -182,6 +200,7 @@ This skill is intentionally generic. The repo's own files tell you how to behave
 | `.github/workflows/` / `.gitlab-ci.yml` / `.circleci/` | CI claims to verify |
 | Infra-as-code (`terraform/`, `pulumi/`, `cdk/`, sibling infra repos) | Resource names, env mappings |
 | Existing sibling docs in the same folder | Tone, structure, cross-link targets |
+| Corpus authoring standard and `index.md` files | Frontmatter, types, reserved names, placement, navigation, cross-links |
 
 If a repo has rules that conflict with this skill (e.g. forbids file paths in trunk docs, requires a specific report template, mandates the doc be regenerated rather than edited), the **repo's rules win**. Acknowledge the conflict and adapt.
 
@@ -194,6 +213,7 @@ If a repo has rules that conflict with this skill (e.g. forbids file paths in tr
 - Removing a section because you didn't find evidence for it in 30 seconds — escalate as UNVERIFIABLE first.
 - Silently dropping warnings or caveats. Outdated warnings are still warnings until proven obsolete.
 - Editing before reading the repo's `AGENTS.md` / `CONTRIBUTING.md`.
+- Creating or moving a document without updating the corpus index and inbound links.
 - Skipping the report step and going straight to edits — the report is what makes this trustworthy.
 
 ## A worked example
