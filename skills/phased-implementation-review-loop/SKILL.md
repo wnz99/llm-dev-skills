@@ -65,67 +65,23 @@ user defines a plan location; otherwise present it in the conversation. If the
 plan itself is stored in a governed documentation corpus, follow that corpus's
 frontmatter, filename, placement, index, and linking rules.
 
-Start the plan with:
+Use the plan template in
+[`references/implementation-plan-template.md`](references/implementation-plan-template.md).
+Read the template before writing the plan and retain every section that applies;
+omit an optional section only when it genuinely has no content. The template is
+the output contract, while the instructions below explain how to populate it.
 
-```markdown
-# <Feature> Implementation Plan
+The template is the single source of truth for plan structure. Do not reproduce
+or maintain a second template in this file. Its key semantics are:
 
-**Goal:** <one sentence describing the observable result>
-
-**Architecture:** <two or three sentences describing boundaries and data flow>
-
-**Tech stack:** <relevant languages, frameworks, libraries, and tools>
-
-## Global constraints
-
-- <exact project-wide requirement>
-
-## Acceptance criteria traceability
-
-| Requirement | Task(s) | Verification |
-| --- | --- | --- |
-| <requirement> | Task 1 | <exact command or inspection> |
-```
-
-Then define each task with this structure:
-
-````markdown
-### Task N: <independently testable deliverable>
-
-**Goal:** <behavior completed by this task>
-
-**Files:**
-
-- Create: `exact/path/to/file`
-- Modify: `exact/path/to/file:line-or-symbol`
-- Test: `exact/path/to/test`
-- Docs: `exact/path/to/doc-or-index`
-
-**Interfaces:**
-
-- Consumes: <exact existing names and shapes>
-- Produces: <exact names, signatures, schemas, or artifacts for later tasks>
-
-**Review target:** <behavior and risks the independent reviewer must inspect>
-
-- [ ] **Step 1: Write the failing test**
-  - Add: <specific test name, inputs, and assertions; include a concise code
-    sketch when names or shapes are not obvious>
-- [ ] **Step 2: Prove the test fails for the intended reason**
-  - Run: `<exact command>`
-  - Expect: `<specific failure, not merely non-zero exit>`
-- [ ] **Step 3: Implement the minimum behavior**
-  - Change: <exact symbols, control flow, validation, and error behavior>
-- [ ] **Step 4: Prove the focused behavior passes**
-  - Run: `<exact command>`
-  - Expect: `<specific passing result>`
-- [ ] **Step 5: Run the task gate**
-  - Run: `<exact type/lint/integration/doc command>`
-  - Expect: `<specific clean result>`
-- [ ] **Step 6: Review and record the task**
-  - Review: <independent review scope>
-  - Record: <verification, loop count, residual risk>
-````
+- Trace every requirement to tasks and observable verification.
+- Separate factual, source-backed current-state evidence from directive
+  intended edits.
+- Prefer stable `path:symbol`, `path:heading`, or `path:key` anchors; use a line
+  only as a locator when no stable named anchor exists.
+- Name new contracts and identifiers under intended edits and interfaces.
+- State exact commands and expected outcomes, using TDD when a practical seam
+  exists and an explicit pre-change check when it does not.
 
 A task is the smallest unit with its own test cycle and a meaningful fresh
 reviewer gate. Fold setup, configuration, migration, and documentation into the
@@ -156,13 +112,19 @@ Before implementation or handoff:
 1. Re-read every requirement and map it to a task and verification command.
 2. Scan for placeholders, vague verbs, missing paths, undefined interfaces, and
    commands without expected outcomes; replace them with executable detail.
-3. Check type, schema, route, event, and property names across tasks for exact
+3. Confirm every modified existing symbol has source-backed current-state
+   evidence, and every evidence claim points to an inspected path plus a stable
+   symbol, heading, or config key when one exists.
+4. Confirm intended edits state target behavior and identifiers without
+   duplicating the same prose in actions, interfaces, and acceptance criteria;
+   ensure line-number drift cannot invalidate a task.
+5. Check type, schema, route, event, and property names across tasks for exact
    consistency.
-4. Check task ordering and ensure every dependency is produced before it is
+6. Check task ordering and ensure every dependency is produced before it is
    consumed.
-5. Check documentation claims against code/config evidence and verify planned
+7. Check documentation claims against code/config evidence and verify planned
    files follow corpus placement, metadata, index, and cross-link rules.
-6. Confirm every task leaves the repository in a working, independently
+8. Confirm every task leaves the repository in a working, independently
    testable state.
 
 If the user has not chosen an execution mode, offer inline phased execution or
