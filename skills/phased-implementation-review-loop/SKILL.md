@@ -138,6 +138,12 @@ Do not write `TBD`, `TODO`, "add validation", "handle edge cases", "write tests"
 enough code or pseudocode to remove ambiguity, but do not paste large finished
 implementations that will go stale before execution.
 
+Treat 2–5 minutes as a useful micro-step sizing heuristic, not a rigid limit.
+For non-obvious code changes, include exact signatures, assertions, control
+flow, validation behavior, and transformation snippets. Boilerplate may be
+omitted only when the plan names the exact existing symbol or repository pattern
+to follow.
+
 Use TDD for observable behavior when a practical seam exists. Prefer DRY and
 YAGNI. Include atomic commits only when the user authorized commits and the
 repository workflow permits them; use the repository's commit convention and
@@ -177,10 +183,17 @@ Before Task 1:
    them piecemeal during execution.
 2. Record the branch merge base and current commit when Git is available. Never
    assume `HEAD~1` is a task boundary because a task may create multiple commits.
+   Detect the active branch and repository policy first. Do not implement on
+   `main`, `master`, or another protected/shared branch without explicit user
+   authorization; create or use an allowed feature branch or isolated worktree
+   when permitted.
 3. Create a durable progress ledger in the repository-approved ignored scratch
    location. Record every task, status, baseline, commits, verification, review
    verdicts, and residual findings. After context compaction or resume, trust
    the ledger and Git history; do not redispatch completed tasks.
+   If no approved ignored repository location exists, use a host-local temporary
+   path outside the repository and record that path in the session. Do not edit
+   `.gitignore` solely to create a ledger location without authorization.
 4. Prepare one task brief per task. The brief is the task's full plan section,
    global constraints that apply verbatim, earlier-task interfaces it consumes,
    exact acceptance criteria, and report contract. Do not send the whole plan or
@@ -189,6 +202,11 @@ Before Task 1:
 Run implementation tasks sequentially in a shared working tree. Parallelize
 read-only exploration only when safe; do not run multiple implementation
 subagents concurrently where their edits, tests, or commits can conflict.
+
+Once plan execution is authorized, continue task-to-task without routine
+"should I continue?" pauses. Stop only for an unresolved blocker, a requirements
+or product contradiction requiring user choice, user interruption, or complete
+execution and review.
 
 ### Implementer dispatch contract
 
@@ -247,27 +265,30 @@ Do not ask the reviewer to rerun verification already captured in the fresh
 implementer report unless the evidence is missing, stale, suspicious, or the
 review itself changes code.
 
-## Step Loop
+## Task Loop
 
-For every planned step, repeat this loop.
+For every planned task, repeat this loop. The implementer executes that task's
+checkbox micro-steps internally; the controller dispatches, verifies, reviews,
+and records the task once.
 
 ### 1. Re-read The Plan
 
-Before changing code for the step:
+Before changing code for the task:
 
-- Re-read the full plan and the current step.
-- Re-check the relevant code path to confirm the step still makes sense.
+- Re-read the full plan and the current task.
+- Re-check the relevant code path to confirm the task still makes sense.
 - If discoveries invalidate the plan, update the plan before editing and explain
   why.
 
-### 2. Implement The Step
+### 2. Implement The Task
 
 Dispatch the task to the fresh implementer subagent using the implementer
-contract. Use the repo's established patterns. Prefer TDD when the change has
-observable behavior. Keep edits scoped to the current step.
+contract. The implementer executes the task's planned micro-steps in order. Use
+the repo's established patterns. Prefer TDD when the change has observable
+behavior. Keep edits scoped to the current task.
 
-When the step changes public behavior, update the relevant docs or runbooks in
-the same step unless the plan intentionally separates documentation. Verify
+When the task changes public behavior, update the relevant docs or runbooks in
+the same task unless the plan intentionally separates documentation. Verify
 documentation claims against live code/config evidence, preserve local corpus
 metadata and placement, and update indexes and inbound links when concepts move
 or are created.
@@ -284,7 +305,7 @@ Verification should include, as appropriate:
 - Live provider or integration checks only when explicitly requested or already
   required by the task.
 
-Do not claim the step is complete until fresh verification output exists after
+Do not claim the task is complete until fresh verification output exists after
 the latest edit.
 
 ### 4. Controller Check Against Requirements
@@ -292,20 +313,22 @@ the latest edit.
 Before delegating review:
 
 - Re-read the original requirements, global constraints, and plan's current
-  step.
+  task.
 - Inspect the diff and the implemented code path.
-- Confirm every promised behavior for the step is present in code.
+- Confirm every promised behavior for the task is present in code.
 - Confirm tests exercise the behavior, not just implementation details.
 - Confirm documentation and index changes match the implemented behavior and
   the repository's documentation format.
 - Confirm the implementer report contains fresh commands and results after the
   latest edit.
-- If anything is missing, fix it before asking for sub-agent review.
+- If anything is missing, return it to the current implementer or dispatch a
+  bounded fresh fix implementer. Require an updated report and fresh
+  verification, then repeat this controller check before independent review.
 
 ### 5. Run Independent Sub-agent Review
 
 Build the review package and delegate a fresh-context review of only the current
-step's requirements, diff, evidence, and relevant repository contracts.
+task's requirements, diff, evidence, and relevant repository contracts.
 
 Reviewer instructions:
 
@@ -325,7 +348,7 @@ If either verdict fails, dispatch one bounded fix subagent with the complete
 task finding set, task brief, current report, and covering test files. For every
 substantiated requirement, Critical/High, or Medium/Important finding:
 
-1. Fix the issue in the current step.
+1. Fix the issue in the current task.
 2. Re-read the requirements affected by the fix.
 3. Re-run focused verification and append commands/results to the task report.
 4. Re-run the controller check against the requirements and code.
@@ -336,9 +359,9 @@ requirements gaps and both verdicts approve with zero unresolved Critical/High
 or Medium/Important findings.
 
 Low and Nit findings are optional unless they are cheap, useful, or explicitly
-requested. Do not let optional polish expand the step.
+requested. Do not let optional polish expand the task.
 
-### 7. Step Completion Record
+### 7. Task Completion Record
 
 After review is clean, record:
 
@@ -346,14 +369,14 @@ After review is clean, record:
 - Verification commands and result.
 - Review loop count.
 - Any remaining Low/Nit findings or accepted risks.
-- Whether the plan needs adjustment before the next step.
+- Whether the plan needs adjustment before the next task.
 
 Write this to the durable progress ledger before moving to the next planned
-step. Never rely only on conversation todos for completion state.
+task. Never rely only on conversation todos for completion state.
 
 ## Final Completion
 
-After the last step:
+After the last task:
 
 1. Re-read the original plan and acceptance criteria.
 2. Re-run the plan self-review: requirement coverage, placeholders, interface
@@ -374,14 +397,14 @@ After the last step:
 ## Blockers
 
 If a step cannot proceed because of missing credentials, unavailable services,
-or a product decision, stop the step loop and report:
+or a product decision, stop the task loop and report:
 
 - The exact blocker.
 - What was verified before the blocker.
 - What remains unverified.
 - The smallest decision or access needed to continue.
 
-Do not mark the step complete while blocked.
+Do not mark the task complete while blocked.
 
 ## Non-Negotiable Controls
 
