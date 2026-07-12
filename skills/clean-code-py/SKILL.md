@@ -14,6 +14,10 @@ change without losing the Pythonic style of the surrounding codebase.
 This skill should help an agent make smaller, better edits, not turn every file
 into a lecture on "Clean Code."
 
+## Canonical source and updates
+
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/clean-code-py). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
 ## Use This Skill When
 
 - The user explicitly asks for cleaner Python code or a refactor

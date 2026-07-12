@@ -14,6 +14,10 @@ description:
 Review code with a findings-first, evidence-backed approach. Prioritize real
 bugs and regressions over style commentary.
 
+## Canonical source and updates
+
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/code-reviewer). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
 ## Terminal Awareness
 
 Before running shell commands, inspect the active terminal environment and use

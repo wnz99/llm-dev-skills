@@ -12,7 +12,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [clean-code-js](skills/clean-code-js/) | Focused JavaScript/TypeScript readability and maintainability refactoring guidance |
 | [clean-code-py](skills/clean-code-py/) | Focused Python readability, API clarity, and maintainability refactoring guidance |
 | [clean-code-rust](skills/clean-code-rust/) | Focused Rust readability, ownership, error-handling, and API maintainability guidance |
-| [doc-review](skills/doc-review/) | Audit and refresh an existing documentation file (runbook, README, AGENTS.md, ADR, etc.) against the live codebase, with an evidence-backed report before any edits |
+| [doc-write-expert](skills/doc-write-expert/) | Write new or review existing technical and non-technical documentation using evidence-backed authoring, corpus-conformance, approval, and fresh-reader workflows |
 | [phased-implementation-review-loop](skills/phased-implementation-review-loop/) | Plan a multi-step change, then implement each step under a verify → in-code review → independent cross-model sub-agent review loop, fixing until no High/Medium findings remain before advancing |
 
 ## Install
@@ -32,7 +32,7 @@ npx skills add wnz99/llm-dev-skills/code-reviewer -g
 npx skills add wnz99/llm-dev-skills/clean-code-js -g
 npx skills add wnz99/llm-dev-skills/clean-code-py -g
 npx skills add wnz99/llm-dev-skills/clean-code-rust -g
-npx skills add wnz99/llm-dev-skills/doc-review -g
+npx skills add wnz99/llm-dev-skills/doc-write-expert -g
 npx skills add wnz99/llm-dev-skills/phased-implementation-review-loop -g
 ```
 
@@ -48,7 +48,7 @@ directory, such as `~/.claude/skills/`, `~/.codex/skills/`, or
   - [Codex CLI](https://github.com/openai/codex): `npm i -g @openai/codex && codex login`
   - [OpenCode](https://dev.opencode.ai/docs/): `npm i -g opencode-ai`
 - **cross-review-pr** also requires [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
-- **code-reviewer**, **clean-code-\***, and **doc-review** skills work standalone with no extra dependencies
+- **code-reviewer**, **clean-code-\***, and **doc-write-expert** skills work standalone with no extra dependencies
 
 ## How it works
 
@@ -58,7 +58,21 @@ These skills are designed to complement each other:
 2. **llm-assist** adds cross-model validation by running analysis through a different LLM architecture (Codex or OpenCode)
 3. **cross-review-pr** orchestrates both: two LLMs review independently, then each validates the other's findings before producing a unified report with confidence scores
 4. **clean-code-\*** skills provide language-specific guidance for small, behavior-preserving readability and maintainability refactors
-5. **doc-review** keeps existing documentation honest: it inventories checkable claims, verifies each against the live code with `file:line` citations, and produces a structured findings report before any edit lands
+5. **doc-write-expert** writes new technical and non-technical documents from authoritative evidence and keeps existing documentation honest. It establishes the reader and intended action, follows local corpus rules, inventories and verifies checkable claims, gates review edits behind a findings report, and cold-reads the result before completion.
+
+## Canonical source and updates
+
+This repository is the canonical source for every skill it contains. Each `SKILL.md` links back to its own upstream directory so an installed copy can locate its origin.
+
+When updating, reinstalling, downloading, or replacing an installed skill, compare it with the matching `skills/<name>/` directory here and use the newest compatible upstream version. Preserve intentional local adaptations and review divergences before overwriting them.
+
+To refresh all globally installed skills from this repository:
+
+```bash
+npx skills add wnz99/llm-dev-skills -g
+```
+
+To refresh a single skill, use its individual installation command from the section above.
 
 **cross-review-pr** supports any combination of Claude, Codex, and OpenCode as Reviewer A / Reviewer B via `--from` / `--to` flags. The default is `--from claude --to codex`. Running `--from codex --to claude` starts with Codex's independent review, then asks Claude for an independent review and reciprocal validation.
 

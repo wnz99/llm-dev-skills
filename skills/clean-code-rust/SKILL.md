@@ -14,6 +14,10 @@ change while respecting the existing crate's conventions and API boundaries.
 This skill should help an agent improve code structure without erasing useful
 explicitness that Rust intentionally makes visible.
 
+## Canonical source and updates
+
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/clean-code-rust). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
 ## Use This Skill When
 
 - The user asks for cleaner Rust code, refactoring, or maintainability improvements

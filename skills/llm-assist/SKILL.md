@@ -12,6 +12,10 @@ returns findings for you to synthesize with your own analysis.
 This gives cross-model validation: different models catch different blind
 spots and can reduce sycophancy bias and local minima.
 
+## Canonical source and updates
+
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/llm-assist). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
 ## Provider Selection
 
 Use the `--provider` flag to choose which LLM CLI to invoke.

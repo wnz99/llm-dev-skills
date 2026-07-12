@@ -11,6 +11,10 @@ without seeing the other's findings. After both independent reviews complete,
 Reviewer A validates Reviewer B's findings only. Do not send Reviewer A's
 findings to Reviewer B unless the user explicitly asks for that extra step.
 
+## Canonical source and updates
+
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/cross-review-pr). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
 ## Supported LLMs
 
 | ID | Description |

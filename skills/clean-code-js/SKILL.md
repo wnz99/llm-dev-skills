@@ -14,6 +14,10 @@ consistent with the surrounding codebase.
 This is an agent workflow, not a license to rewrite code until it looks
 "textbook clean."
 
+## Canonical source and updates
+
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/clean-code-js). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
 ## Use This Skill When
 
 - The user asks for cleaner JS/TS code, refactoring, readability, or quality improvements
