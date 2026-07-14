@@ -84,7 +84,7 @@ Walk from repository root to the target location. Read applicable instruction fi
 - House style for headings, code fences, tables, callouts, tone, and links
 - Whether another document already owns part of the proposed content
 
-For governed bundles such as OKF, apply the declared local profile and specification. Preserve unknown metadata and respect reserved file roles.
+For governed bundles such as OKF, apply the declared local profile and specification. Before creating or modifying an OKF bundle, read [`references/okf-v0.1-spec.md`](references/okf-v0.1-spec.md) completely, then apply any stricter repository-local OKF profile on top. Treat the bundled document as a versioned snapshot of the [official OKF v0.1 specification](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md), not as a substitute for local governance. Preserve unknown metadata and respect reserved file roles.
 
 ### 4. Design the outline before drafting
 
