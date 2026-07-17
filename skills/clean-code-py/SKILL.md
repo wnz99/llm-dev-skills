@@ -20,19 +20,35 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 
 ## Use This Skill When
 
+<activation_criteria>
+
+<use_when>
+
 - The user explicitly asks for cleaner Python code or a refactor
 - A review task should surface maintainability problems, not just bugs
 - Naming, function boundaries, data shapes, or error handling are making the code hard to reason about
 - A local, behavior-preserving refactor would materially simplify the code
 
+</use_when>
+
 ## Do Not Use This Skill When
+
+<do_not_use_when>
 
 - The task is mainly to fix behavior and cleanup would noticeably expand scope
 - The existing style is already clear and consistent with the project
 - The code is intentionally procedural, framework-driven, or generated
 - The refactor would introduce unnecessary class hierarchies or abstract base classes just to satisfy style doctrine
 
+</do_not_use_when>
+
+</activation_criteria>
+
 ## Operating Rules
+
+<mandatory_constraints>
+
+<precedence>User request and repository instructions, then established local conventions, then this skill's advisory heuristics.</precedence>
 
 1. Read local conventions first.
    Check formatter, linter, type-checker, framework, and package-level patterns before applying generic advice.
@@ -45,9 +61,15 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 5. The surrounding project wins.
    Repo-local patterns override this skill.
 
+</mandatory_constraints>
+
 ## Workflow
 
+<workflow>
+
 ### 1. Identify the precise problem
+
+<step number="1" name="identify_problem">
 
 Typical smells:
 
@@ -59,7 +81,11 @@ Typical smells:
 - comments compensating for weak structure
 - too much incidental object ceremony
 
+</step>
+
 ### 2. Check local patterns
+
+<step number="2" name="inspect_local_patterns">
 
 Before refactoring, inspect nearby files for:
 
@@ -68,7 +94,11 @@ Before refactoring, inspect nearby files for:
 - docstring style and type-hint expectations
 - async patterns and resource-management style
 
+</step>
+
 ### 3. Make the smallest valuable change
+
+<step number="3" name="make_smallest_change">
 
 Good refactors:
 
@@ -86,15 +116,30 @@ Avoid:
 - extracting helpers that hide the main logic rather than clarifying it
 - adding docstrings to every private helper without value
 
+</step>
+
 ### 4. Verify the runtime contract
+
+<step number="4" name="verify_contract">
 
 Check that:
 
 - callers still receive the expected type or exception behavior
-- type hints, tests, and lints still pass
+- the relevant type checker, focused tests, and linter pass when available
 - the refactor reduced cognitive load rather than redistributing it
 
+If a relevant check cannot run, state which check was skipped and why.
+
+</step>
+
+</workflow>
+
 ## Python Heuristics
+
+<advisory_heuristics language="python">
+
+Apply these only when they improve the identified smell without expanding scope
+or changing behavior.
 
 ### Naming
 
@@ -137,13 +182,19 @@ Check that:
 - Docstrings are most useful for public APIs, stable interfaces, and non-obvious behavior
 - Do not add commentary that only repeats the code
 
+</advisory_heuristics>
+
 ## Review Checklist
+
+<completion_checklist>
 
 - Is the code easier to scan top to bottom?
 - Are names aligned with nearby modules?
 - Is the return / exception contract explicit?
 - Did the refactor stay Pythonic, or did it introduce unnecessary ceremony?
 - Would another maintainer understand the call sites faster now?
+
+</completion_checklist>
 
 ## References
 

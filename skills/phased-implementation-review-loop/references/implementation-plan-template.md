@@ -28,9 +28,31 @@ under **Read first**, then define the new identifiers under **Intended edits** a
 | --- | --- | --- |
 | <observable requirement> | Task 1 | `<exact command or inspection>` |
 
+## Execution topology
+
+<execution_waves>
+
+| Wave | Tasks | Mode | Prerequisites | Isolation and integration | Wave verification |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Task 1, Task 2 | parallel-safe | none | Separate worktrees; integrate Task 1 then Task 2 | `<command>` → <expected outcome> |
+| 2 | Task 3 | sequential-only | Tasks 1–2 reviewed and integrated | Shared integration branch | `<command>` → <expected outcome> |
+
+- Parallel implementation permission: `<not-requested | approved | denied>`
+- Host/model policy: `<detected host>; implementation model <model or host limitation>; user override <none or value>`
+
+</execution_waves>
+
 ### Task N: <independently testable deliverable>
 
 **Goal:** <behavior completed by this task>
+
+**Execution:**
+
+- Prerequisites: <task IDs or `none`>
+- Wave: <wave number>
+- Mode: <parallel-safe or sequential-only, with reason>
+- Isolation: <worktree/branch and owned files, or shared-tree sequential>
+- Integration order: <position and cross-task verification>
 
 **Files:**
 
@@ -93,6 +115,9 @@ under **Read first**, then define the new identifiers under **Intended edits** a
   criteria.
 - Include only execution-relevant anchors. A complete file inventory is less
   useful than a small map of owned behavior, contracts, tests, and wiring.
+- Treat `parallel-safe` as a correctness claim. Require non-overlapping writes
+  and mutable resources, explicit isolation, deterministic integration order,
+  and a wave-level verification command. Otherwise use `sequential-only`.
 - For observable behavior with a practical test seam, Steps 1–2 mean a failing
   test. When no practical seam exists (for example docs, generated output, or a
   mechanical config change), replace them with an exact characterization or

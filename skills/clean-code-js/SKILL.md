@@ -20,6 +20,10 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 
 ## Use This Skill When
 
+<activation_criteria>
+
+<use_when>
+
 - The user asks for cleaner JS/TS code, refactoring, readability, or quality improvements
 - A review task needs maintainability findings, not just correctness findings
 - A change would benefit from better naming, clearer function boundaries, or cleaner error contracts
@@ -27,12 +31,24 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 
 ## Do Not Use This Skill When
 
+</use_when>
+
+<do_not_use_when>
+
 - The user only wants a bug fixed and the clean-code rewrite would expand scope
 - The repo already has strong local patterns and the only reason to change them is generic doctrine
 - The code is intentionally optimized, framework-constrained, or generated
 - The cleanup would require speculative architectural changes not asked for by the user
 
 ## Operating Rules
+
+</do_not_use_when>
+
+</activation_criteria>
+
+<mandatory_constraints>
+
+<precedence>User request and repository instructions, then established local conventions, then this skill's advisory heuristics.</precedence>
 
 1. Read local conventions first.
    Check the repo's lint, format, test, framework, and file-organization rules before applying generic advice.
@@ -47,7 +63,13 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 
 ## Workflow
 
+</mandatory_constraints>
+
+<workflow>
+
 ### 1. Identify the actual smell
+
+<step number="1" name="identify_smell">
 
 Name the concrete issue before editing:
 
@@ -63,6 +85,10 @@ If you cannot name the smell precisely, do not start a cleanup rewrite.
 
 ### 2. Check the local pattern first
 
+</step>
+
+<step number="2" name="inspect_local_patterns">
+
 Before changing shape, inspect nearby files for:
 
 - function style and file layout
@@ -71,6 +97,10 @@ Before changing shape, inspect nearby files for:
 - preferred React / Node / library patterns already in use
 
 ### 3. Choose the least invasive fix
+
+</step>
+
+<step number="3" name="choose_smallest_fix">
 
 Good fixes:
 
@@ -90,6 +120,10 @@ Avoid:
 
 ### 4. Verify the contract
 
+</step>
+
+<step number="4" name="verify_contract">
+
 After refactoring, verify:
 
 - types still communicate intent
@@ -97,7 +131,19 @@ After refactoring, verify:
 - tests or typechecks still pass
 - the call site got simpler, not just the callee
 
+If a relevant focused test, typecheck, or lint command cannot run, state which
+check was skipped and why.
+
+</step>
+
+</workflow>
+
 ## JS/TS Heuristics
+
+<advisory_heuristics language="javascript-typescript">
+
+Apply these only when they improve the identified smell without expanding scope
+or changing public behavior.
 
 ### Naming
 
@@ -143,6 +189,10 @@ After refactoring, verify:
 
 ## Review Checklist
 
+</advisory_heuristics>
+
+<completion_checklist>
+
 - Can a reader understand the main behavior without reading every line?
 - Are names consistent with nearby modules?
 - Is the error contract explicit?
@@ -151,6 +201,8 @@ After refactoring, verify:
 - Did the change preserve framework and repo-local patterns?
 
 ## References
+
+</completion_checklist>
 
 Read [references/patterns.md](references/patterns.md) when you need concrete
 refactoring patterns for JS/TS cleanup.

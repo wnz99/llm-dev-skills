@@ -22,6 +22,8 @@ Post one short line identifying the mode and target:
 
 ## Choose the mode
 
+<mode_selection>
+
 ### Author mode
 
 Use when the requested durable document does not exist, needs a replacement written from a blank page, or the user explicitly asks for a new draft.
@@ -36,7 +38,17 @@ Use when reviewing an existing document reveals that a split, replacement, or co
 
 Do not use either mode for fixed generated documentation when the repository mandates a generator. Use the owning generator and review its inputs and output instead.
 
+Requests to `review`, `audit`, or `check` are read-only unless edits are also
+requested. Requests to `update`, `fix`, or `rewrite` authorize scoped edits;
+document moves, splits, and broad restructuring still require approval.
+
+</mode_selection>
+
 ## Shared operating principles
+
+<governance_and_evidence_contract>
+
+<precedence>User request, then applicable repository/subtree instructions and documentation governance, then this skill.</precedence>
 
 1. **Evidence before prose.** Verify factual claims against authoritative code, configuration, schemas, policies, source material, or user-provided facts. Never fill gaps from memory.
 2. **Write for a named reader and action.** Define who will read the document and what they should be able to decide, understand, or do afterward.
@@ -47,7 +59,11 @@ Do not use either mode for fixed generated documentation when the repository man
 7. **Preserve navigability.** Update relevant indexes and inbound links whenever adding, moving, splitting, or renaming documents.
 8. **Cold-read before completion.** Test whether a reader without session context can take the intended action safely.
 
+</governance_and_evidence_contract>
+
 ## Author mode workflow
+
+<author_workflow>
 
 ### 1. Establish the writing brief
 
@@ -131,7 +147,11 @@ Read the finished document from top to bottom as a fresh member of the intended 
 
 Close gaps and cut content that does not serve the reader action.
 
+</author_workflow>
+
 ## Review mode workflow
+
+<review_workflow>
 
 ### 1. Read the target end-to-end
 
@@ -166,6 +186,8 @@ Only stale, outdated, ambiguous, missing, nonconformant, and approved misplaced 
 
 ### 4. Report before editing
 
+<review_edit_gate>
+
 Unless the user has already explicitly approved immediate edits, provide:
 
 ```markdown
@@ -192,6 +214,8 @@ Unless the user has already explicitly approved immediate edits, provide:
 
 If the document is fresh, say so and stop. Do not manufacture edits.
 
+</review_edit_gate>
+
 ### 5. Apply approved edits surgically
 
 - Prefer one finding per edit.
@@ -205,7 +229,11 @@ If the document is fresh, say so and stop. Do not manufacture edits.
 
 For procedural or onboarding material, confirm a fresh reader can complete the workflow. Re-run relevant commands or checks proportionate to the risk. For reference documents, emphasize schema, link, and corpus validation.
 
+</review_workflow>
+
 ## Final handoff
+
+<definition_of_done>
 
 Summarize:
 
@@ -216,6 +244,8 @@ Summarize:
 - Open questions, deferred restructuring, or downstream documentation work
 
 Do not commit unless the user explicitly asks. Follow repository commit rules when they do.
+
+</definition_of_done>
 
 ## Anti-patterns
 

@@ -1,6 +1,6 @@
 ---
 name: phased-implementation-review-loop
-description: Use this skill whenever the user asks to plan or implement a multi-step code change with subagents, execute work phase by phase, independently check requirement compliance and code quality after every phase, or keep fixing review findings until solved. It unifies implementation-ready planning, fresh implementer subagents, TDD micro-steps, requirement rereads, verification, two-verdict review gates, fix/re-review loops, durable progress, and final aggregate review.
+description: Use this skill whenever the user asks to plan or implement a multi-step code change with subagents, determine safe sequential versus parallel implementation waves, execute work phase by phase, independently check requirement compliance and code quality after every phase, or keep fixing review findings until solved. It unifies dependency-aware implementation planning, permission-gated parallel execution, host-aware implementer model selection, fresh implementer subagents, TDD micro-steps, requirement rereads, verification, two-verdict review gates, fix/re-review loops, durable progress, and final aggregate review.
 ---
 
 # Phased Implementation Review Loop
@@ -28,19 +28,35 @@ Before editing code:
    part of correctness in a governed corpus such as OKF.
 6. Confirm that subagent delegation is authorized by the user and host policy.
    This workflow uses a fresh implementer and a separate fresh reviewer for each
-   task. If delegation is unavailable, preserve the same task and two-verdict
-   review gates inline and state the limitation.
-7. Select models explicitly by role when the host supports it: use a capable
-   low-cost model for mechanical tasks, a standard model for integration work,
-   and the strongest available reasoning model for architecture or final
-   aggregate review. Reviewers need enough judgment for the task's risk; never
-   omit model selection merely to inherit an expensive session default.
+   task. If independent delegation is unavailable, the skill may still produce
+   or refine the implementation plan, but execution is blocked: hand off the
+   plan and state that fresh implementer/reviewer isolation cannot be honestly
+   satisfied. Do not simulate independence with two passes in one context.
+<host_and_model_policy>
+
+7. Auto-detect the host before dispatching subagents. Treat the runtime as
+   Claude when its system identity or native delegation surface identifies
+   Claude Code; treat it as Codex when its system identity or collaboration
+   surface identifies Codex. Prefer the explicit system identity when signals
+   disagree; do not ask the user to identify the host.
+8. Unless the user explicitly requests another model, select `sonnet` for every
+   implementation subagent on Claude Code and `gpt-5.6-terra` for every
+   implementation subagent on Codex. Pass the model explicitly in each dispatch
+   when the host API exposes model selection. If the host does not expose a
+   model selector, state that limitation before dispatch and use the host's
+   assigned implementation model; never pretend the requested model was set.
+   Use a sufficiently capable independent model for reviews and preserve any
+   user-specified model override for the applicable role.
+
+</host_and_model_policy>
 
 ## Scope And Structure Before Tasks
 
 Write the plan for a capable implementer who has fresh context: they understand
 software engineering, but not this repository, its domain, or its testing
 conventions.
+
+<dependency_aware_planning>
 
 Before defining tasks:
 
@@ -57,10 +73,23 @@ Before defining tasks:
 4. Capture global constraints verbatim from the requirements and repository
    instructions: supported versions, dependency limits, naming, security,
    migration order, documentation format, and release rules.
+5. Build a task dependency graph. For every task, name its prerequisites,
+   produced interfaces, owned files, mutable external resources, and review
+   gate. Group dependency-free tasks into explicit execution waves. Tasks may
+   share a wave only when they can be implemented and verified concurrently
+   without overlapping writes, shared migrations, mutable services, generated
+   artifacts, test fixtures, or ordering-sensitive contracts.
+6. Mark each wave `parallel-safe` or `sequential-only` and explain the reason.
+   When parallel work needs isolated Git worktrees or branches, include the
+   integration order and conflict-resolution owner in the plan. Never label a
+   shared-working-tree edit wave parallel-safe merely because its tasks concern
+   different concepts.
 
 Avoid opportunistic restructuring. If a touched file is too large to change
 safely, make the boundary-improving split an explicit task with its own test and
 review gate.
+
+</dependency_aware_planning>
 
 ## Plan Artifact
 
@@ -131,9 +160,21 @@ Before implementation or handoff:
 8. Confirm every task leaves the repository in a working, independently
    testable state.
 
-If the user has not chosen an execution mode, offer inline phased execution or
-fresh-sub-agent execution. Do not assume permission to spawn sub-agents or make
-commits; the user's request and host policy control those actions.
+<parallel_permission_gate>
+
+If the plan contains at least one parallel-safe implementation wave, ask the
+user for explicit permission to execute implementation tasks in parallel before
+starting any implementation. Summarize the proposed waves, isolation strategy,
+and integration order in that request. A yes authorizes only the planned
+parallel waves; a no selects sequential execution for the entire plan. Record
+the choice in the plan and progress ledger. Do not ask again for each wave.
+
+If no implementation wave is parallel-safe, say so and offer fresh-subagent
+sequential execution orchestrated by the controller. Do not assume permission to spawn
+subagents, run parallel implementation, make commits, or create branches; the
+user’s request and host policy control those actions.
+
+</parallel_permission_gate>
 
 ## Subagent Execution Control
 
@@ -141,6 +182,8 @@ The primary agent is the controller. It owns the plan, requirements, task
 ordering, working tree, progress record, conflict resolution, and completion
 claim. Subagents own bounded implementation or review work; they do not decide
 that the overall project is complete.
+
+<execution_control>
 
 Before Task 1:
 
@@ -164,10 +207,31 @@ Before Task 1:
    global constraints that apply verbatim, earlier-task interfaces it consumes,
    exact acceptance criteria, and report contract. Do not send the whole plan or
    accumulated session history to a fresh subagent.
+5. Reconfirm the recorded execution choice. When parallel-safe waves exist and
+   permission has not yet been recorded, stop and ask before dispatching any
+   implementer. If permission was denied, flatten every wave into the plan's
+   deterministic sequential order.
+6. For approved parallel execution, create the planned isolation boundary for
+   each concurrent implementer before dispatch. Record its worktree/branch,
+   baseline, owned files, verification scope, and integration order. The
+   controller remains the sole integration and conflict-resolution owner.
 
-Run implementation tasks sequentially in a shared working tree. Parallelize
-read-only exploration only when safe; do not run multiple implementation
-subagents concurrently where their edits, tests, or commits can conflict.
+Run sequential tasks in the shared working tree. For an approved parallel-safe
+wave, dispatch all wave implementers concurrently in their isolated worktrees
+or other plan-defined non-overlapping environments, using the selected
+host-specific implementation model or the disclosed host-assigned fallback
+when the API has no model selector. Preserve any user model override. Never run
+concurrent implementation agents against the same mutable working tree. Read-
+only exploration may run in parallel whenever it cannot race with generated or
+mutable state.
+
+After a parallel wave completes, verify and review each task against its own
+baseline before integration. Integrate tasks in the plan's declared order,
+rerun cross-task verification after each integration, resolve conflicts in the
+controller, then run the wave-level integration tests. A failed task or review
+blocks dependent waves but does not invalidate independent completed tasks.
+
+</execution_control>
 
 Once plan execution is authorized, continue task-to-task without routine
 "should I continue?" pauses. Stop only for an unresolved blocker, a requirements
@@ -374,12 +438,22 @@ Do not mark the task complete while blocked.
 
 ## Non-Negotiable Controls
 
+<non_negotiable_controls>
+
 - Do not start implementation without an implementation-ready plan and
   acceptance traceability.
+- Do not start parallel implementation without a dependency/wave plan and the
+  user's explicit recorded permission. A denial means sequential execution.
+- Do not dispatch an implementation subagent without auto-detecting the host
+  and applying the host-default model (`sonnet` on Claude Code,
+  `gpt-5.6-terra` on Codex) unless the user supplied an override; disclose when
+  the host API cannot enforce the selection.
 - Do not dispatch a task without rereading its requirements and prerequisites.
 - Do not give a fresh implementer the entire session transcript or accumulated
   task history; provide a bounded brief and explicit interfaces.
-- Do not run conflicting implementation subagents in parallel.
+- Do not run parallel implementation in one mutable working tree or across
+  tasks with overlapping files, mutable resources, generated artifacts, or
+  ordering-sensitive contracts.
 - Do not accept implementer self-review as independent review.
 - Do not accept a reviewer response missing either requirements or quality
   verdict.
@@ -390,3 +464,5 @@ Do not mark the task complete while blocked.
 - Do not redispatch a task marked complete in the durable ledger.
 - Do not claim final completion without fresh aggregate verification and final
   aggregate review after the latest fix.
+
+</non_negotiable_controls>

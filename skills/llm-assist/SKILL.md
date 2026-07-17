@@ -18,6 +18,10 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 
 ## Provider Selection
 
+<provider_routing>
+
+<self_invocation_rule>Never invoke the current host through its own external CLI. The current host performs its leg inline; only a different provider is launched externally.</self_invocation_rule>
+
 Use the `--provider` flag to choose which LLM CLI to invoke.
 
 Default behavior:
@@ -44,10 +48,13 @@ Usage examples:
 - `/llm-assist --provider opencode review` — runs OpenCode explicitly
 - `/llm-assist --provider all review` — runs Codex + Claude in parallel
 
-When `--provider all` is used, run Codex and Claude in parallel, then
-synthesize findings from both. Label each finding's source
+When `--provider all` is used, run the complementary provider externally and
+perform the current host's leg inline; when neither provider is the current
+host, run both externally in parallel. Then synthesize findings from both. Label each finding's source
 (`CLAUDE`, `CODEX`, `BOTH`) in the final report. Do not add OpenCode to
 `all` unless the user explicitly asks for it.
+
+</provider_routing>
 
 ## Prerequisites
 
@@ -72,11 +79,15 @@ Read `references/provider-invocation.md` before running provider CLI commands.
 
 ## Wait Before Coding
 
+<external_process_policy>
+
 After invoking the external LLM, wait for its reply or a clear failure before
 starting new code changes. Treat quiet output as ambiguous, not as a hang:
 monitor the process and output file before retrying or killing it. Continue
 without the reply only if the invocation fails, times out after a reasonable
 wait, or the user explicitly tells you to continue.
+
+</external_process_policy>
 
 ## Terminal Awareness
 
@@ -113,6 +124,8 @@ generated prompt/output files before invoking an external model.
 
 ## Invocation Flow
 
+<invocation_workflow>
+
 ### 1. Detect or collect context
 
 Parse what the user provided. If invoked proactively (no user prompt),
@@ -136,8 +149,9 @@ For each mode, gather the minimum context needed:
 
 ### 2. Assemble the prompt
 
-Build the prompt in a temp file. **ALWAYS include project coding standards
-from CLAUDE.md** — this ensures the external LLM applies the same rules.
+Build the prompt in a temp file. Include the applicable project instructions
+(`AGENTS.md`, `CLAUDE.md`, or repository-local equivalent) according to their
+normal precedence so the external LLM applies the same rules.
 
 ```bash
 PROMPT_FILE=$(mktemp "${TMPDIR:-/tmp}/llm-assist-prompt.XXXXXX")
@@ -214,14 +228,17 @@ CMD="opencode run \"$PROMPT\""
 eval "$CMD"
 ```
 
-**CRITICAL: CLAUDE.md inclusion is mandatory, not optional.** If a CLAUDE.md
-(or equivalent project instructions file) exists in the repo, read it and
+<project_instruction_context>
+
+If an applicable project instructions file exists in the repo, read it and
 include the coding guidelines and conventions sections in the prompt's
 `## Project Context` section. Prioritize sections about: coding standards,
 language guidelines, design patterns, review standards, and architectural
 constraints. For review mode specifically, instruct the external LLM to
 check each finding against these project-specific guidelines and flag
 violations as review findings.
+
+</project_instruction_context>
 
 When the selected provider supports incremental output, instruct the external
 LLM to emit brief periodic progress markers while it works, without stopping
@@ -269,6 +286,8 @@ failure; check process state and output before retrying.
 
 ### 4. Read and synthesize results
 
+<synthesis_contract>
+
 Read the output file(s). Do NOT just pass through raw output. Instead:
 
 When using `--provider all`, read both output files and label each finding
@@ -312,11 +331,15 @@ with its source: **CLAUDE**, **CODEX**, or **BOTH** (found by both).
 - Synthesize the provider's answer with your own knowledge
 - Flag any contradictions between the two
 
+</synthesis_contract>
+
 ### 5. Clean up
 
 ```bash
 rm -f "$PROMPT_FILE" "$OUTPUT_FILE"
 ```
+
+</invocation_workflow>
 
 ## Proactive Triggering
 

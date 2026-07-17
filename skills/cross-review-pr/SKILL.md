@@ -25,6 +25,8 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 
 ## Self-awareness rule
 
+<agent_identity_and_role_routing>
+
 **You (the agent executing this skill) must identify which LLM you are.**
 This determines which roles you handle inline vs. which require shelling
 out to an external CLI.
@@ -40,6 +42,8 @@ out to an external CLI.
 **CRITICAL: Never shell out to yourself.** If `--from` or `--to` matches
 your own identity, you perform that step directly — no CLI subprocess.
 If the role is a *different* LLM, you invoke it via its CLI.
+
+</agent_identity_and_role_routing>
 
 ## Prerequisites
 
@@ -88,6 +92,8 @@ the other defaults to `codex` and vice versa. If the provided value is
 `opencode`, the other defaults to `codex`.
 
 ## Workflow
+
+<comparative_review_workflow>
 
 ### Step 1: Terminal Awareness
 
@@ -139,6 +145,8 @@ trap cleanup_cross_review_tmpdir EXIT
 
 ### Step 2: Deep-Mode Delegation Authorization
 
+<deep_mode_authorization>
+
 If `--deep` is active, read `references/deep-mode.md` before proceeding.
 Strict deep mode requires symmetric independent parallel reviewer agents:
 Reviewer A and Reviewer B must each review every decomposed area independently,
@@ -164,6 +172,8 @@ sub-agents", or "`--deep` with sub-agents".
 Do not silently fall back to one inline pass or only external CLI processes. If
 the user declines sub-agents, ask whether they want a non-deep comparative
 fallback and label that fallback clearly.
+
+</deep_mode_authorization>
 
 ### Step 3: Gather PR Context
 
@@ -225,7 +235,8 @@ Request Changes.
 If the reviewer is a DIFFERENT LLM, build a review prompt file following the
 `llm-assist` skill's review mode template:
 
-1. **Common Header** — CLAUDE.md project conventions (mandatory per llm-assist)
+1. **Common Header** — applicable repository instructions such as `AGENTS.md`
+   or `CLAUDE.md`, following repository precedence
 2. **Skill Preference** — code-reviewer detection preamble (from llm-assist)
 3. **Review Target** — the PR diff
 4. **Focus** — user-specified or general
@@ -472,6 +483,8 @@ Present a summary of added tests in the report so the user can verify coverage.
 
 ### Step 10: Optional Post As PR Comment
 
+<side_effect_authorization>
+
 If `--post` flag was provided, ask the user to confirm before posting:
 
 ```text
@@ -483,6 +496,8 @@ If confirmed:
 ```bash
 gh pr comment "$PR_NUM" --body-file /tmp/cross-review-report.md
 ```
+
+</side_effect_authorization>
 
 ### Step 11: Clean Up
 
@@ -496,7 +511,11 @@ Switch back to the previous branch:
 git checkout - 2>/dev/null || true
 ```
 
+</comparative_review_workflow>
+
 ## Deep Mode
+
+<deep_mode_contract>
 
 Activated by `--deep` or by a request for a deep, multi-area, or
 parallel-agent review. Deep mode means symmetric focused parallel reviewer
@@ -509,7 +528,11 @@ Read `references/deep-mode.md` before running deep mode. If the current
 harness cannot launch parallel agents, say that strict deep mode is unavailable
 and clearly label any fallback as a normal comparative review.
 
+</deep_mode_contract>
+
 ## Error Handling
+
+<external_process_policy>
 
 | Failure | Recovery |
 |---------|----------|
@@ -522,6 +545,8 @@ and clearly label any fallback as a normal comparative review.
 | External LLM auth error | Tell user to check auth config for the selected provider |
 | Diff too large (>3000 lines) | Warn the user and suggest `--focus`; above 5000 lines, split by file groups and run sequentially |
 | Dirty working tree before PR checkout | Stop before checkout if user changes could be disturbed; ask how to proceed |
+
+</external_process_policy>
 
 ## Tips
 

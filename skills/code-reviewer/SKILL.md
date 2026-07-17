@@ -37,6 +37,8 @@ reading changed files, or running verification commands.
 
 ## Workflow
 
+<mode_and_target_selection>
+
 ### 1. Detect Operating Mode
 
 Before choosing the review flow, classify the request:
@@ -59,11 +61,26 @@ Before choosing the review flow, classify the request:
 
 ### 3. Preparation
 
+</mode_and_target_selection>
+
+<preparation>
+
+Single-pass review is read-only by default. Checkout, commits, pushes, PR
+creation, comments, and fixes require explicit user intent for the corresponding
+workflow. Before any checkout, inspect the worktree and prefer a non-mutating
+remote diff when checkout would mix or overwrite local changes.
+
 #### For Remote PRs:
-1.  **Checkout**: Use the GitHub CLI to checkout the PR.
+1.  **Read without checkout by default**: Inspect metadata and the patch without
+    changing the user's branch or worktree.
     ```bash
-    gh pr checkout <PR_NUMBER>
+    gh pr view <PR_NUMBER> --json title,body,baseRefName,headRefName,files
+    gh pr diff <PR_NUMBER>
     ```
+    Checkout only when the user explicitly requests it. If focused verification
+    requires full-tree access, ask for checkout permission. Before checkout,
+    inspect the worktree; if local changes could be disturbed, explain the risk
+    rather than switching branches.
 2.  **Context**: Read the PR title, description, changed file list, and relevant discussion to understand the goal and history.
 3.  **Project Instructions**: Read nearby project instructions (`AGENTS.md`, `CLAUDE.md`, or equivalent) before judging style or architecture.
 4.  **Verification Signals**: If the project has an obvious local verification command, note it and run it only when appropriate for the review scope and environment. Do not assume `npm run preflight` exists.
@@ -76,6 +93,10 @@ Before choosing the review flow, classify the request:
 3.  **Verification Signals**: Identify likely verification commands from package scripts, task runners, Makefiles, pyproject/poe tasks, Nx targets, or repo instructions. Run focused checks when useful and safe; otherwise state that verification was not run.
 
 ### PR Creation And Sub-Agent Loop Review
+
+</preparation>
+
+<pr_loop_workflow>
 
 Use this workflow when the user asks to open a PR and run sub-agent loop reviews,
 or uses similar wording. The goal is to keep the PR reviewable while converging
@@ -151,6 +172,8 @@ command/model policy below, including loops run after pushed fixes.
 
 #### C. Stopping Criteria
 
+<stopping_criteria>
+
 Stop the loop only when one of these is true:
 
 *   A fresh sub-agent review loop reports zero unresolved High/Medium findings.
@@ -162,13 +185,19 @@ Stop the loop only when one of these is true:
 Do not stop merely because one round of fixes was pushed. The final loop must be
 a fresh review after the latest pushed commit.
 
+</stopping_criteria>
+
 #### D. Final User Report
 
 Report the PR URL, loop count, final High/Medium status, verification evidence,
 and any remaining Low/Nit notes or blocked checks. Keep the final response short;
 the PR comments should contain the detailed loop history.
 
+</pr_loop_workflow>
+
 ### 4. In-Depth Analysis
+
+<review_analysis>
 Analyze the code changes based on the following pillars:
 
 *   **Correctness**: Does the code achieve its stated purpose without bugs or logical errors?
@@ -214,7 +243,11 @@ name the runtime mechanism involved. Report concrete breakages, brittle
 implicit contracts, or high-risk unverified paths; do not expand into unrelated
 whole-repo review.
 
+</review_analysis>
+
 ### 5. Provide Feedback
+
+<review_output>
 
 #### Structure
 
@@ -228,6 +261,8 @@ whole-repo review.
 *   Be direct, professional, and specific.
 *   Explain *why* a change is requested.
 *   Do not pad the review with praise.
+
+</review_output>
 
 ### 6. Cleanup (Remote PRs only)
 *   If you checked out a remote PR, return to the previous branch unless the user asked to stay on the PR branch.

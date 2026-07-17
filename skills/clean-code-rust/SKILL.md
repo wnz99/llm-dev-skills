@@ -20,6 +20,10 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 
 ## Use This Skill When
 
+<activation_criteria>
+
+<use_when>
+
 - The user asks for cleaner Rust code, refactoring, or maintainability improvements
 - A review task should include design and ergonomics findings, not just correctness bugs
 - Ownership, borrowing, error handling, or type design are making the code harder to evolve
@@ -27,12 +31,24 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 
 ## Do Not Use This Skill When
 
+</use_when>
+
+<do_not_use_when>
+
 - The task is mainly to fix behavior and a cleanup rewrite would expand scope
 - The existing crate already follows a coherent internal style
 - The "cleanup" would hide ownership or error behavior that should stay explicit
 - The refactor would introduce abstraction layers that are larger than the problem
 
 ## Operating Rules
+
+</do_not_use_when>
+
+</activation_criteria>
+
+<mandatory_constraints>
+
+<precedence>User request and repository instructions, then established crate conventions, then this skill's advisory heuristics.</precedence>
 
 1. Read local crate conventions first.
    Check `Cargo.toml`, formatting, lint settings, error libraries, and nearby module patterns before applying generic advice.
@@ -47,7 +63,13 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 
 ## Workflow
 
+</mandatory_constraints>
+
+<workflow>
+
 ### 1. Identify the concrete problem
+
+<step number="1" name="identify_problem">
 
 Typical smells:
 
@@ -61,6 +83,10 @@ Typical smells:
 
 ### 2. Check local patterns
 
+</step>
+
+<step number="2" name="inspect_local_patterns">
+
 Inspect nearby code for:
 
 - whether the crate is app code or library code
@@ -70,6 +96,10 @@ Inspect nearby code for:
 - whether `Arc`, `Rc`, builders, newtypes, or enums are already common patterns
 
 ### 3. Pick the smallest meaningful refactor
+
+</step>
+
+<step number="3" name="choose_smallest_refactor">
 
 Good refactors:
 
@@ -89,6 +119,10 @@ Avoid:
 
 ### 4. Verify the boundary
 
+</step>
+
+<step number="4" name="verify_boundary">
+
 After refactoring, check:
 
 - ownership still matches how callers use the API
@@ -96,7 +130,19 @@ After refactoring, check:
 - public behavior and visibility are unchanged unless intended
 - `cargo fmt`, `cargo clippy`, and relevant tests still pass
 
+Use the narrowest repository-defined format check, Clippy invocation, and tests
+that cover the changed crate. If a relevant check cannot run, state why.
+
+</step>
+
+</workflow>
+
 ## Rust Heuristics
+
+<advisory_heuristics language="rust">
+
+Apply these only when they address a demonstrated smell without expanding scope
+or changing public behavior.
 
 ### Naming and API Shape
 
@@ -138,6 +184,10 @@ After refactoring, check:
 
 ## Review Checklist
 
+</advisory_heuristics>
+
+<completion_checklist>
+
 - Is ownership obvious at the API boundary?
 - Are there clones that exist only to satisfy the current structure?
 - Is the error surface appropriate for app code vs library code?
@@ -145,6 +195,8 @@ After refactoring, check:
 - Did the new types earn their weight?
 
 ## References
+
+</completion_checklist>
 
 Read [references/patterns.md](references/patterns.md) when you need concrete
 Rust cleanup patterns and examples.
