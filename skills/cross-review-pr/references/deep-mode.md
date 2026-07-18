@@ -49,10 +49,11 @@ If the current shell is `zsh`, do not rely on zsh word splitting. Either:
 - run prompt-generation scripts under `bash`, or
 - use shell-agnostic newline-safe loops and arrays.
 
-Preferred pattern for generated review prompts:
+Preferred pattern for generated review prompts (pass positional arguments to
+the Bash process before the quoted heredoc):
 
 ```bash
-bash <<'BASH'
+bash -s -- "$PROMPT_FILE" "$FILE_LIST" <<'BASH'
 set -euo pipefail
 
 prompt_file="$1"
@@ -85,17 +86,19 @@ done
 echo "$DIFF" >> "$PROMPT_FILE"
 ```
 
-After generating every area prompt, validate it before launching reviewers:
+After generating every area prompt, install and call the canonical
+`validate_prompt` function from `default-mode.md` in the same controller shell.
+It covers both the D0 source form and the D4 bounded source/diff form. Small,
+focused prompts are valid; line count is not a correctness signal:
 
 ```bash
-wc -l "$PROMPT_FILE"
-rg -n '^(diff --git|## Source:|<diff>)' "$PROMPT_FILE" | head
-test "$(wc -l < "$PROMPT_FILE")" -gt 50
+validate_prompt "$PROMPT_FILE" || exit 1
 ```
 
-If a prompt is unexpectedly short or lacks source/diff markers, stop and
-regenerate it under a known shell, preferably `bash`. Do not launch reviewers
-against empty or placeholder prompts.
+If a prompt is empty, lacks the required task/source sections, contains no
+nonempty injected source, or retains a template token, stop and regenerate it
+under a known shell, preferably `bash`. Do not launch reviewers against empty
+or placeholder prompts.
 
 ## D0b. Delegation Authorization
 

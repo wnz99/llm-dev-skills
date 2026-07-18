@@ -184,10 +184,22 @@ CLAUDE_PID=$!
 codex exec -s read-only --ephemeral -o "$CODEX_OUTPUT" - < "$PROMPT_FILE" &
 CODEX_PID=$!
 
-wait "$CLAUDE_PID"
-CLAUDE_STATUS=$?
-wait "$CODEX_PID"
-CODEX_STATUS=$?
+CLAUDE_STATUS=0
+CODEX_STATUS=0
+
+# `wait` can return non-zero for a failed provider. Keep each wait in an
+# explicit conditional so `set -e` cannot exit before the other child is
+# reaped and both statuses are available for partial-failure synthesis.
+if wait "$CLAUDE_PID"; then
+  CLAUDE_STATUS=0
+else
+  CLAUDE_STATUS=$?
+fi
+if wait "$CODEX_PID"; then
+  CODEX_STATUS=0
+else
+  CODEX_STATUS=$?
+fi
 ```
 
 Handle partial failure explicitly. If one provider succeeds and the other
