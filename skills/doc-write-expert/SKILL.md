@@ -18,19 +18,18 @@ This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-
 Post one short line identifying the mode and target:
 
 - New document: `Using **doc-write-expert** to author <document/purpose> — I'll establish the reader, evidence, corpus rules, and structure before drafting.`
-- Existing document: `Using **doc-write-expert** to review <relative path> — I'll inventory checkable claims, verify them, and report findings before editing.`
+- Existing document: `Using **doc-write-expert** to review <relative path> — I'll inventory checkable claims, verify them, and make only the edits the request authorizes.`
 
 ## Choose the mode
 
-<mode_selection>
-
 ### Author mode
 
-Use when the requested durable document does not exist, needs a replacement written from a blank page, or the user explicitly asks for a new draft.
+For a new durable document or a replacement drafted from a blank page, use the
+author workflow.
 
 ### Review mode
 
-Use when a document already exists and the user wants it checked, refreshed, corrected, reorganized, or brought into conformance.
+For an existing document, use the review workflow.
 
 ### Hybrid mode
 
@@ -38,17 +37,17 @@ Use when reviewing an existing document reveals that a split, replacement, or co
 
 Do not use either mode for fixed generated documentation when the repository mandates a generator. Use the owning generator and review its inputs and output instead.
 
-Requests to `review`, `audit`, or `check` are read-only unless edits are also
-requested. Requests to `update`, `fix`, or `rewrite` authorize scoped edits;
-document moves, splits, and broad restructuring still require approval.
-
-</mode_selection>
+Authorization is determined once from the request: `review`, `audit`, or
+`check` alone is read-only; `update`, `fix`, `refresh`, or `rewrite` authorizes
+scoped correctness and conformance edits. Document moves, splits, replacement,
+and other material structural changes require approval unless explicitly
+requested.
 
 ## Shared operating principles
 
-<governance_and_evidence_contract>
-
-<precedence>User request, then applicable repository/subtree instructions and documentation governance, then this skill.</precedence>
+Follow the user request, applicable repository and subtree instructions, and
+documentation governance in that order; use this skill where those sources do
+not decide the issue.
 
 1. **Evidence before prose.** Verify factual claims against authoritative code, configuration, schemas, policies, source material, or user-provided facts. Never fill gaps from memory.
 2. **Write for a named reader and action.** Define who will read the document and what they should be able to decide, understand, or do afterward.
@@ -59,11 +58,7 @@ document moves, splits, and broad restructuring still require approval.
 7. **Preserve navigability.** Update relevant indexes and inbound links whenever adding, moving, splitting, or renaming documents.
 8. **Cold-read before completion.** Test whether a reader without session context can take the intended action safely.
 
-</governance_and_evidence_contract>
-
 ## Author mode workflow
-
-<author_workflow>
 
 ### 1. Establish the writing brief
 
@@ -115,7 +110,9 @@ Use only the sections the reader needs. Common patterns include:
 - Policy/process: purpose → scope → roles → rules → procedure → exceptions/escalation
 - Explanatory article: reader question → concise answer → evidence/examples → implications → next action
 
-For a substantial or judgment-heavy document, show the outline to the user before drafting. For straightforward work, draft in place after confirming the outline internally.
+For substantial or judgment-heavy work, share the outline only when approval
+would resolve a material structural choice. Otherwise confirm it internally
+and continue drafting.
 
 ### 5. Draft in place
 
@@ -147,11 +144,7 @@ Read the finished document from top to bottom as a fresh member of the intended 
 
 Close gaps and cut content that does not serve the reader action.
 
-</author_workflow>
-
 ## Review mode workflow
-
-<review_workflow>
 
 ### 1. Read the target end-to-end
 
@@ -186,9 +179,7 @@ Only stale, outdated, ambiguous, missing, nonconformant, and approved misplaced 
 
 ### 4. Report before editing
 
-<review_edit_gate>
-
-Unless the user has already explicitly approved immediate edits, provide:
+For a review-only request, provide this report before any editing:
 
 ```markdown
 # Doc Review: <relative path>
@@ -212,9 +203,10 @@ Unless the user has already explicitly approved immediate edits, provide:
 <Unverifiable claims and judgment calls.>
 ```
 
-If the document is fresh, say so and stop. Do not manufacture edits.
-
-</review_edit_gate>
+If the document is fresh, say so and stop. Do not manufacture edits. When the
+request already authorizes scoped correctness edits, apply them after
+classification without a separate report-first pause. Report first and obtain
+approval before material structural changes.
 
 ### 5. Apply approved edits surgically
 
@@ -229,11 +221,7 @@ If the document is fresh, say so and stop. Do not manufacture edits.
 
 For procedural or onboarding material, confirm a fresh reader can complete the workflow. Re-run relevant commands or checks proportionate to the risk. For reference documents, emphasize schema, link, and corpus validation.
 
-</review_workflow>
-
 ## Final handoff
-
-<definition_of_done>
 
 Summarize:
 
@@ -245,8 +233,6 @@ Summarize:
 
 Do not commit unless the user explicitly asks. Follow repository commit rules when they do.
 
-</definition_of_done>
-
 ## Anti-patterns
 
 - Writing from remembered facts before inspecting sources
@@ -257,7 +243,8 @@ Do not commit unless the user explicitly asks. Follow repository commit rules wh
 - Treating an opinion as stale merely because the reviewer disagrees
 - Dropping warnings or caveats without evidence they are obsolete
 - Creating or moving documents without updating navigation
-- Producing a review report and then editing without approval
+- Editing during a review-only request, or making material structural changes
+  without authorization
 - Claiming completion without a factual, corpus, and fresh-reader check
 
 ## Repository precedence

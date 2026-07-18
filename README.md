@@ -7,7 +7,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | Skill | Description |
 |-------|-------------|
 | [llm-assist](skills/llm-assist/) | Spawn an external LLM CLI (Claude, Codex, or OpenCode) as a cross-model thinking partner for review, debug, plan, verify, RCA, rescue, and ask modes |
-| [cross-review-pr](skills/cross-review-pr/) | Bidirectional comparative PR review between any two LLMs (Claude, Codex, OpenCode) with cross-validation and confidence scoring |
+| [cross-review-pr](skills/cross-review-pr/) | Comparative PR review between any two LLMs (Claude, Codex, OpenCode): both review independently, then Reviewer A validates Reviewer B's findings before synthesis |
 | [code-reviewer](skills/code-reviewer/) | Structured code review for local changes and remote PRs (based on [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) code-reviewer) |
 | [clean-code-js](skills/clean-code-js/) | Focused JavaScript/TypeScript readability and maintainability refactoring guidance |
 | [clean-code-py](skills/clean-code-py/) | Focused Python readability, API clarity, and maintainability refactoring guidance |
@@ -56,13 +56,19 @@ These skills are designed to complement each other:
 
 1. **code-reviewer** provides structured single-model review (correctness, security, maintainability, etc.)
 2. **llm-assist** adds cross-model validation by running analysis through a different LLM architecture (Codex or OpenCode)
-3. **cross-review-pr** orchestrates both: two LLMs review independently, then each validates the other's findings before producing a unified report with confidence scores
+3. **cross-review-pr** orchestrates both: two LLMs review independently, then Reviewer A validates Reviewer B's findings before producing a unified report with confidence scores
 4. **clean-code-\*** skills provide language-specific guidance for small, behavior-preserving readability and maintainability refactors
 5. **doc-write-expert** writes new technical and non-technical documents from authoritative evidence and keeps existing documentation honest. It establishes the reader and intended action, follows local corpus rules, inventories and verifies checkable claims, gates review edits behind a findings report, and cold-reads the result before completion.
 
 ## Canonical source and updates
 
 This repository is the canonical source for every skill it contains. Each `SKILL.md` links back to its own upstream directory so an installed copy can locate its origin.
+
+Authors and reviewers should follow the [cross-model prompt engineering standard](docs/prompt-engineering.md). It defines the shared provider guidance, provider-specific caveats, and the repository rule that Markdown owns all `SKILL.md` instructions while XML is reserved for injected content boundaries inside executable prompt templates.
+
+Root [`AGENTS.md`](AGENTS.md) makes that standard required for every skill
+addition or modification and adds validation, evaluation, and standalone-
+installability gates for contributors and coding agents.
 
 When updating, reinstalling, downloading, or replacing an installed skill, compare it with the matching `skills/<name>/` directory here and use the newest compatible upstream version. Preserve intentional local adaptations and review divergences before overwriting them.
 
@@ -74,7 +80,7 @@ npx skills add wnz99/llm-dev-skills -g
 
 To refresh a single skill, use its individual installation command from the section above.
 
-**cross-review-pr** supports any combination of Claude, Codex, and OpenCode as Reviewer A / Reviewer B via `--from` / `--to` flags. The default is `--from claude --to codex`. Running `--from codex --to claude` starts with Codex's independent review, then asks Claude for an independent review and reciprocal validation.
+**cross-review-pr** supports any combination of Claude, Codex, and OpenCode as Reviewer A / Reviewer B via `--from` / `--to` flags. The default is `--from claude --to codex`. Running `--from codex --to claude` starts with Codex's independent review, then asks Claude for an independent review before Codex validates Claude's findings.
 
 The cross-model approach helps reduce sycophancy bias and can catch bugs that any single model might miss.
 

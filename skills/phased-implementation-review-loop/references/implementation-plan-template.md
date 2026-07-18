@@ -30,17 +30,13 @@ under **Read first**, then define the new identifiers under **Intended edits** a
 
 ## Execution topology
 
-<execution_waves>
-
 | Wave | Tasks | Mode | Prerequisites | Isolation and integration | Wave verification |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Task 1, Task 2 | parallel-safe | none | Separate worktrees; integrate Task 1 then Task 2 | `<command>` → <expected outcome> |
 | 2 | Task 3 | sequential-only | Tasks 1–2 reviewed and integrated | Shared integration branch | `<command>` → <expected outcome> |
 
 - Parallel implementation permission: `<not-requested | approved | denied>`
-- Host/model policy: `<detected host>; implementation model <model or host limitation>; user override <none or value>`
-
-</execution_waves>
+- Host/model policy: `<detected host>; user override <none or value>; selected capable default or host limitation <value>`
 
 ### Task N: <independently testable deliverable>
 
