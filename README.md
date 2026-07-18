@@ -64,6 +64,8 @@ These skills are designed to complement each other:
 
 This repository is the canonical source for every skill it contains. Each `SKILL.md` links back to its own upstream directory so an installed copy can locate its origin.
 
+Authors and reviewers should follow the [cross-model prompt engineering standard](docs/prompt-engineering.md). It defines the shared provider guidance, provider-specific caveats, and the repository rule that Markdown owns `SKILL.md` hierarchy while XML is reserved for meaningful bounded prompt content.
+
 When updating, reinstalling, downloading, or replacing an installed skill, compare it with the matching `skills/<name>/` directory here and use the newest compatible upstream version. Preserve intentional local adaptations and review divergences before overwriting them.
 
 To refresh all globally installed skills from this repository:
