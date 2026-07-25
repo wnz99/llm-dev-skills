@@ -8,7 +8,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 |-------|-------------|
 | [llm-assist](skills/llm-assist/) | Spawn an external LLM CLI (Claude, Codex, or OpenCode) as a cross-model thinking partner for review, debug, plan, verify, RCA, rescue, and ask modes |
 | [cross-review-pr](skills/cross-review-pr/) | Comparative PR review between any two LLMs (Claude, Codex, OpenCode): both review independently, then Reviewer A validates Reviewer B's findings before synthesis |
-| [code-reviewer](skills/code-reviewer/) | Structured code review for local changes and remote PRs (based on [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) code-reviewer) |
+| [code-reviewer](skills/code-reviewer/) | Fresh-context code review for local changes and remote PRs, with automatic independent reviewer delegation when supported (based on [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) code-reviewer) |
 | [clean-code-js](skills/clean-code-js/) | Focused JavaScript/TypeScript readability and maintainability refactoring guidance |
 | [clean-code-py](skills/clean-code-py/) | Focused Python readability, API clarity, and maintainability refactoring guidance |
 | [clean-code-rust](skills/clean-code-rust/) | Focused Rust readability, ownership, error-handling, and API maintainability guidance |
@@ -54,7 +54,7 @@ directory, such as `~/.claude/skills/`, `~/.codex/skills/`, or
 
 These skills are designed to complement each other:
 
-1. **code-reviewer** provides structured single-model review (correctness, security, maintainability, etc.)
+1. **code-reviewer** provides structured review (correctness, security, maintainability, etc.) and automatically uses a fresh independent sub-agent when the host supports delegation
 2. **llm-assist** adds cross-model validation by running analysis through a different LLM architecture (Codex or OpenCode)
 3. **cross-review-pr** orchestrates both: two LLMs review independently, then Reviewer A validates Reviewer B's findings before producing a unified report with confidence scores
 4. **clean-code-\*** skills provide language-specific guidance for small, behavior-preserving readability and maintainability refactors
