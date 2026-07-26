@@ -1,6 +1,6 @@
 ---
 name: phased-implementation-review-loop
-description: Use this skill whenever the user asks to plan or implement a multi-step code change with subagents, determine safe sequential versus parallel implementation waves, execute work phase by phase, independently check requirement compliance and code quality after every phase, or keep fixing review findings until solved. It unifies dependency-aware implementation planning, permission-gated parallel execution, host-aware implementer model selection, fresh implementer subagents, TDD micro-steps, requirement rereads, verification, two-verdict review gates, fix/re-review loops, durable progress, and final aggregate review.
+description: Use for substantial multi-task implementations whose correctness depends on dependency-aware phases, isolated subagent execution, and independent review gates after each phase. Trigger when the user asks to plan and execute coordinated sequential or parallel implementation waves, delegate bounded implementation tasks, or run a full implementation-to-convergence workflow. Do not trigger solely because an already-implemented change needs review or iterative fixes; use the most focused available workflow for that task.
 ---
 
 # Phased Implementation Review Loop
