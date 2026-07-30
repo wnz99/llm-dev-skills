@@ -14,6 +14,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [clean-code-rust](skills/clean-code-rust/) | Focused Rust readability, ownership, error-handling, and API maintainability guidance |
 | [doc-write-expert](skills/doc-write-expert/) | Write new or review existing technical and non-technical documentation using evidence-backed authoring, corpus-conformance, approval, and fresh-reader workflows |
 | [phased-implementation-review-loop](skills/phased-implementation-review-loop/) | Plan a multi-step change, then implement each step under a verify → in-code review → independent cross-model sub-agent review loop, fixing until no High/Medium findings remain before advancing |
+| [pr-release-notes](skills/pr-release-notes/) | Prepare and maintain bounded, evidence-based release notes in GitHub pull request descriptions while honoring repository-specific release conventions |
 
 ## Install
 
@@ -34,6 +35,7 @@ npx skills add wnz99/llm-dev-skills/clean-code-py -g
 npx skills add wnz99/llm-dev-skills/clean-code-rust -g
 npx skills add wnz99/llm-dev-skills/doc-write-expert -g
 npx skills add wnz99/llm-dev-skills/phased-implementation-review-loop -g
+npx skills add wnz99/llm-dev-skills/pr-release-notes -g
 ```
 
 Or manually copy any `skills/<name>/` directory to your agent's skills
@@ -48,6 +50,7 @@ directory, such as `~/.claude/skills/`, `~/.codex/skills/`, or
   - [Codex CLI](https://github.com/openai/codex): `npm i -g @openai/codex && codex login`
   - [OpenCode](https://dev.opencode.ai/docs/): `npm i -g opencode-ai`
 - **cross-review-pr** also requires [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
+- **pr-release-notes** requires [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
 - **code-reviewer**, **clean-code-\***, and **doc-write-expert** skills work standalone with no extra dependencies
 
 ## How it works

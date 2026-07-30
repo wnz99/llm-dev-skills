@@ -14,7 +14,8 @@
         "skills/clean-code-py",
         "skills/clean-code-rust",
         "skills/doc-write-expert",
-        "skills/phased-implementation-review-loop"
+        "skills/phased-implementation-review-loop",
+        "skills/pr-release-notes"
       ],
       "strict": false
     }
