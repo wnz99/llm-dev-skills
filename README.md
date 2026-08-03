@@ -13,7 +13,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [clean-code-py](skills/clean-code-py/) | Focused Python readability, API clarity, and maintainability refactoring guidance |
 | [clean-code-rust](skills/clean-code-rust/) | Focused Rust readability, ownership, error-handling, and API maintainability guidance |
 | [doc-write-expert](skills/doc-write-expert/) | Write new or review existing technical and non-technical documentation using evidence-backed authoring, corpus-conformance, approval, and fresh-reader workflows |
-| [phased-implementation-review-loop](skills/phased-implementation-review-loop/) | Plan a multi-step change, then implement each step under a verify → in-code review → independent cross-model sub-agent review loop, fixing until no High/Medium findings remain before advancing |
+| [phased-implementation-review-loop](skills/phased-implementation-review-loop/) | Plan a multi-step change, pass an independent plan-review and correction gate, then implement each step under a verify → in-code review → independent sub-agent review loop until no High/Medium findings remain |
 | [pr-release-notes](skills/pr-release-notes/) | Prepare and maintain bounded, evidence-based release notes in GitHub pull request descriptions while honoring repository-specific release conventions |
 
 ## Install

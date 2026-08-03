@@ -122,6 +122,14 @@ user defines a plan location; otherwise present it in the conversation. If the
 plan itself is stored in a governed documentation corpus, follow that corpus's
 frontmatter, filename, placement, index, and linking rules.
 
+After writing the plan, create the durable progress ledger described under
+Subagent Execution Control before self-review or independent review. Initialize
+the plan-review status as `PENDING`; store reviewer identities, iterations,
+findings, corrections, clarifications, and the final verdict in the ledger, not
+in the semantic plan sent to reviewers. Audit-only ledger updates do not change
+the plan revision. Any change to requirements, architecture, tasks, topology,
+interfaces, or verification does and requires a fresh review.
+
 Use the plan template in
 [`references/implementation-plan-template.md`](references/implementation-plan-template.md).
 Read the template before writing the plan and retain every section that applies;
@@ -184,6 +192,19 @@ Before implementation or handoff:
 8. Confirm every task leaves the repository in a working, independently
    testable state.
 
+## Independent Plan Review Gate
+
+After self-review and before requesting parallel permission or dispatching any
+implementer, follow the complete
+[`references/independent-plan-review.md`](references/independent-plan-review.md)
+gate. Read that reference in full every time this skill produces or revises a
+plan. It defines reviewer independence, the unbiased review package, verdicts,
+automatic correction and re-review, clarification handling, and ledger fields.
+
+This gate blocks implementation. Only a fresh `APPROVED` verdict on the latest
+complete plan permits parallel-permission requests, implementation worktrees,
+task-code edits, or implementer dispatch.
+
 If the plan contains at least one parallel-safe implementation wave, ask the
 user for explicit permission to execute implementation tasks in parallel before
 starting any implementation. Summarize the proposed waves, isolation strategy,
@@ -205,31 +226,35 @@ that the overall project is complete.
 
 Before Task 1:
 
-1. Re-read the plan, original requirements, global constraints, and repository
+1. Confirm the progress ledger records an `APPROVED` independent review of the
+   latest plan revision. If the plan changed after approval, return to the
+   independent plan review gate before continuing.
+2. Re-read the plan, original requirements, global constraints, and repository
    instructions. Resolve contradictions before dispatch instead of discovering
    them piecemeal during execution.
-2. Record the branch merge base and current commit when Git is available. Never
+3. Record the branch merge base and current commit when Git is available. Never
    assume `HEAD~1` is a task boundary because a task may create multiple commits.
    Detect the active branch and repository policy first. Do not implement on
    `main`, `master`, or another protected/shared branch without explicit user
    authorization; create or use an allowed feature branch or isolated worktree
    when permitted.
-3. Create a durable progress ledger in the repository-approved ignored scratch
-   location. Record every task, status, baseline, commits, verification, review
-   verdicts, and residual findings. After context compaction or resume, trust
-   the ledger and Git history; do not redispatch completed tasks.
+4. Confirm the durable progress ledger created before plan review remains in
+   the repository-approved ignored scratch location. Record every task, status,
+   baseline, commits, verification, review verdicts, and residual findings.
+   After context compaction or resume, trust the ledger and Git history; do not
+   redispatch completed tasks.
    If no approved ignored repository location exists, use a host-local temporary
    path outside the repository and record that path in the session. Do not edit
    `.gitignore` solely to create a ledger location without authorization.
-4. Prepare one task brief per task. The brief is the task's full plan section,
+5. Prepare one task brief per task. The brief is the task's full plan section,
    global constraints that apply verbatim, earlier-task interfaces it consumes,
    exact acceptance criteria, and report contract. Do not send the whole plan or
    accumulated session history to a fresh subagent.
-5. Reconfirm the recorded execution choice. When parallel-safe waves exist and
+6. Reconfirm the recorded execution choice. When parallel-safe waves exist and
    permission has not yet been recorded, stop and ask before dispatching any
    implementer. If permission was denied, flatten every wave into the plan's
    deterministic sequential order.
-6. For approved parallel execution, create the planned isolation boundary for
+7. For approved parallel execution, create the planned isolation boundary for
    each concurrent implementer before dispatch. Record its worktree/branch,
    baseline, owned files, verification scope, and integration order. The
    controller remains the sole integration and conflict-resolution owner.
@@ -464,7 +489,11 @@ Do not mark the task complete while blocked.
 ## Non-Negotiable Controls
 
 - Do not start implementation without an implementation-ready plan and
-  acceptance traceability.
+  acceptance traceability that has passed the independent plan review gate.
+- Do not let the plan author, a planned implementer, or a prior plan reviewer
+  serve as the fresh independent reviewer of the latest plan revision.
+- Do not implement while a plan review finding or material clarification
+  remains unresolved, or after changing an approved plan without re-review.
 - Do not start parallel implementation without a dependency/wave plan and the
   user's explicit recorded permission. A denial means sequential execution.
 - Do not dispatch an implementation subagent without auto-detecting the host,
