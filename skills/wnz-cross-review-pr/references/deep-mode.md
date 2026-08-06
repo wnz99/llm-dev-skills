@@ -1,6 +1,6 @@
 # Deep Mode
 
-Use this reference when `cross-review-pr` is invoked with `--deep` or the user
+Use this reference when `wnz-cross-review-pr` is invoked with `--deep` or the user
 asks for a deep, multi-area, or parallel-agent review.
 
 Deep mode has one precise meaning: split the scope into focused review areas,
@@ -125,7 +125,7 @@ To bypass this checkpoint, the user must explicitly ask for sub-agents or
 parallel agent work in the original request, for example:
 
 - "Run a deep parallel-agent PR review."
-- "Run `cross-review-pr --deep` and spawn parallel reviewer sub-agents."
+- "Run `wnz-cross-review-pr --deep` and spawn parallel reviewer sub-agents."
 - "Delegate each deep-review area to a separate reviewer agent."
 
 Only after the user says yes should you spawn area reviewer agents. If the user

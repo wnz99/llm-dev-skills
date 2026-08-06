@@ -1,5 +1,5 @@
 ---
-name: clean-code-py
+name: wnz-clean-code-py
 description: Improve Python readability and maintainability when the task explicitly involves refactoring, code quality, naming, function design, API clarity, or reducing accidental complexity. Use this skill for Python cleanup reviews or targeted refactors. Do not use it to force heavy OOP patterns, override repo-local conventions, or broaden a bug-fix task into a style rewrite.
 ---
 
@@ -16,7 +16,13 @@ into a lecture on "Clean Code."
 
 ## Canonical source and updates
 
-This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/clean-code-py). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-clean-code-py). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
+## Migration note
+
+This skill was previously published as `clean-code-py`. Prefer
+`wnz-clean-code-py` in prompts and installed skill directories. Remove the
+legacy `clean-code-py` copy after upgrading to avoid ambiguous routing.
 
 ## Operating Rules
 

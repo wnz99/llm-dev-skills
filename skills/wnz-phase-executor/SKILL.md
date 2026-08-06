@@ -1,9 +1,9 @@
 ---
-name: phased-implementation-review-loop
+name: wnz-phase-executor
 description: Use for substantial multi-task implementations whose correctness depends on dependency-aware phases, isolated subagent execution, and independent review gates after each phase. Trigger when the user asks to plan and execute coordinated sequential or parallel implementation waves, delegate bounded implementation tasks, or run a full implementation-to-convergence workflow. Do not trigger solely because an already-implemented change needs review or iterative fixes; use the most focused available workflow for that task.
 ---
 
-# Phased Implementation Review Loop
+# Phase Executor
 
 Use this skill for substantial implementation work where correctness depends on
 controlled sequencing and independent review. The workflow exists to prevent the
@@ -12,7 +12,15 @@ spots as proof.
 
 ## Canonical source and updates
 
-This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/phased-implementation-review-loop). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-phase-executor). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
+## Migration note
+
+This skill was previously published as `phased-implementation-review-loop`.
+Prefer `wnz-phase-executor` in prompts and installed skill directories. Remove
+the legacy `phased-implementation-review-loop` copy after upgrading to avoid
+ambiguous routing, especially for review-only requests that should use
+`wnz-code-reviewer`.
 
 ## Preconditions
 
@@ -412,7 +420,7 @@ task's requirements, diff, evidence, and relevant repository contracts.
 
 Reviewer instructions:
 
-- Use the `code-reviewer` skill when available and return both the requirements
+- Use the `wnz-code-reviewer` skill when available and return both the requirements
   verdict and quality verdict from the reviewer contract.
 - Review requirement compliance before code quality so well-written code cannot
   hide missing or extra behavior.

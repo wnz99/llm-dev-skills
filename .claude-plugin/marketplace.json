@@ -7,15 +7,15 @@
       "name": "cross-model-review",
       "description": "Cross-model review and clean-code refactoring skills for Claude, Codex, and OpenCode",
       "skills": [
-        "skills/llm-assist",
-        "skills/cross-review-pr",
-        "skills/code-reviewer",
-        "skills/clean-code-js",
-        "skills/clean-code-py",
-        "skills/clean-code-rust",
-        "skills/doc-write-expert",
-        "skills/phased-implementation-review-loop",
-        "skills/pr-release-notes"
+        "skills/wnz-llm-assist",
+        "skills/wnz-cross-review-pr",
+        "skills/wnz-code-reviewer",
+        "skills/wnz-clean-code-js",
+        "skills/wnz-clean-code-py",
+        "skills/wnz-clean-code-rust",
+        "skills/wnz-doc-write-expert",
+        "skills/wnz-phase-executor",
+        "skills/wnz-pr-release-notes"
       ],
       "strict": false
     }

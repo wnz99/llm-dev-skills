@@ -1,5 +1,5 @@
 ---
-name: pr-release-notes
+name: wnz-pr-release-notes
 description: >-
   Prepare, refresh, or check a bounded release-notes block in a GitHub pull
   request description. Use when a non-draft PR is created or updated, its
@@ -18,7 +18,13 @@ the PR description.
 
 ## Canonical source and updates
 
-This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/pr-release-notes). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-pr-release-notes). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
+## Migration note
+
+This skill was previously published as `pr-release-notes`. Prefer
+`wnz-pr-release-notes` in prompts and installed skill directories. Remove the
+legacy `pr-release-notes` copy after upgrading to avoid ambiguous routing.
 
 ## Workflow
 

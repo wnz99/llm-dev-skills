@@ -1,5 +1,5 @@
 ---
-name: code-reviewer
+name: wnz-code-reviewer
 description:
   Use this skill to review code changes, including local staged/unstaged changes
   and remote pull requests by number or URL. By default, dispatch a fresh,
@@ -27,7 +27,13 @@ looks in isolation.
 
 ## Canonical source and updates
 
-This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/code-reviewer). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-code-reviewer). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
+## Migration note
+
+This skill was previously published as `code-reviewer`. Prefer
+`wnz-code-reviewer` in prompts and installed skill directories. Remove the
+legacy `code-reviewer` copy after upgrading to avoid ambiguous routing.
 
 Maintainers changing delegation behavior must read and run the representative
 cases in [references/delegation-evals.md](references/delegation-evals.md) before
@@ -435,7 +441,7 @@ consumer needs P-level compatibility, map High to P1, Medium to P2, and Low/Nit
 to P3; reserve P0 for an immediate critical risk. This compact contract is local
 so an independent installation has no sibling-skill dependency. For
 maintainers, the canonical upstream schema is
-https://github.com/wnz99/llm-dev-skills/blob/main/skills/llm-assist/references/review-schema.md.
+https://github.com/wnz99/llm-dev-skills/blob/main/skills/wnz-llm-assist/references/review-schema.md.
 
 Use one of these outcomes:
 

@@ -1,5 +1,5 @@
 ---
-name: doc-write-expert
+name: wnz-doc-write-expert
 description: Expertly write new or review and refresh existing technical and non-technical documentation. Use whenever the user asks to create, draft, document, rewrite, review, audit, verify, or update a README, runbook, guide, proposal, architecture document, ADR, specification, process document, policy, knowledge-base article, AGENTS.md/CLAUDE.md, or other durable prose. Derive claims from authoritative evidence, follow repository and documentation-corpus rules, design for the intended reader and action, and keep existing-document changes surgical. Prefer this skill over ad hoc documentation work; use a fixed generator only when the repository explicitly requires one.
 ---
 
@@ -11,14 +11,20 @@ The standard is the same in both modes: understand the reader, identify the acti
 
 ## Origin and local extension
 
-This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/doc-write-expert) and extends that repository's original `doc-review` workflow. When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and reconcile them with both the evidence-backed review mode and the authoring mode rather than overwriting them silently.
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-doc-write-expert) and extends that repository's original `doc-review` workflow. When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and reconcile them with both the evidence-backed review mode and the authoring mode rather than overwriting them silently.
+
+## Migration note
+
+This skill was previously published as `doc-write-expert`. Prefer
+`wnz-doc-write-expert` in prompts and installed skill directories. Remove the
+legacy `doc-write-expert` copy after upgrading to avoid ambiguous routing.
 
 ## Announce on trigger
 
 Post one short line identifying the mode and target:
 
-- New document: `Using **doc-write-expert** to author <document/purpose> — I'll establish the reader, evidence, corpus rules, and structure before drafting.`
-- Existing document: `Using **doc-write-expert** to review <relative path> — I'll inventory checkable claims, verify them, and make only the edits the request authorizes.`
+- New document: `Using **wnz-doc-write-expert** to author <document/purpose> — I'll establish the reader, evidence, corpus rules, and structure before drafting.`
+- Existing document: `Using **wnz-doc-write-expert** to review <relative path> — I'll inventory checkable claims, verify them, and make only the edits the request authorizes.`
 
 ## Choose the mode
 

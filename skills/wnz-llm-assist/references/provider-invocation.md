@@ -1,6 +1,6 @@
 # Provider Invocation
 
-Use this reference when running an external LLM CLI from `llm-assist`.
+Use this reference when running an external LLM CLI from `wnz-llm-assist`.
 
 ## Terminal Preflight
 
@@ -29,7 +29,7 @@ loops. Validate generated prompt files before invoking providers.
 ## Temp Files
 
 ```bash
-LLM_ASSIST_TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/llm-assist.XXXXXX")
+LLM_ASSIST_TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/wnz-llm-assist.XXXXXX")
 LLM_ASSIST_CLEANED=0
 cleanup_llm_assist() {
   cleanup_failure=0

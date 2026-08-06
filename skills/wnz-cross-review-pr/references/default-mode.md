@@ -102,7 +102,7 @@ validate_prompt "$PROMPT_FILE" || {
 Install this handler before writing prompt, metadata, diff, or output files:
 
 ```bash
-CROSS_REVIEW_TMPDIR=$(mktemp -d /tmp/cross-review-pr-XXXXXX)
+CROSS_REVIEW_TMPDIR=$(mktemp -d /tmp/wnz-cross-review-pr-XXXXXX)
 ORIGINAL_BRANCH=$(git symbolic-ref --quiet --short HEAD || true)
 ORIGINAL_HEAD=$(git rev-parse --verify HEAD)
 CHECKOUT_AUTHORIZED=0

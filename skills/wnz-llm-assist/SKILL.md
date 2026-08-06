@@ -1,5 +1,5 @@
 ---
-name: llm-assist
+name: wnz-llm-assist
 description: "Use this skill instead of ad hoc CLI calls when external LLM help is needed for debugging, code review, planning, root cause analysis, fix verification, rescue after repeated failures, or a second opinion. Default to the complementary model: Codex to Claude, Claude to Codex. Ask which provider to use when running inside OpenCode. Use OpenCode only when explicitly requested or approved as a fallback. The skill builds a prompt file, includes project instructions, invokes the external model safely, and synthesizes the result."
 ---
 
@@ -14,7 +14,13 @@ spots and can reduce sycophancy bias and local minima.
 
 ## Canonical source and updates
 
-This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/llm-assist). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-llm-assist). When asked to update, reinstall, download, or replace this skill with a newer version, inspect that upstream directory first and use the newest compatible version. Preserve intentional installation-specific adaptations and report any divergence instead of silently overwriting it.
+
+## Migration note
+
+This skill was previously published as `llm-assist`. Prefer
+`wnz-llm-assist` in prompts and installed skill directories. Remove the
+legacy `llm-assist` copy after upgrading to avoid ambiguous routing.
 
 ## Provider Selection
 
@@ -41,11 +47,11 @@ Default behavior:
 | `all` | Explicit cross-check with the standard pair | Claude Code CLI + OpenAI Codex CLI | Both installed | Both configured |
 
 Usage examples:
-- `/llm-assist review` — runs the complementary provider by default
-- `/llm-assist --provider claude review` — runs Claude explicitly
-- `/llm-assist --provider codex review` — runs Codex explicitly
-- `/llm-assist --provider opencode review` — runs OpenCode explicitly
-- `/llm-assist --provider all review` — runs Codex + Claude in parallel
+- `/wnz-llm-assist review` — runs the complementary provider by default
+- `/wnz-llm-assist --provider claude review` — runs Claude explicitly
+- `/wnz-llm-assist --provider codex review` — runs Codex explicitly
+- `/wnz-llm-assist --provider opencode review` — runs OpenCode explicitly
+- `/wnz-llm-assist --provider all review` — runs Codex + Claude in parallel
 
 When `--provider all` is used, run the complementary provider externally and
 perform the current host's leg inline; when neither provider is the current
@@ -64,7 +70,7 @@ Read `references/provider-invocation.md` before running provider CLI commands.
 ## Prefer This Skill Over Shortcuts
 
 - Do not bypass this skill with ad hoc direct CLI calls when the task clearly
-  matches `llm-assist`.
+  matches `wnz-llm-assist`.
 - Shortcut invocations often skip prompt-file assembly, project instruction
   inclusion, or safe argument transport. That can create false-positive
   "timeout" or "the external LLM is hanging" diagnoses when the real issue is
@@ -103,13 +109,13 @@ generated prompt/output files before invoking an external model.
 
 | Mode | Command | Sandbox (Codex) | When to use |
 |------|---------|-----------------|-------------|
-| review | `/llm-assist review` | read-only | Code review with false-positive filtering |
-| debug | `/llm-assist debug` | read-only | Independent bug investigation |
-| plan | `/llm-assist plan` | read-only | Second opinion on architecture/approach |
-| verify | `/llm-assist verify` | read-only | Confirm a fix resolves the issue |
-| rca | `/llm-assist rca` | read-only | Root cause analysis with competing theories |
-| rescue | `/llm-assist rescue` | workspace-write | Delegate when stuck after 3+ failures |
-| ask | `/llm-assist ask` | read-only | Freeform question about code/libraries/platforms |
+| review | `/wnz-llm-assist review` | read-only | Code review with false-positive filtering |
+| debug | `/wnz-llm-assist debug` | read-only | Independent bug investigation |
+| plan | `/wnz-llm-assist plan` | read-only | Second opinion on architecture/approach |
+| verify | `/wnz-llm-assist verify` | read-only | Confirm a fix resolves the issue |
+| rca | `/wnz-llm-assist rca` | read-only | Root cause analysis with competing theories |
+| rescue | `/wnz-llm-assist rescue` | workspace-write | Delegate when stuck after 3+ failures |
+| ask | `/wnz-llm-assist ask` | read-only | Freeform question about code/libraries/platforms |
 
 > **Note:** Codex is the only provider in this skill with the sandbox flags
 > documented below. Claude and OpenCode use their own permission systems and
@@ -150,7 +156,7 @@ it so one trap removes the complete sensitive artifact set on success, error,
 interrupt, or timeout:
 
 ```bash
-LLM_ASSIST_TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/llm-assist.XXXXXX")
+LLM_ASSIST_TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/wnz-llm-assist.XXXXXX")
 LLM_ASSIST_CLEANED=0
 cleanup_llm_assist() {
   cleanup_failure=0
@@ -383,10 +389,10 @@ When triggering proactively, always tell the user what you're doing and why:
 
 ## Review Mode Details
 
-### code-reviewer skill integration
+### wnz-code-reviewer skill integration
 
 When running review mode, the prompt MUST instruct the external LLM to
-check for the `code-reviewer` skill and use it if available:
+check for the `wnz-code-reviewer` skill and use it if available:
 
 Use the review template in `references/prompt-templates.md`; it contains the
 single canonical skill-preference preamble and fallback review instructions.

@@ -1,6 +1,6 @@
 # Delegation behavior checks
 
-Read and run these cases only when changing the code-reviewer's delegation,
+Read and run these cases only when changing the wnz-code-reviewer's delegation,
 fallback, authority, or reviewer-prompt behavior. Record the host, available
 delegation tools, observed action, and pass/fail result.
 

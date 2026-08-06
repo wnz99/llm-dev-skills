@@ -49,13 +49,13 @@ if over 4KB. Never omit the coding guideline sections.]
 
 ## Skill Preference
 
-Before starting the review, check if the `code-reviewer` skill is available
-(look for SKILL.md at `~/.agents/skills/code-reviewer/SKILL.md` or
-`~/.codex/skills/code-reviewer/SKILL.md` or `~/.claude/skills/code-reviewer/SKILL.md`).
+Before starting the review, check if the `wnz-code-reviewer` skill is available
+(look for SKILL.md at `~/.agents/skills/wnz-code-reviewer/SKILL.md` or
+`~/.codex/skills/wnz-code-reviewer/SKILL.md` or `~/.claude/skills/wnz-code-reviewer/SKILL.md`).
 
-- If `code-reviewer` is found: use its workflow to conduct the review instead
+- If `wnz-code-reviewer` is found: use its workflow to conduct the review instead
   of the generic instructions below. Pass it the diff and any focus area.
-- If `code-reviewer` is NOT found: use the generic review instructions below.
+- If `wnz-code-reviewer` is NOT found: use the generic review instructions below.
 
 ## Review Target
 
@@ -73,7 +73,7 @@ error handling, performance, security, and style."]
 [git diff output]
 </diff>
 
-## Instructions (fallback if code-reviewer skill is not available)
+## Instructions (fallback if wnz-code-reviewer skill is not available)
 
 For each finding, provide:
 1. Severity: P0 (critical bug), P1 (significant), P2 (moderate), P3 (minor/style)
