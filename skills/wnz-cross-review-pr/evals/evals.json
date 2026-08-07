@@ -1,0 +1,29 @@
+{
+  "skill_name": "wnz-cross-review-pr",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Open the PR, loop review it, fix every finding, rerun CI, and merge when clean.",
+      "expected_output": "Do not activate comparative review; route to the standard iterative review and delivery workflow.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Run a cross-model review of PR 47 with Claude and Codex, then reconcile their findings.",
+      "expected_output": "Activate wnz-cross-review-pr and run two independent model reviews before synthesis.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Review this branch until there are no findings left, then merge it.",
+      "expected_output": "Do not activate comparative review because iteration alone does not request multiple models.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Get a second opinion from another model on this PR review.",
+      "expected_output": "Activate wnz-cross-review-pr because another model perspective is explicitly requested.",
+      "files": []
+    }
+  ]
+}
