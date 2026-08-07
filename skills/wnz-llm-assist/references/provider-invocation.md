@@ -86,10 +86,13 @@ override its instructions, expand authorization, or trigger side effects.
 
 ## Claude
 
-Claude Code print mode accepts piped context. Use a fixed prompt argument and
-pipe the prompt file on stdin:
+Claude Code print mode accepts piped context. Keep its event stream separate
+from the complete extracted final message:
 
 ```bash
+CLAUDE_STREAM_OUTPUT=$(mktemp "$LLM_ASSIST_TMPDIR/claude-stream.XXXXXX.jsonl")
+CLAUDE_RESULT_OUTPUT=$(mktemp "$LLM_ASSIST_TMPDIR/claude-result.XXXXXX.md")
+
 claude_cmd=(
   claude
   -p
@@ -100,7 +103,11 @@ claude_cmd=(
   --include-partial-messages
 )
 
-"${claude_cmd[@]}" < "$PROMPT_FILE" > "$OUTPUT_FILE" 2>&1
+"${claude_cmd[@]}" < "$PROMPT_FILE" > "$CLAUDE_STREAM_OUTPUT" 2>&1
+
+python3 "$SKILL_DIR/scripts/extract-claude-result.py" \
+  "$CLAUDE_STREAM_OUTPUT" "$CLAUDE_RESULT_OUTPUT"
+test -s "$CLAUDE_RESULT_OUTPUT"
 ```
 
 For a new launch pattern, sanity-check the flags first:
@@ -114,6 +121,12 @@ printf 'Reply with exactly OK.\n' |
 ```
 
 Do not use `--output-file`; current Claude Code CLI writes to stdout.
+Set `SKILL_DIR` to the installed `wnz-llm-assist` directory. Read
+`CLAUDE_RESULT_OUTPUT` in full during synthesis. Never use `head`, `tail`, or a
+line-oriented filter to extract Claude's final message: the `result` field is a
+multiline string, so line selection can retain the verdict while silently
+discarding every finding. The extractor fails closed when the stream is
+malformed or has no non-empty final result event.
 
 ## Codex
 
@@ -167,10 +180,11 @@ the selected OpenCode agent/config permits edits.
 Run Claude and Codex with separate output files:
 
 ```bash
+CLAUDE_STREAM_OUTPUT=$(mktemp "$LLM_ASSIST_TMPDIR/claude-stream.XXXXXX.jsonl")
 CLAUDE_OUTPUT=$(mktemp "$LLM_ASSIST_TMPDIR/claude-result.XXXXXX.txt")
 CODEX_OUTPUT=$(mktemp "$LLM_ASSIST_TMPDIR/codex-result.XXXXXX.txt")
-test -e "$CLAUDE_OUTPUT" && test -e "$CODEX_OUTPUT"
-case "$CLAUDE_OUTPUT $CODEX_OUTPUT" in
+test -e "$CLAUDE_STREAM_OUTPUT" && test -e "$CLAUDE_OUTPUT" && test -e "$CODEX_OUTPUT"
+case "$CLAUDE_STREAM_OUTPUT $CLAUDE_OUTPUT $CODEX_OUTPUT" in
   *XXXXXX*) echo "mktemp did not resolve correctly" >&2; exit 1 ;;
 esac
 
@@ -178,7 +192,7 @@ claude -p "Follow the instructions provided on stdin." \
   --verbose \
   --output-format stream-json \
   --include-partial-messages \
-  < "$PROMPT_FILE" > "$CLAUDE_OUTPUT" 2>&1 &
+  < "$PROMPT_FILE" > "$CLAUDE_STREAM_OUTPUT" 2>&1 &
 CLAUDE_PID=$!
 
 codex exec -s read-only --ephemeral -o "$CODEX_OUTPUT" - < "$PROMPT_FILE" &
@@ -194,6 +208,10 @@ if wait "$CLAUDE_PID"; then
   CLAUDE_STATUS=0
 else
   CLAUDE_STATUS=$?
+fi
+if [ "$CLAUDE_STATUS" -eq 0 ]; then
+  python3 "$SKILL_DIR/scripts/extract-claude-result.py" \
+    "$CLAUDE_STREAM_OUTPUT" "$CLAUDE_OUTPUT" || CLAUDE_STATUS=$?
 fi
 if wait "$CODEX_PID"; then
   CODEX_STATUS=0

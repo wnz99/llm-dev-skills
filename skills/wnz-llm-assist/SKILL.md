@@ -321,6 +321,13 @@ failure; check process state and output before retrying.
 
 ### 4. Read and synthesize results
 
+For Claude stream output, first run the bundled
+`scripts/extract-claude-result.py` as described in
+`references/provider-invocation.md`. Read the extracted result file in full.
+Do not select a single physical line from a multiline final message, and do not
+clean the invocation directory until synthesis has consumed every provider's
+validated result.
+
 Read the output file(s). Do NOT just pass through raw output. Instead:
 
 When using `--provider all`, read both output files and label each finding

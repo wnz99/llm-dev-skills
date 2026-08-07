@@ -1,6 +1,6 @@
 ---
 name: wnz-cross-review-pr
-description: "Cross-model comparative PR / Pull Request review of a PR, branch, commit, or codebase scope. Runs two LLMs through independent reviews, has Reviewer A validate Reviewer B's findings only, then synthesizes overlap, A-only findings, and A-checked B-only findings. Default: Claude to Codex. Supports Claude, Codex, and OpenCode via --from/--to. Trigger for comparative PR review, comparative review, PR cross-review, cross-review, dual review, cross-model review, second-opinion review, deep PR review, deep review, multi-area review, parallel-agent PR review, or when the user wants two LLMs to review a PR together. Deep review requires explicit permission to spawn sub-agents/parallel agents where the host policy requires it; see references/deep-mode.md."
+description: "Cross-model comparative review of a PR, branch, commit, or codebase scope using two explicitly requested LLM perspectives. Runs independent reviews, has Reviewer A validate Reviewer B's findings, and synthesizes the result. Trigger only when the user explicitly asks for cross-review, comparative review, dual-model review, cross-model review, a second model/opinion, Claude and Codex together, or parallel multi-model reviewers. Do not trigger for ordinary review requests, review loops, loop review, review-until-clean, fix-and-rereview, or merge-after-review; route those to the standard code-review or delivery workflow unless the user separately requests multiple models. Deep review also requires explicit permission for sub-agents where the host requires it."
 ---
 
 # Cross-Review PR
@@ -10,6 +10,11 @@ The value is in independent coverage: each model reviews the same change
 without seeing the other's findings. After both independent reviews complete,
 Reviewer A validates Reviewer B's findings only. Do not send Reviewer A's
 findings to Reviewer B unless the user explicitly asks for that extra step.
+
+If the request says only “review,” “loop review,” “review until clean,” or
+“fix findings and re-review,” stop routing to this skill. Those phrases describe
+iteration, not multiple-model comparison. Use the standard review workflow and
+launch this skill only after the user explicitly asks for comparative coverage.
 
 ## Canonical source and updates
 
@@ -246,6 +251,11 @@ reviewer without asking when it has clearly exited badly, is an obvious orphan,
 or the user explicitly instructs you to stop it.
 
 Parse the output into the same structured findings format.
+For Claude stream output, use the bundled extractor described in
+`references/default-mode.md`. Preserve the complete final message in a separate
+result file and validate the review contract before any cleanup. A shell
+shortcut such as `tail -n 1` destroys multiline findings and is not a valid
+parse step.
 If Reviewer A fails because the CLI is unavailable, auth is broken, or the
 process exits badly, stop the comparative workflow and report the failure. Do
 not synthesize a comparative report from only one completed review.

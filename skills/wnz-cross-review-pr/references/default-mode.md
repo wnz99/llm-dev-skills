@@ -215,13 +215,29 @@ stdin, or an attached file:
 ```bash
 codex exec -s read-only --ephemeral -o "$OUTPUT_FILE" - < "$PROMPT_FILE"
 
+CLAUDE_STREAM_OUTPUT=$(mktemp "$CROSS_REVIEW_TMPDIR/claude-stream-XXXXXX.jsonl")
+CLAUDE_RESULT_OUTPUT=$(mktemp "$CROSS_REVIEW_TMPDIR/claude-result-XXXXXX.md")
+
 claude -p "Follow the instructions provided on stdin." \
   --verbose --output-format stream-json --include-partial-messages \
-  < "$PROMPT_FILE" > "$OUTPUT_FILE" 2>&1
+  < "$PROMPT_FILE" > "$CLAUDE_STREAM_OUTPUT" 2>&1
+
+python3 "$SKILL_DIR/scripts/extract-claude-result.py" \
+  --contract cross-review \
+  "$CLAUDE_STREAM_OUTPUT" "$CLAUDE_RESULT_OUTPUT"
+test -s "$CLAUDE_RESULT_OUTPUT"
 
 opencode run "Follow the instructions in the attached file" \
   -f "$PROMPT_FILE" --format json > "$OUTPUT_FILE" 2>&1
 ```
+
+Set `SKILL_DIR` to the installed `wnz-cross-review-pr` directory before this
+step. Consume the complete `CLAUDE_RESULT_OUTPUT` during synthesis. Keep raw
+stream events separate from the extracted review, never pipe the extracted
+message through `head` or `tail`, and do not let the exit trap remove the
+temporary directory until the result has been parsed and incorporated into the
+report. The extractor fails closed when Claude emits no final result, when the
+review verdict is missing, or when `Request Changes` lacks detailed findings.
 
 Monitor quiet processes before judging them stuck. Capture nonzero status and
 handle the controller's documented partial-failure cases explicitly.
