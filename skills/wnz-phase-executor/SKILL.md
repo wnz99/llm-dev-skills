@@ -429,12 +429,21 @@ Reviewer instructions:
   contracts, and maintainability risks.
 - Include file/line references, impact, evidence, and concrete fixes.
 - Do not review the authoring agent's reasoning. Review the diff and codebase.
+- Report only concrete, evidence-backed correctness or requirement gaps. Do not
+  invent interfaces, telemetry, orchestration, or abstractions when existing
+  contracts, reuse, or deletion can satisfy the requirement. Keep speculative
+  hardening and optional architecture ideas out of blocking verdicts.
+- Keep review read-only and within the phase's stated scope. The controller may
+  apply a finding automatically only when the fix is small and does not expand
+  scope, implementation radius, or architecture. Collect genuinely complex or
+  expansive issues, finish the review, and ask the operator once at the end.
 
 ### 6. Fix And Loop
 
 If either verdict fails, dispatch one bounded fix subagent with the complete
 task finding set, task brief, current report, and covering test files. For every
-substantiated requirement, High, or Medium finding:
+substantiated requirement, High, or Medium finding whose correction is small
+and stays within the phase's scope and implementation radius:
 
 1. Fix the issue in the current task.
 2. Re-read the requirements affected by the fix.
@@ -445,6 +454,11 @@ substantiated requirement, High, or Medium finding:
 Stop the loop only when a fresh review after the latest fixes reports zero
 requirements gaps and both verdicts approve with zero unresolved High or Medium
 findings.
+
+If a substantiated finding needs a complex correction or would expand scope,
+implementation radius, or architecture, do not silently modify the phase.
+Finish triaging the review, collect all such issues, and ask the operator once
+at the end how to proceed.
 
 Low and Nit findings are optional unless they are cheap, useful, or explicitly
 requested. Do not let optional polish expand the task.

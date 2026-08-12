@@ -46,13 +46,29 @@ impact, evidence, and a concrete correction or the smallest question needed.
 The reviewer distinguishes verified gaps from optional improvements and does
 not rewrite the plan.
 
+The reviewer reports only concrete, evidence-backed correctness or requirement
+gaps. It does not invent new interfaces, telemetry, orchestration, abstraction,
+or process merely to make a plan more elaborate. When existing contracts or a
+smaller deletion/reuse approach satisfy the requirement, prefer that simpler
+correction. Omit speculative hardening and optional architecture ideas from a
+blocking verdict.
+
+Review is read-only: assess the phase as scoped and do not edit or redesign it.
+The controller may apply a finding automatically only when the correction is a
+small, requirement-preserving fix that does not expand scope, implementation
+radius, or architecture. If a concrete issue requires a complex or expansive
+change, complete the review, collect it with any similar issues, and ask the
+operator once at the end instead of silently growing the phase.
+
 ## Resolution loop
 
 1. Validate every finding against requirements and repository evidence.
    Discard unsupported findings only with a reason recorded in the ledger.
-2. For `REVISE`, correct every substantiated gap directly in the plan, rerun
-   controller self-review, and send the complete revision to another fresh
-   reviewer. Repeat until `APPROVED`.
+2. For `REVISE`, correct each substantiated gap directly only when it is a small,
+   requirement-preserving change within the existing scope and implementation
+   radius. Rerun controller self-review and send the complete revision to
+   another fresh reviewer. Collect complex or scope-expanding corrections and
+   ask the operator once after the review instead of applying them.
 3. For `CLARIFICATION_REQUIRED`, first resolve questions answered by repository
    evidence or explicit prior user decisions. Ask the user only for the
    remaining material decision, update the plan, rerun self-review, and obtain
