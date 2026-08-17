@@ -25,12 +25,21 @@ Ask the reviewer to evaluate:
 
 - complete requirement and acceptance-criteria coverage;
 - factual grounding in inspected repository evidence;
-- architecture, task boundaries, and exact interfaces;
+- architecture, responsibility ownership, task boundaries, and cross-task interfaces;
 - dependency ordering, wave safety, and isolation;
 - migration, compatibility, rollback, and data-loss risks;
-- verification commands and whether tests prove observable behavior;
+- whether the verification strategy can prove observable behavior;
 - documentation and repository-governance obligations; and
 - hidden product or authorization choices that the plan guesses.
+
+Keep plan review at design altitude. Do not block the plan on exhaustive file
+inventories, line-level test matrices, exact exception literals, regular
+expression cases, private helper names, or command spelling that can be safely
+discovered and verified inside an implementation task. Those belong to
+test-first implementation and independent code review. Flag an implementation
+detail only when it exposes a real architectural contradiction, missing owner,
+unverifiable acceptance criterion, destructive migration risk, or unresolved
+product choice.
 
 Require one verdict:
 
@@ -60,22 +69,25 @@ radius, or architecture. If a concrete issue requires a complex or expansive
 change, complete the review, collect it with any similar issues, and ask the
 operator once at the end instead of silently growing the phase.
 
-## Resolution loop
+## Two-round resolution cap
 
-1. Validate every finding against requirements and repository evidence.
-   Discard unsupported findings only with a reason recorded in the ledger.
-2. For `REVISE`, correct each substantiated gap directly only when it is a small,
-   requirement-preserving change within the existing scope and implementation
-   radius. Rerun controller self-review and send the complete revision to
-   another fresh reviewer. Collect complex or scope-expanding corrections and
-   ask the operator once after the review instead of applying them.
-3. For `CLARIFICATION_REQUIRED`, first resolve questions answered by repository
-   evidence or explicit prior user decisions. Ask the user only for the
-   remaining material decision, update the plan, rerun self-review, and obtain
-   a fresh `APPROVED` verdict.
-4. Record every iteration, finding, correction, discarded-finding rationale,
-   clarification decision, reviewer identity, plan revision identifier, and
-   final verdict in the progress ledger.
+1. Round 1 reviews the design and may return `REVISE` once. Validate every
+   finding against requirements and repository evidence. Correct substantiated
+   design gaps that remain within scope; record implementation details as task
+   notes rather than growing the semantic plan.
+2. Run controller self-review on the revision, then dispatch one fresh Round 2
+   reviewer. Round 2 checks the corrected architecture and requirements only.
+3. Round 2 is terminal. If no architecture, requirements, sequencing, migration,
+   or product blocker remains, return `APPROVED`; implementation details remain
+   non-blocking notes for task execution and code review. If a genuine design or
+   product blocker remains, return `CLARIFICATION_REQUIRED` and stop for the
+   operator. Never dispatch Round 3.
+4. Record both rounds, corrections, discarded-finding rationale, implementation
+   notes, clarification decisions, reviewer identities, plan revision and final
+   verdict in the progress ledger.
 
-Never weaken or omit a requirement merely to obtain approval. Any substantive
-change to an approved plan invalidates approval and restarts this gate.
+Never weaken or omit a requirement merely to obtain approval. The two-review
+limit is total for one planning effort, not a renewable loop. If the architecture
+changes materially after Round 2, stop and ask the operator whether to accept
+the revised design or begin a separately authorized planning effort; do not
+silently restart review rounds.

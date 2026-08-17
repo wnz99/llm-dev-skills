@@ -10,9 +10,21 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 CROSS_REVIEW = ROOT / "skills" / "wnz-cross-review-pr"
 LLM_ASSIST = ROOT / "skills" / "wnz-llm-assist"
+PHASE_EXECUTOR = ROOT / "skills" / "wnz-phase-executor"
 
 
 class ReviewSkillContractsTest(unittest.TestCase):
+    def test_phase_executor_caps_plan_review_at_two_design_rounds(self) -> None:
+        skill = (PHASE_EXECUTOR / "SKILL.md").read_text(encoding="utf-8")
+        review = (PHASE_EXECUTOR / "references" / "independent-plan-review.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("capped at two independent review rounds", skill)
+        self.assertIn("Round 2 is final", skill)
+        self.assertIn("Keep plan review at design altitude", review)
+        self.assertIn("Never dispatch Round 3", review)
+
     def test_cross_review_description_excludes_ordinary_review_loops(self) -> None:
         skill = (CROSS_REVIEW / "SKILL.md").read_text(encoding="utf-8")
         frontmatter = skill.split("---", 2)[1]
