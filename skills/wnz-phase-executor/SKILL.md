@@ -209,9 +209,23 @@ gate. Read that reference in full every time this skill produces or revises a
 plan. It defines reviewer independence, the unbiased review package, verdicts,
 automatic correction and re-review, clarification handling, and ledger fields.
 
-This gate blocks implementation. Only a fresh `APPROVED` verdict on the latest
-complete plan permits parallel-permission requests, implementation worktrees,
-task-code edits, or implementer dispatch.
+This gate blocks implementation and is capped at two independent review rounds.
+Plan review exists to validate the design before code work: requirements,
+architecture, ownership boundaries, data flow, task dependencies, migration
+risk, product choices, and whether the verification strategy can prove the
+observable result. It is not a substitute for implementation review.
+
+Round 1 may request one plan revision for concrete design or architecture gaps.
+Round 2 is final: verify the corrected design and return `APPROVED`, or report an
+unresolved architecture/product blocker that requires the operator. Do not
+dispatch a third plan reviewer. Record implementation-level observations as
+non-blocking task notes for TDD and task review rather than repeatedly expanding
+the plan.
+
+Only an `APPROVED` final design permits parallel-permission requests,
+implementation worktrees, task-code edits, or implementer dispatch. If Round 2
+reports a genuine unresolved architecture or product blocker, stop and ask the
+operator instead of reviewing again.
 
 If the plan contains at least one parallel-safe implementation wave, ask the
 user for explicit permission to execute implementation tasks in parallel before
@@ -429,12 +443,21 @@ Reviewer instructions:
   contracts, and maintainability risks.
 - Include file/line references, impact, evidence, and concrete fixes.
 - Do not review the authoring agent's reasoning. Review the diff and codebase.
+- Report only concrete, evidence-backed correctness or requirement gaps. Do not
+  invent interfaces, telemetry, orchestration, or abstractions when existing
+  contracts, reuse, or deletion can satisfy the requirement. Keep speculative
+  hardening and optional architecture ideas out of blocking verdicts.
+- Keep review read-only and within the phase's stated scope. The controller may
+  apply a finding automatically only when the fix is small and does not expand
+  scope, implementation radius, or architecture. Collect genuinely complex or
+  expansive issues, finish the review, and ask the operator once at the end.
 
 ### 6. Fix And Loop
 
 If either verdict fails, dispatch one bounded fix subagent with the complete
 task finding set, task brief, current report, and covering test files. For every
-substantiated requirement, High, or Medium finding:
+substantiated requirement, High, or Medium finding whose correction is small
+and stays within the phase's scope and implementation radius:
 
 1. Fix the issue in the current task.
 2. Re-read the requirements affected by the fix.
@@ -445,6 +468,11 @@ substantiated requirement, High, or Medium finding:
 Stop the loop only when a fresh review after the latest fixes reports zero
 requirements gaps and both verdicts approve with zero unresolved High or Medium
 findings.
+
+If a substantiated finding needs a complex correction or would expand scope,
+implementation radius, or architecture, do not silently modify the phase.
+Finish triaging the review, collect all such issues, and ask the operator once
+at the end how to proceed.
 
 Low and Nit findings are optional unless they are cheap, useful, or explicitly
 requested. Do not let optional polish expand the task.
@@ -500,8 +528,10 @@ Do not mark the task complete while blocked.
   acceptance traceability that has passed the independent plan review gate.
 - Do not let the plan author, a planned implementer, or a prior plan reviewer
   serve as the fresh independent reviewer of the latest plan revision.
-- Do not implement while a plan review finding or material clarification
-  remains unresolved, or after changing an approved plan without re-review.
+- Do not implement while an architecture, requirements, sequencing, or material
+  product clarification from the plan gate remains unresolved. Resolve
+  implementation-detail notes during the relevant task's TDD and code-review
+  loop; they do not authorize more than two plan-review rounds.
 - Do not start parallel implementation without a dependency/wave plan and the
   user's explicit recorded permission. A denial means sequential execution.
 - Do not dispatch an implementation subagent without auto-detecting the host,
