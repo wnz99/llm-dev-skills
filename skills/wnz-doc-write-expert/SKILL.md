@@ -62,7 +62,8 @@ not decide the issue.
 5. **Separate fact from judgment.** Mark recommendations, decisions, hypotheses, examples, and unresolved questions distinctly from verified facts.
 6. **Prefer the smallest durable artifact.** Do not create documentation that duplicates an existing source of truth or records transient conversational history.
 7. **Preserve navigability.** Update relevant indexes and inbound links whenever adding, moving, splitting, or renaming documents.
-8. **Cold-read before completion.** Test whether a reader without session context can take the intended action safely.
+8. **Build understanding progressively.** Introduce data, references, terminology, identifiers, and technical detail only after the reader has the context needed to understand why they matter. Technical depth is welcome; unexplained prerequisites and premature implementation detail are not.
+9. **Cold-read before completion.** Test whether a reader without session context can take the intended action safely.
 
 ## Author mode workflow
 
@@ -107,6 +108,14 @@ For governed bundles such as OKF, apply the declared local profile and specifica
 
 Create an implementation-ready outline in reader order. Each section must have a purpose. Put prerequisites and essential context before procedures or decisions. Put reference detail after the main path.
 
+Design the outline as a dependency chain for understanding. Before a section
+uses a concept, data representation, identifier, file path, or acronym, ensure
+an earlier section has established what it represents and why the reader needs
+it. Prefer a progression such as familiar input → purpose of the transformation
+→ concrete output → internal representation → operational consequence. Do not
+front-load an architecture document with opaque IDs, schemas, or storage paths
+that only become meaningful later.
+
 Use only the sections the reader needs. Common patterns include:
 
 - Runbook: purpose → prerequisites → safe procedure → verification → rollback/recovery
@@ -126,6 +135,10 @@ Write directly to the governed target file. Match local style and terminology. P
 
 - Copy commands, identifiers, and field names from their sources.
 - State prerequisites before they are used.
+- Introduce each project-specific concept immediately before its first use: explain its role in plain language, then give its technical name, exact representation, and example when useful.
+- For a transformation or data flow, show the input, explain what the stage changes and why, then show the output. State what remains unchanged when identity or provenance matters.
+- Give tables and diagrams a short explanatory lead-in and interpretation. They should support the narrative, not force the reader to infer its meaning unaided.
+- Delay internal IDs, hashes, file paths, schemas, and framework-specific objects until the reader knows which real-world or system concept they identify.
 - Explain why a constraint matters when it changes reader behavior.
 - Define project-specific terms; do not re-explain universal concepts to an expert audience.
 - Use tables only for repeated mappings or genuine comparisons.
@@ -137,11 +150,22 @@ Write directly to the governed target file. Match local style and terminology. P
 
 Recheck every material claim against its source. Run relevant lightweight commands when a document promises a command, path, schema, or procedure. Validate frontmatter, links, indexes, and required structure using project-local tooling when available.
 
+Parse every YAML frontmatter block with a real YAML parser before completion;
+visual inspection is insufficient because punctuation can change YAML syntax.
+Quote plain scalar values that contain syntax-sensitive text such as `: ` or
+` #`, or use a YAML block scalar when that improves readability. For example,
+write `title: "Data flow: current architecture"`, not
+`title: Data flow: current architecture`. Prefer the repository's validator;
+otherwise use an available standards-compliant YAML parser and validate every
+frontmatter-bearing document changed in the corpus.
+
 ### 7. Reader-test
 
 Read the finished document from top to bottom as a fresh member of the intended audience:
 
 - Is the purpose clear immediately?
+- At every first use of a term, identifier, data shape, reference, or component, has the document already supplied the context needed to understand it?
+- Does each transformation proceed from recognizable input through purpose and change to a concrete output, instead of presenting disconnected implementation artifacts?
 - Can the named action be completed without tribal knowledge?
 - Are prerequisites, risks, ownership, and failure handling present where needed?
 - Does each section earn its place?
