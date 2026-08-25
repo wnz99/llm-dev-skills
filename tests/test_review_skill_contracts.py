@@ -15,6 +15,14 @@ DOC_WRITE_EXPERT = ROOT / "skills" / "wnz-doc-write-expert"
 
 
 class ReviewSkillContractsTest(unittest.TestCase):
+    def test_doc_writer_requires_progressive_reader_context(self) -> None:
+        skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
+
+        self.assertIn("Build understanding progressively", skill)
+        self.assertIn("familiar input → purpose of the transformation", skill)
+        self.assertIn("Delay internal IDs, hashes, file paths, schemas", skill)
+        self.assertIn("support the narrative", skill)
+
     def test_doc_writer_requires_parser_validated_yaml_frontmatter(self) -> None:
         skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
 
