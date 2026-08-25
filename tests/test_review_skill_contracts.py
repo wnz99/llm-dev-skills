@@ -11,9 +11,17 @@ ROOT = Path(__file__).resolve().parents[1]
 CROSS_REVIEW = ROOT / "skills" / "wnz-cross-review-pr"
 LLM_ASSIST = ROOT / "skills" / "wnz-llm-assist"
 PHASE_EXECUTOR = ROOT / "skills" / "wnz-phase-executor"
+DOC_WRITE_EXPERT = ROOT / "skills" / "wnz-doc-write-expert"
 
 
 class ReviewSkillContractsTest(unittest.TestCase):
+    def test_doc_writer_requires_parser_validated_yaml_frontmatter(self) -> None:
+        skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
+
+        self.assertIn("Parse every YAML frontmatter block with a real YAML parser", skill)
+        self.assertIn('title: "Data flow: current architecture"', skill)
+        self.assertIn("validate every\nfrontmatter-bearing document", skill)
+
     def test_phase_executor_caps_plan_review_at_two_design_rounds(self) -> None:
         skill = (PHASE_EXECUTOR / "SKILL.md").read_text(encoding="utf-8")
         review = (PHASE_EXECUTOR / "references" / "independent-plan-review.md").read_text(

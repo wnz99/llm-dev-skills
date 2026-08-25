@@ -137,6 +137,15 @@ Write directly to the governed target file. Match local style and terminology. P
 
 Recheck every material claim against its source. Run relevant lightweight commands when a document promises a command, path, schema, or procedure. Validate frontmatter, links, indexes, and required structure using project-local tooling when available.
 
+Parse every YAML frontmatter block with a real YAML parser before completion;
+visual inspection is insufficient because punctuation can change YAML syntax.
+Quote plain scalar values that contain syntax-sensitive text such as `: ` or
+` #`, or use a YAML block scalar when that improves readability. For example,
+write `title: "Data flow: current architecture"`, not
+`title: Data flow: current architecture`. Prefer the repository's validator;
+otherwise use an available standards-compliant YAML parser and validate every
+frontmatter-bearing document changed in the corpus.
+
 ### 7. Reader-test
 
 Read the finished document from top to bottom as a fresh member of the intended audience:
