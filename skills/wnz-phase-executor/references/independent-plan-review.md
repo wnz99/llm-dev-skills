@@ -29,6 +29,8 @@ Ask the reviewer to evaluate:
 - dependency ordering, wave safety, and isolation;
 - migration, compatibility, rollback, and data-loss risks;
 - whether the verification strategy can prove observable behavior;
+- scoped dead-code detection and cleanup in every step, including ownership
+  of removals and verification of affected consumers;
 - documentation and repository-governance obligations; and
 - hidden product or authorization choices that the plan guesses.
 

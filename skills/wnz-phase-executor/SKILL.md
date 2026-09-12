@@ -120,6 +120,33 @@ tip](https://pragprog.com/tips/), [Principles behind the Agile
 Manifesto](https://agilemanifesto.org/principles), and Martin Fowler on
 [internal quality](https://martinfowler.com/articles/is-quality-worth-cost.html).
 
+## Dead Code Detection And Cleanup
+
+Every plan step must include a scoped dead-code check and cleanup before it is
+complete. This prevents a replacement from leaving its predecessor, exports,
+or tests behind even when the new behavior passes. Apply the check to the
+step's changed paths and affected callers; reuse earlier evidence when nothing
+relevant changed rather than rescanning the whole repository at every step.
+
+Trace entrypoints, call sites, exports, configuration, dynamic registration,
+framework hooks, and supported external APIs before classifying a candidate.
+Zero direct callers, test-only references, or a scanner warning are leads, not
+proof. Remove confirmed unused code, obsolete wrappers, unreachable branches,
+and orphaned imports/exports/tests/docs within the task's ownership. Preserve
+supported behavior tests; remove tests whose only purpose is retaining obsolete
+code. Record uncertain candidates and the concrete reason they remain.
+
+Each step records its checked scope, reachability evidence, and cleanup result
+(or a specific no-code-impact reason). Include anticipated removals and their
+consumer updates in the plan's file ownership and verification. A step cannot
+close with confirmed dead code in scope; newly discovered cleanup outside its
+ownership goes to the controller for scope resolution. Cleanup does not itself
+authorize API breaks or unrelated repository-wide deletions. Run affected
+checks after the final cleanup, and have the independent reviewer verify the
+removals and remaining references. Read and run
+[`references/dead-code-evals.md`](references/dead-code-evals.md) when changing
+this requirement or its plan-template integration.
+
 ## Optional Repository Graph Evidence
 
 Use an available repository knowledge graph, such as Graphify, when it can
@@ -230,7 +257,7 @@ Before implementation or handoff:
 7. Check documentation claims against code/config evidence and verify planned
    files follow corpus placement, metadata, index, and cross-link rules.
 8. Confirm every task leaves the repository in a working, independently
-   testable state.
+   testable state, with a dead-code check and cleanup result defined for every step.
 
 ## Independent Plan Review Gate
 
@@ -354,7 +381,8 @@ edit, self-review the diff against the task, and report one status:
 - `BLOCKED`: the plan, environment, or task size prevents completion.
 
 The task report records changed files, requirement-by-requirement coverage,
-commands and outputs, commits if authorized, self-review findings, and concerns.
+commands and outputs, per-step dead-code scope/evidence/removals or retention
+reasons, commits if authorized, self-review findings, and concerns.
 The implementer's chat response stays short and points to that report.
 
 Handle statuses deliberately: provide missing context and redispatch;
@@ -451,6 +479,8 @@ Before delegating review:
 - Inspect the diff and the implemented code path.
 - Confirm every promised behavior for the task is present in code.
 - Confirm tests exercise the behavior, not just implementation details.
+- Verify each step recorded its dead-code check, removed confirmed leftovers,
+  and updated affected exports, tests, and documentation.
 - Confirm documentation and index changes match the implemented behavior and
   the repository's documentation format.
 - Confirm the implementer report contains fresh commands and results after the

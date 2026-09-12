@@ -23,7 +23,9 @@ bugs and regressions over style commentary.
 Always use deep review. A deep review combines per-file analysis with
 cross-file tracing so approval reflects how the change behaves through its
 callers, boundaries, and side effects rather than only how each edited file
-looks in isolation.
+looks in isolation. Dead-code detection and cleanup assessment are required in
+every proper review; passing tests alone do not establish that replaced code
+was removed.
 
 ## Canonical source and updates
 
@@ -130,6 +132,9 @@ Perform a deep review:
 - Include unchanged callers or consumers when needed to verify a changed
   contract. For dynamic dispatch, name the runtime mechanism and what cannot be
   proven statically.
+- Perform the mandatory dead-code and cleanup assessment: trace reachability,
+  verify removals and orphaned consumers, and report retained candidates with
+  reasons. Review-only mode reports required cleanup without editing files.
 - Verify structural-tool findings rather than repeating them blindly. Record
   unavailable optional checks without treating their failure as a clean result.
 
@@ -427,6 +432,39 @@ For dynamic paths that cannot be proven statically, state the uncertainty and
 name the runtime mechanism involved. Report concrete breakages, brittle
 implicit contracts, or high-risk unverified paths; do not expand into unrelated
 whole-repo review.
+
+#### Mandatory Dead-Code And Cleanup Assessment
+
+Inspect changed code and affected callers for unused helpers, obsolete wrappers,
+unreachable branches, redundant checks already guaranteed by earlier control
+flow, and orphaned imports, exports, tests, configuration, or documentation.
+Trace deletions as well as additions: verify replacement callers and check that
+removing a symbol did not strand consumers. Use available static tools as leads,
+then validate each candidate against source and contracts.
+
+Before declaring code dead, check entrypoints, public API consumers, dynamic
+registries, framework hooks, reflection, and configuration-driven use. No direct
+callers or only test references is insufficient evidence: tests may protect a
+supported API. Conversely, an export and a test that merely preserve an obsolete
+internal wrapper do not justify keeping it after its role has been replaced.
+Preserve behavior tests when removing implementation-only tests.
+
+Record checked paths, reachability evidence, confirmed removals or required
+cleanup, and reasons for retaining uncertain candidates in the review's trace
+coverage. If this assessment cannot be completed, report `Incomplete`, not
+`Clean`. Confirmed dead code introduced or made obsolete by the change requires
+cleanup before approval; treat that as a Medium requirement gap unless its
+impact warrants High. Pre-existing unrelated candidates do not expand the review
+scope. When the user requested broader cleanup, apply the same evidence standard
+throughout that authorized scope.
+
+Review-only requests report the cleanup and remain read-only. In an authorized
+fix loop, remove confirmed leftovers and update their consumers, then rerun
+relevant checks and independently review the complete scope again. Do not add
+compatibility wrappers without a supported consumer or weaken behavior tests
+to make deletions pass. Read and run the dead-code cases in
+[`references/review-evals.md`](references/review-evals.md) when changing this
+assessment or its reporting contract.
 
 ### 6. Provide Feedback
 
