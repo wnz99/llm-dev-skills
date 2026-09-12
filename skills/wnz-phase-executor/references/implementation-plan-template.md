@@ -78,24 +78,33 @@ under **Read first**, then define the new identifiers under **Intended edits** a
 - Consumes: <exact existing names and shapes>
 - Produces: <exact names, signatures, schemas, commands, routes, events, or artifacts>
 
-**Review target:** <behavior and risks the independent reviewer must inspect>
+**Dead-code scope:** <affected paths, entrypoints/consumers to trace, candidate
+removals and retained API/dynamic contracts; scanner/search evidence to collect>
+
+**Review target:** <behavior, dead-code cleanup, and risks the independent reviewer must inspect>
 
 - [ ] **Step 1: Establish the pre-change check**
   - Add: <test name, inputs, and observable assertions>
+  - Cleanup: <inspect affected helpers/fixtures/exports; record supported consumers>
 - [ ] **Step 2: Prove the check exposes the intended gap**
   - Run: `<exact command>`
   - Expect: <specific failure caused by missing behavior>
+  - Cleanup: <check artifacts/references changed by this step, or state why prior evidence still applies>
 - [ ] **Step 3: Implement the minimum behavior**
   - Change: <exact symbols, control flow, validation, and error behavior>
+  - Cleanup: <remove confirmed obsolete symbols/branches and update their consumers>
 - [ ] **Step 4: Prove the focused behavior passes**
   - Run: `<exact command>`
   - Expect: <specific passing result>
+  - Cleanup: <check final references and tests after removals; record retained candidates and reasons>
 - [ ] **Step 5: Run the task gate**
   - Run: `<exact type/lint/integration/doc command>`
   - Expect: <specific clean result>
+  - Cleanup: <verify no new orphaned code/artifacts; record evidence or no-code-impact reason>
 - [ ] **Step 6: Review and record the task**
   - Review: <independent review scope>
   - Record: <verification, loop count, and residual risk>
+  - Cleanup: <review per-step evidence/removals and confirm no known dead code remains in scope>
 ```
 
 ## Reference rules

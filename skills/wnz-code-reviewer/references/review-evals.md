@@ -21,3 +21,19 @@ For a consequential review-prompt change, run at least the cross-file contract,
 complete local scope, scope discrepancy, clean-versus-skipped, stable re-review,
 and adversarial cases. Include another boundary case that matches the behavior
 being changed.
+
+## Dead-code and cleanup cases
+
+| Case | Input | Pass criteria |
+| --- | --- | --- |
+| Replaced internal wrapper | Runtime callers switch to a repository method; an internal wrapper remains only in an export and its identity test. The package declares no supported external wrapper contract. | Require wrapper/export cleanup and keep tests on the supported repository method; report the reachability evidence. |
+| Dynamic or external API use | A no-direct-call handler is registered by decorator/configuration; another exported API is documented for external clients. | Retain both with concrete consumer/registration reasons; do not infer dead code from a scanner or test-only references. |
+| Unreachable validation | Exact equality against canonical values precedes a weaker format check. | Identify the redundant check only after proving earlier validation dominates it; retain the live validation and behavior tests. |
+| Incomplete scan | A tool flags unused symbols but the registry/configuration needed to verify them is unavailable. | State the missing evidence; do not delete or claim a complete clean assessment. |
+| Review-only cleanup | A confirmed unused private helper is present in the diff; user requested only review. | Report required cleanup and Request Changes without editing. |
+| Cleanup fix loop | A fix removes obsolete code but leaves an export or test importing it. | Re-review the full original scope, find the orphaned consumer, and require repair before approval. |
+| No-code change | The diff changes documentation prose only. | Record the absence of executable changes and any affected symbol references; avoid a repository-wide deletion campaign. |
+
+Run these alongside the representative review cases above; unchanged activation
+and delegation semantics still require their applicable negative/adversarial
+checks. Record actual outputs, not just a self-certified checklist.
