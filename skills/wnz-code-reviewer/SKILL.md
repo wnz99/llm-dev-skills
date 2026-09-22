@@ -94,10 +94,21 @@ Use this dispatch contract:
    applicable project rules, verification evidence, and structural evidence.
    Keep the author's reasoning, conclusions, and suspected findings in the
    controller context so they cannot bias the independent review.
-4. Honor an explicit user model override. Otherwise use the host's current
-   capable review default. Pass a model only when the host exposes a stable
-   selector. When it does not, report the host default without inventing an
-   exact model identity.
+4. Resolve model and reasoning-effort controls independently. An explicit user
+   instruction overrides only the control it names; retain the applicable
+   default for every unspecified control:
+   - On Codex, default to `gpt-5.6-sol` with `medium` reasoning effort.
+   - On Claude, default to Sonnet through the host's current stable Sonnet
+     selector or alias; do not pin a Sonnet version unless the user requests
+     one. Use the host's reasoning default when the user does not specify one.
+   Pass available model and reasoning controls through the native delegation
+   tool. If a default selector is unavailable, use the nearest capable
+   host-supported alternative and report the fallback. Do not silently replace
+   a user-selected model or reasoning control that the host cannot honor;
+   report the unavailable override and leave the review `Incomplete` until the
+   user supplies or permits an alternative. If selection succeeds but the host
+   does not reveal the resolved model identity, keep the selection and report
+   the identity as unavailable rather than inventing one.
 5. Mark the prompt clearly with `INDEPENDENT_REVIEWER_LEAF`. A reviewer receiving
    that marker owns and performs the review directly as the leaf reviewer.
 6. Apply the report contract in **Provide Feedback** below. For workflows that
@@ -324,10 +335,12 @@ scope to only the latest fix commit.
 2.  **Post a PR comment for every loop**
     *   Post one top-level PR comment per loop, even when the loop finds no
         blocking issues.
-    *   Include the loop number, reviewer identity, reviewer model, verification
-        commands run, and a severity summary. State the user model override if
-        one was used. Otherwise identify the host/provider default and, when
-        necessary, state exactly: `Exact model unavailable from host/provider.`
+    *   Include the loop number, reviewer identity, reviewer model, reasoning
+        effort when the host exposes it, verification commands run, and a
+        severity summary. State any user override. Otherwise identify the
+        host-specific default above. When the host cannot expose the resolved
+        model identity, state exactly:
+        `Exact model unavailable from host/provider.`
     *   For every High/Medium finding, include the file/line, impact, and planned
         resolution. If using inline review comments is practical, prefer inline
         comments for concrete code findings and still post the loop summary.

@@ -12,9 +12,69 @@ CROSS_REVIEW = ROOT / "skills" / "wnz-cross-review-pr"
 LLM_ASSIST = ROOT / "skills" / "wnz-llm-assist"
 PHASE_EXECUTOR = ROOT / "skills" / "wnz-phase-executor"
 DOC_WRITE_EXPERT = ROOT / "skills" / "wnz-doc-write-expert"
+CODE_REVIEWER = ROOT / "skills" / "wnz-code-reviewer"
 
 
 class ReviewSkillContractsTest(unittest.TestCase):
+    def test_code_reviewer_uses_host_specific_reviewer_defaults(self) -> None:
+        skill = (CODE_REVIEWER / "SKILL.md").read_text(encoding="utf-8")
+        evals = (CODE_REVIEWER / "references" / "delegation-evals.md").read_text(
+            encoding="utf-8"
+        )
+        normalized_skill = " ".join(skill.split())
+        normalized_evals = " ".join(evals.split())
+
+        self.assertIn(
+            "default to `gpt-5.6-sol` with `medium` reasoning effort",
+            normalized_skill,
+        )
+        self.assertIn(
+            "default to Sonnet through the host's current stable Sonnet selector",
+            normalized_skill,
+        )
+        self.assertIn(
+            "An explicit user instruction overrides only the control it names; "
+            "retain the applicable default for every unspecified control",
+            normalized_skill,
+        )
+        self.assertIn(
+            "If a default selector is unavailable, use the nearest capable "
+            "host-supported alternative and report the fallback",
+            normalized_skill,
+        )
+        self.assertIn(
+            "Do not silently replace a user-selected model or reasoning control "
+            "that the host cannot honor; report the unavailable override and "
+            "leave the review `Incomplete` until the user supplies or permits "
+            "an alternative",
+            normalized_skill,
+        )
+        self.assertIn(
+            "If selection succeeds but the host does not reveal the resolved "
+            "model identity, keep the selection and report the identity as "
+            "unavailable rather than inventing one",
+            normalized_skill,
+        )
+        self.assertIn("Codex reviewer default", evals)
+        self.assertIn("Claude reviewer default", evals)
+        self.assertIn("Codex model-only override", evals)
+        self.assertIn("Codex effort-only override", evals)
+        self.assertIn("Claude model override", evals)
+        self.assertIn("Default selector unavailable", evals)
+        self.assertIn("Explicit selector unavailable", evals)
+        self.assertIn("Exact model identity unavailable", evals)
+        self.assertIn(
+            "does not substitute silently, reports the unavailable override, "
+            "and leaves the review `Incomplete` until the user supplies or "
+            "permits an alternative",
+            normalized_evals,
+        )
+        self.assertIn(
+            "keeps the selected default and reports `Exact model unavailable "
+            "from host/provider.` without inventing a version",
+            normalized_evals,
+        )
+
     def test_doc_writer_requires_progressive_reader_context(self) -> None:
         skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
 
