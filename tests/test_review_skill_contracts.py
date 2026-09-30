@@ -148,16 +148,24 @@ class ReviewSkillContractsTest(unittest.TestCase):
         self.assertIn('title: "Data flow: current architecture"', skill)
         self.assertIn("validate every\nfrontmatter-bearing document", skill)
 
-    def test_phase_executor_caps_plan_review_at_two_design_rounds(self) -> None:
+    def test_phase_executor_reviews_user_feedback_in_fresh_bounded_cycles(self) -> None:
         skill = (PHASE_EXECUTOR / "SKILL.md").read_text(encoding="utf-8")
         review = (PHASE_EXECUTOR / "references" / "independent-plan-review.md").read_text(
             encoding="utf-8"
         )
-
-        self.assertIn("capped at two independent review rounds", skill)
-        self.assertIn("Round 2 is final", skill)
+        normalized = " ".join(review.split())
+        self.assertIn("Each review cycle is capped at two independent design reviews", skill)
         self.assertIn("Keep plan review at design altitude", review)
-        self.assertIn("Never dispatch Round 3", review)
+        self.assertIn("Never dispatch Round 3 within the same cycle", normalized)
+        self.assertIn("open a new review cycle automatically", normalized)
+        self.assertIn("Even annotations accepted without questions require this review", normalized)
+        self.assertIn("When the user answers, incorporate the answers", normalized)
+        self.assertIn("Reviewer feedback, controller edits, or a renamed revision alone do not renew the cap", normalized)
+        self.assertIn("Bind approval to the latest semantic plan revision", normalized)
+        self.assertNotIn("two-review limit is total for one planning effort", review)
+        self.assertNotIn("they do not authorize more than two plan-review rounds", skill)
+        self.assertIn("(references/annotation-review-evals.md)", skill)
+        self.assertTrue((PHASE_EXECUTOR / "references" / "annotation-review-evals.md").is_file())
 
     def test_cross_review_description_excludes_ordinary_review_loops(self) -> None:
         skill = (CROSS_REVIEW / "SKILL.md").read_text(encoding="utf-8")
