@@ -305,23 +305,24 @@ gate. Read that reference in full every time this skill produces or revises a
 plan. It defines reviewer independence, the unbiased review package, verdicts,
 automatic correction and re-review, clarification handling, and ledger fields.
 
-This gate blocks implementation and is capped at two independent review rounds.
-Plan review exists to validate the design before code work: requirements,
-architecture, ownership boundaries, data flow, task dependencies, migration
-risk, product choices, and whether the verification strategy can prove the
-observable result. It is not a substitute for implementation review.
+This gate blocks implementation until the latest semantic revision is approved.
+Each review cycle is capped at two independent design reviews; user annotations,
+requested changes, and clarification answers automatically open a fresh cycle,
+even after an earlier cycle exhausted its cap. No permission to restart review
+is needed. Follow the reference's annotation triage and clarification workflow;
+prior approval does not cover an amended plan.
 
-Round 1 may request one plan revision for concrete design or architecture gaps.
-Round 2 is final: verify the corrected design and return `APPROVED`, or report an
-unresolved architecture/product blocker that requires the operator. Do not
-dispatch a third plan reviewer. Record implementation-level observations as
-non-blocking task notes for TDD and task review rather than repeatedly expanding
-the plan.
+Plan review validates requirements, architecture, ownership, data flow,
+dependencies, migration risk, product choices, and observable verification.
+Implementation-level observations remain non-blocking task notes for TDD and
+code review. Reviewer feedback or controller edits alone cannot reset the cap.
+Only an `APPROVED` verdict for the latest revision permits implementation or
+parallel-permission requests. At the cycle cap, collect unresolved design or
+product blockers and ask the operator once instead of reviewing again.
 
-Only an `APPROVED` final design permits parallel-permission requests,
-implementation worktrees, task-code edits, or implementer dispatch. If Round 2
-reports a genuine unresolved architecture or product blocker, stop and ask the
-operator instead of reviewing again.
+Read and run
+[`references/annotation-review-evals.md`](references/annotation-review-evals.md)
+when changing annotation handling or the review-cycle boundary.
 
 If the plan contains at least one parallel-safe implementation wave, ask the
 user for explicit permission to execute implementation tasks in parallel before
@@ -636,7 +637,7 @@ Do not mark the task complete while blocked.
 - Do not implement while an architecture, requirements, sequencing, or material
   product clarification from the plan gate remains unresolved. Resolve
   implementation-detail notes during the relevant task's TDD and code-review
-  loop; they do not authorize more than two plan-review rounds.
+  loop; they do not reset the two-round cap within a review cycle.
 - Do not start parallel implementation without a dependency/wave plan and the
   user's explicit recorded permission. A denial means sequential execution.
 - Do not dispatch an implementation subagent without auto-detecting the host,

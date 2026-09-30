@@ -84,6 +84,13 @@ npx skills add wnz99/llm-dev-skills -g
 
 To refresh a single skill, use its individual installation command from the section above.
 
+## Contributing
+
+Open pull requests against `main` for all updates. Use short-lived feature
+branches; this repository does not maintain development or staging branches.
+Before changing a skill, follow [`AGENTS.md`](AGENTS.md), validate its standalone
+package, and run the relevant behavior evaluations and regression tests.
+
 ## Migration from legacy names
 
 The skills now use a `wnz-` prefix to avoid collisions with similarly named
