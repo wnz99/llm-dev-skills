@@ -14,6 +14,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [wnz-clean-code-rust](skills/wnz-clean-code-rust/) | Focused Rust readability, ownership, error-handling, and API maintainability guidance |
 | [wnz-doc-write-expert](skills/wnz-doc-write-expert/) | Write new or review existing technical and non-technical documentation using evidence-backed authoring, corpus-conformance, approval, and fresh-reader workflows |
 | [wnz-phase-executor](skills/wnz-phase-executor/) | Plan a multi-step change, pass an independent plan-review and correction gate, then execute each phase through implementation, verification, and independent review gates |
+| [wnz-plan-simplicity-review](skills/wnz-plan-simplicity-review/) | Review an existing plan for KISS, DRY, and unnecessary complexity while preserving production readiness and practical expandability |
 | [wnz-pr-release-notes](skills/wnz-pr-release-notes/) | Prepare and maintain bounded, evidence-based release notes in GitHub pull request descriptions while honoring repository-specific release conventions |
 
 ## Install
@@ -35,6 +36,7 @@ npx skills add wnz99/llm-dev-skills/wnz-clean-code-py -g
 npx skills add wnz99/llm-dev-skills/wnz-clean-code-rust -g
 npx skills add wnz99/llm-dev-skills/wnz-doc-write-expert -g
 npx skills add wnz99/llm-dev-skills/wnz-phase-executor -g
+npx skills add wnz99/llm-dev-skills/wnz-plan-simplicity-review -g
 npx skills add wnz99/llm-dev-skills/wnz-pr-release-notes -g
 ```
 
@@ -51,7 +53,7 @@ directory, such as `~/.claude/skills/`, `~/.codex/skills/`, or
   - [OpenCode](https://dev.opencode.ai/docs/): `npm i -g opencode-ai`
 - **wnz-cross-review-pr** also requires [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
 - **wnz-pr-release-notes** requires [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
-- **wnz-code-reviewer**, **wnz-clean-code-\***, and **wnz-doc-write-expert** skills work standalone with no extra dependencies
+- **wnz-code-reviewer**, **wnz-clean-code-\***, **wnz-doc-write-expert**, and **wnz-plan-simplicity-review** skills work standalone with no extra dependencies
 
 ## How it works
 
@@ -62,7 +64,8 @@ These skills are designed to complement each other:
 3. **wnz-cross-review-pr** orchestrates both: two LLMs review independently, then Reviewer A validates Reviewer B's findings before producing a unified report with confidence scores
 4. **wnz-clean-code-\*** skills provide language-specific guidance for small, behavior-preserving readability and maintainability refactors
 5. **wnz-phase-executor** plans and executes substantial multi-task implementation work through dependency-aware phase gates.
-6. **wnz-doc-write-expert** writes new technical and non-technical documents from authoritative evidence and keeps existing documentation honest. It establishes the reader and intended action, follows local corpus rules, inventories and verifies checkable claims, gates review edits behind a findings report, and cold-reads the result before completion.
+6. **wnz-plan-simplicity-review** challenges an existing plan before approval or implementation, returning evidence-backed simplifications and exact replacement text. It works independently of the planner.
+7. **wnz-doc-write-expert** writes new technical and non-technical documents from authoritative evidence and keeps existing documentation honest. It establishes the reader and intended action, follows local corpus rules, inventories and verifies checkable claims, gates review edits behind a findings report, and cold-reads the result before completion.
 
 ## Canonical source and updates
 
