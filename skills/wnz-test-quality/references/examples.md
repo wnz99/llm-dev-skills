@@ -68,3 +68,29 @@ assert calculate_total(cart) == expected
 # Meaningful: the contract says two items at 12 each, less a discount of 3.
 assert calculate_total(cart) == 21
 ```
+
+## Share fake construction, keep scenarios explicit
+
+Several notification tests duplicate the same recording email fake and service
+wiring. Reuse a small fixture that returns a fresh service and fake for each
+test. Keep recipient, message, triggering action, and expected delivery or denial
+in each scenario. Clear call history by constructing a new fake, not by letting
+tests depend on execution order. Put a shared fake in an existing test-support
+module only when its consumers actually share that boundary contract.
+
+## Similar syntax does not imply shared responsibility
+
+A checkout test and password-reset test each create one user and record one
+outbound message, but require different data and side effects. Two short local
+setups are clearer than a universal `setup_flow(mode, flags, callbacks)` helper.
+Reuse a genuinely common user factory if it already fits; leave scenario logic
+and independent expectations local. A helper that hides why a test passes costs
+more than the duplication it removes.
+
+## Organize around the existing boundary
+
+An API suite already groups tests by endpoint. Add order-validation scenarios to
+the order endpoint tests and reuse its fixtures. Do not create a parallel
+`negative_cases/` tree or move the whole suite into a new unit/integration taxonomy
+for one fix. If a focused file becomes hard to navigate, split by coherent
+behavior using the runner's discovery conventions, retaining the same coverage.
