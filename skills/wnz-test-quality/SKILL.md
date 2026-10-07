@@ -1,9 +1,9 @@
 ---
-name: wnz-test-value
-description: Select, write, and review tests that catch meaningful failures without redundant coverage or implementation coupling. Use when writing or changing tests, choosing coverage for features or bug fixes, or auditing test value and suite bloat. Do not use merely to run an existing suite, troubleshoot a test runner, or edit prose without a test-selection decision.
+name: wnz-test-quality
+description: Select, write, organize, and review tests that catch meaningful failures without redundant coverage, repeated setup, or implementation coupling. Use when writing or changing tests, choosing coverage for features or bug fixes, or simplifying test organization, fixtures, mocks, and suite bloat. Do not use merely to run an existing suite, troubleshoot a test runner, or edit prose without a test-design decision.
 ---
 
-# Test Value
+# Test Quality
 
 Optimize confidence in supported behavior per unit of maintenance and feedback
 cost. A test earns its place by detecting a concrete failure that matters.
@@ -12,7 +12,13 @@ establish that value.
 
 ## Canonical source and updates
 
-This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-test-value). When asked to update or reinstall, inspect that upstream directory first. Preserve intentional installation-specific adaptations and report divergence instead of silently overwriting it.
+This skill is maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-test-quality). When asked to update or reinstall, inspect that upstream directory first. Preserve intentional installation-specific adaptations and report divergence instead of silently overwriting it.
+
+## Migration note
+
+This skill was previously published as `wnz-test-value`. Prefer
+`wnz-test-quality` and remove the old installed copy after upgrading to avoid
+ambiguous routing.
 
 ## Operating rules
 
@@ -112,9 +118,34 @@ and randomness when needed. Prefer an integration test over elaborate mocks
 when real composition is the source of confidence.
 
 Read [references/examples.md](references/examples.md) when deciding whether a
-negative, duplicate, implementation-coupled, or broader test adds value.
+negative, duplicate, implementation-coupled, or broader test adds value, or when
+balancing shared setup against readable, independent scenarios.
 
-### 5. Prove the evidence and stop
+### 5. Organize tests and share stable setup
+
+Follow the project's test layout, naming, and fixture conventions. Keep related
+behavior tests together at their responsible boundary; choose names that explain
+the scenario and expected outcome. Preserve test discovery when moving files.
+Avoid reorganizing an unrelated suite to impose a universal folder structure.
+
+Apply DRY to repeated, stable mechanics: reuse existing fixtures, factories, or
+fakes; extract a small helper when repeated mock wiring or resource setup has the
+same purpose and changes together. Keep helpers near their consumers and share
+more broadly only when multiple suites genuinely need the same contract.
+
+Keep each scenario's important inputs, actions, and expected outcomes visible.
+Do not have a setup helper calculate expected values from production logic or
+hide assertions that differ between scenarios. Prefer explicit overrides for
+relevant data over giant fixtures that provision unrelated state.
+
+Apply KISS to the test infrastructure too. A little duplication is preferable to
+coupling unrelated scenarios through flags, callbacks, inheritance, or a generic
+mock framework. Extract for an observed maintenance benefit, not a fixed line
+count or imagined future reuse. Reset call history and mutable fake state for
+each test; share construction logic rather than a mutable singleton. Run affected
+tests together when changing shared fixtures to expose state leakage.
+
+### 6. Prove the evidence and stop
 
 Run focused checks after the last edit, plus repository-required checks. Broaden
 verification when changed interfaces, shared state, dependency effects, failures,
