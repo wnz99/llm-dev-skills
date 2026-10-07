@@ -9,6 +9,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [wnz-llm-assist](skills/wnz-llm-assist/) | Spawn an external LLM CLI (Claude, Codex, or OpenCode) as a cross-model thinking partner for review, debug, plan, verify, RCA, rescue, and ask modes |
 | [wnz-cross-review-pr](skills/wnz-cross-review-pr/) | Comparative PR review between any two LLMs (Claude, Codex, OpenCode): both review independently, then Reviewer A validates Reviewer B's findings before synthesis |
 | [wnz-code-reviewer](skills/wnz-code-reviewer/) | Fresh-context code review for local changes and remote PRs, with automatic independent reviewer delegation when supported (based on [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) code-reviewer) |
+| [wnz-test-value](skills/wnz-test-value/) | Select, write, and audit tests by distinct failure detection, avoiding redundant coverage and implementation coupling |
 | [wnz-clean-code-js](skills/wnz-clean-code-js/) | Focused JavaScript/TypeScript readability and maintainability refactoring guidance |
 | [wnz-clean-code-py](skills/wnz-clean-code-py/) | Focused Python readability, API clarity, and maintainability refactoring guidance |
 | [wnz-clean-code-rust](skills/wnz-clean-code-rust/) | Focused Rust readability, ownership, error-handling, and API maintainability guidance |
@@ -30,6 +31,7 @@ npx skills add wnz99/llm-dev-skills -g
 npx skills add wnz99/llm-dev-skills/wnz-llm-assist -g
 npx skills add wnz99/llm-dev-skills/wnz-cross-review-pr -g
 npx skills add wnz99/llm-dev-skills/wnz-code-reviewer -g
+npx skills add wnz99/llm-dev-skills/wnz-test-value -g
 npx skills add wnz99/llm-dev-skills/wnz-clean-code-js -g
 npx skills add wnz99/llm-dev-skills/wnz-clean-code-py -g
 npx skills add wnz99/llm-dev-skills/wnz-clean-code-rust -g
@@ -51,7 +53,7 @@ directory, such as `~/.claude/skills/`, `~/.codex/skills/`, or
   - [OpenCode](https://dev.opencode.ai/docs/): `npm i -g opencode-ai`
 - **wnz-cross-review-pr** also requires [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
 - **wnz-pr-release-notes** requires [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
-- **wnz-code-reviewer**, **wnz-clean-code-\***, and **wnz-doc-write-expert** skills work standalone with no extra dependencies
+- **wnz-code-reviewer**, **wnz-test-value**, **wnz-clean-code-\***, and **wnz-doc-write-expert** skills work standalone with no extra dependencies
 
 ## How it works
 
