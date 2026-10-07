@@ -25,11 +25,11 @@ class ReviewSkillContractsTest(unittest.TestCase):
         normalized_evals = " ".join(evals.split())
 
         self.assertIn(
-            "default to `gpt-5.6-sol` with `medium` reasoning effort",
+            "default to `gpt-6.1-sol` with `medium` reasoning effort",
             normalized_skill,
         )
         self.assertIn(
-            "default to Sonnet through the host's current stable Sonnet selector",
+            "default to `claude-opus-5-5` with `medium` reasoning effort",
             normalized_skill,
         )
         self.assertIn(

@@ -101,10 +101,9 @@ Use this dispatch contract:
 4. Resolve model and reasoning-effort controls independently. An explicit user
    instruction overrides only the control it names; retain the applicable
    default for every unspecified control:
-   - On Codex, default to `gpt-5.6-sol` with `medium` reasoning effort.
-   - On Claude, default to Sonnet through the host's current stable Sonnet
-     selector or alias; do not pin a Sonnet version unless the user requests
-     one. Use the host's reasoning default when the user does not specify one.
+   - On Codex, default to `gpt-6.1-sol` with `medium` reasoning effort.
+   - On Claude, default to `claude-opus-5-5` with `medium` reasoning effort.
+     Use a host-equivalent selector only when it resolves to this model.
    Pass available model and reasoning controls through the native delegation
    tool. If a default selector is unavailable, use the nearest capable
    host-supported alternative and report the fallback. Do not silently replace
@@ -113,6 +112,14 @@ Use this dispatch contract:
    user supplies or permits an alternative. If selection succeeds but the host
    does not reveal the resolved model identity, keep the selection and report
    the identity as unavailable rather than inventing one.
+   Apply the same policy to inline reviews: a prompt cannot switch the caller's
+   model. Disclose an unenforceable default and the actual host-assigned model;
+   an unavailable explicit override still makes the review `Incomplete`.
+   For authorized fix work, default to `claude-sonnet-5-5` with the host's effort
+   default on Claude, or `gpt-6.1-sol` with `medium` effort on Codex. Pass these
+   controls when dispatching a fixer; disclose inline selection limitations.
+   Keep user overrides and unavailable-control handling as above. Fixers do
+   not review their own fixes; fresh re-review uses the reviewer defaults.
 5. Mark the prompt clearly with `INDEPENDENT_REVIEWER_LEAF`. A reviewer receiving
    that marker owns and performs the review directly as the leaf reviewer.
 6. Apply the report contract in **Provide Feedback** below. For workflows that

@@ -36,7 +36,7 @@ under **Read first**, then define the new identifiers under **Intended edits** a
 | 2 | Task 3 | sequential-only | Tasks 1–2 reviewed and integrated | Shared integration branch | `<command>` → <expected outcome> |
 
 - Parallel implementation permission: `<not-requested | approved | denied>`
-- Host/model policy: `<detected host>; user override <none or value>; selected capable default or host limitation <value>`
+- Host/model policy: `<detected host>; per-role model and effort for planner, implementer/fixer, and reviewer; applicable user overrides; requested versus selected controls and host limitations`
 
 ### Task N: <independently testable deliverable>
 

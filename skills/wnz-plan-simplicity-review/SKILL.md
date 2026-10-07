@@ -23,6 +23,21 @@ Return review findings and proposed replacement text. Edit a plan file only
 when requested; this review does not authorize implementation or revoke an
 existing approval silently.
 
+## Model policy
+
+Default to `claude-opus-5-5` on Claude or `gpt-6.1-sol` on Codex, both with
+`medium` reasoning effort. Resolve model and effort independently; an explicit
+user override changes only the named control. This review needs design judgment
+even when its output is short.
+
+Use the current agent when its controls match, or an authorized native model
+selection or bounded delegation when available. A prompt cannot change its
+caller's model. If a default cannot be enforced, disclose the limitation and
+the host-supported fallback before reviewing. If an explicit user control is
+unavailable, stop the review until the user permits an alternative. Report
+unexposed resolved controls as unavailable; do not invent selection evidence or
+invoke an external provider solely to enforce these defaults.
+
 ## Review
 
 ### 1. Establish what must work

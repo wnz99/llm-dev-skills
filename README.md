@@ -15,6 +15,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [wnz-clean-code-rust](skills/wnz-clean-code-rust/) | Focused Rust readability, ownership, error-handling, and API maintainability guidance |
 | [wnz-doc-write-expert](skills/wnz-doc-write-expert/) | Write new or review existing technical and non-technical documentation using evidence-backed authoring, corpus-conformance, approval, and fresh-reader workflows |
 | [wnz-phase-executor](skills/wnz-phase-executor/) | Plan a multi-step change, pass an independent plan-review and correction gate, then execute each phase through implementation, verification, and independent review gates |
+| [wnz-plan-simplicity-review](skills/wnz-plan-simplicity-review/) | Review an existing plan for KISS, DRY, and unnecessary complexity while preserving production safeguards and workload performance |
 | [wnz-pr-release-notes](skills/wnz-pr-release-notes/) | Prepare and maintain bounded, evidence-based release notes in GitHub pull request descriptions while honoring repository-specific release conventions |
 
 ## Install

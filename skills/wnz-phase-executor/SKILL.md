@@ -45,11 +45,44 @@ Before editing code:
    Claude Code; treat it as Codex when its system identity or collaboration
    surface identifies Codex. Prefer the explicit system identity when signals
    disagree; do not ask the user to identify the host.
-8. Honor a user-specified model override first. Otherwise use the host or
-   provider's current capable implementation default. Pass a model explicitly
-   only when the host API exposes a stable selector. If it does not, state that
-   limitation before dispatch and use the host-assigned model; never pretend a
-   model was selected. Use a capable independent review default for reviewers.
+8. Resolve the model and effort for each role under **Model policy** before
+   planning or dispatch. Record selections, overrides, and host limitations.
+
+## Model policy
+
+Use stronger models for design judgment and review; use the implementation tier
+for bounded implementation and fixes. These are configurable defaults, not a
+claim that a model is always better or cheaper for every task.
+
+| Role | Claude | Codex | Effort |
+| --- | --- | --- | --- |
+| Plan generation and semantic plan revisions | `claude-opus-5-5` | `gpt-6.1-sol` | `medium` |
+| Plan, task, and final aggregate reviews | `claude-opus-5-5` | `gpt-6.1-sol` | `medium` |
+| Implementation and fix tasks | `claude-sonnet-5-5` | `gpt-6.1-sol` | Claude host default; Codex `medium` |
+
+Resolve model and effort independently: an explicit user override changes only
+the named control and role. Pass supported controls through the native host
+API, using a host-equivalent selector only when it resolves to the named model.
+Do not infer that an implementer inherits the controller's model. Keep the
+implementation tier for review fixes; review itself uses the review tier.
+
+A skill cannot switch its caller's model through prose. For planning, use the
+current agent when its model and effort match; otherwise use an authorized,
+bounded planner delegation with the requirements, repository evidence, and plan
+template. The controller retains plan ownership and validates the returned
+artifact before self-review and the independent gate. A delegated plan author
+cannot serve as its independent reviewer or a planned implementer.
+
+If a default control cannot be enforced, disclose the limitation before work,
+use a capable host-supported fallback, and record requested versus selected
+controls. If an explicit user control cannot be honored, stop the affected
+role until the user permits an alternative. When the host does not expose the
+resolved identity or effort, report it as unavailable; never claim a selection
+was enforced merely because the prompt names it. Do not switch providers or
+invoke an external CLI solely to force this policy without authorization.
+
+When changing this policy, run the capability and activation cases in
+[references/model-policy-evals.md](references/model-policy-evals.md).
 
 ## Scope And Structure Before Tasks
 
@@ -381,8 +414,8 @@ Before Task 1:
 Run sequential tasks in the shared working tree. For an approved parallel-safe
 wave, dispatch all wave implementers concurrently in their isolated worktrees
 or other plan-defined non-overlapping environments, using the selected
-host-specific implementation model or the disclosed host-assigned fallback
-when the API has no model selector. Preserve any user model override. Never run
+implementation model and effort from **Model policy**, or its disclosed
+fallback. Preserve applicable user overrides. Never run
 concurrent implementation agents against the same mutable working tree. Read-
 only exploration may run in parallel whenever it cannot race with generated or
 mutable state.
@@ -424,7 +457,8 @@ reasons, commits if authorized, self-review findings, and concerns.
 The implementer's chat response stays short and points to that report.
 
 Handle statuses deliberately: provide missing context and redispatch;
-strengthen the model for a reasoning mismatch; split an oversized task; or ask
+consider a stronger model for a reasoning mismatch only when permitted by the
+model policy and user controls; split an oversized task; or ask
 the user when the plan or product decision is wrong. Never repeat an identical
 failed dispatch and hope for a different result.
 
@@ -641,8 +675,8 @@ Do not mark the task complete while blocked.
 - Do not start parallel implementation without a dependency/wave plan and the
   user's explicit recorded permission. A denial means sequential execution.
 - Do not dispatch an implementation subagent without auto-detecting the host,
-  honoring a user model override, and otherwise using a current capable host or
-  provider default; disclose when the host API cannot enforce model selection.
+  resolving its role under **Model policy**; disclose when the host API cannot
+  enforce model or effort selection.
 - Do not dispatch a task without rereading its requirements and prerequisites.
 - Do not give a fresh implementer the entire session transcript or accumulated
   task history; provide a bounded brief and explicit interfaces.

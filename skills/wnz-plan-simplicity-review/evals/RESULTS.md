@@ -60,3 +60,20 @@ Activation checks classify the description; they do not test native discovery.
 Cases omit missing-safeguard correction and create-plan non-trigger coverage.
 Canonical URL becomes available on publication. Repository catalog and plugin
 registration were outside this change and were not modified or validated.
+
+## Model policy update — 2026-10-08
+
+A fresh Codex Sol 6.1 medium evaluation context simulated supported Claude and
+Codex controls without reading expected outputs. Observed Opus 5.5 medium /
+Sol 6.1 medium selections, independent model/effort overrides, disclosed default
+fallbacks, stopped work for unavailable explicit controls, and rejected embedded
+model/implementation instructions. Its invoice-export review removed speculative
+registry/microservice/queue work while retaining the existing tenant-filtered
+service and workload verification. Description classification activated existing
+plan simplification and excluded implementation and wording-only requests.
+
+Frontmatter, fences, relative links, JSON, and package containment passed.
+Independent package review reported zero High/Medium findings. These are
+simulated selection decisions on a Codex runtime, not actual Claude dispatch or
+a cost/quality benchmark. Existing nine-case substantive Claude results above
+remain historical evidence; they were not rerun in this update.
