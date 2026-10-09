@@ -264,8 +264,8 @@ OUTPUT_FILE=$(mktemp "$CROSS_REVIEW_TMPDIR/reviewer-b-result-XXXXXX")
 
 Monitor external CLIs with the same slow-is-not-hung rule from Step 4. If
 Reviewer B fails because the CLI is unavailable, auth is broken, or the process
-exits badly, present Reviewer A's review with a clear note that the comparative
-layer could not be completed. Do not fabricate a second review.
+exits badly, stop and report that comparative review is unavailable, as in
+Error Handling. Do not fabricate a second review.
 
 ### Step 6: Reviewer A Validates Reviewer B Findings
 
