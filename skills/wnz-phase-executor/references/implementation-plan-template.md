@@ -1,4 +1,72 @@
-# Implementation Plan Template
+# Implementation Plan Authoring
+
+Read this file in full before writing or revising a plan. It covers the
+structure analysis that precedes tasks, how to populate the plan, the plan
+template that is the plan's output contract, and the plan self-review.
+
+## Scope and structure before tasks
+
+Write the plan for a capable implementer who has fresh context: they understand
+software engineering, but not this repository, its domain, or its testing
+conventions.
+
+Before defining tasks:
+
+1. Check whether the request spans independent subsystems. Split it into
+   separate plans when each subsystem can produce useful, testable software on
+   its own; do not hide unrelated projects inside phases.
+2. Map every file likely to be created, modified, tested, moved, or removed and
+   state its responsibility. Follow existing organization and the smallest
+   owning subtree. Files that change together should usually live together;
+   split by responsibility, not merely technical layer.
+3. Identify contracts between tasks: exact exported names, parameters, return
+   types, schemas, commands, routes, events, or artifacts one task consumes and
+   another produces.
+4. Capture global constraints verbatim from the requirements and repository
+   instructions: supported versions, dependency limits, naming, security,
+   migration order, documentation format, and release rules.
+5. Build a task dependency graph. For every task, name its prerequisites,
+   produced interfaces, owned files, mutable external resources, and review
+   gate. Group dependency-free tasks into explicit execution waves. Tasks may
+   share a wave only when they can be implemented and verified concurrently
+   without overlapping writes, shared migrations, mutable services, generated
+   artifacts, test fixtures, or ordering-sensitive contracts.
+6. Mark each wave `parallel-safe` or `sequential-only` and explain the reason.
+   When parallel work needs isolated Git worktrees or branches, include the
+   integration order and conflict-resolution owner in the plan. Never label a
+   shared-working-tree edit wave parallel-safe merely because its tasks concern
+   different concepts.
+
+Avoid opportunistic restructuring. If a touched file is too large to change
+safely, make the boundary-improving split an explicit task with its own test and
+review gate.
+
+## Populating the plan
+
+Retain every template section that applies; omit an optional section only when
+it genuinely has no content. Trace every requirement to tasks and observable
+verification; anchors, evidence, and TDD follow **Reference rules** below.
+
+A task is the smallest unit with its own test cycle and a meaningful fresh
+reviewer gate. Fold setup, configuration, migration, and documentation into the
+task whose deliverable requires them. Split tasks only when a reviewer could
+reasonably accept one and reject its neighbor.
+
+Use exact paths, symbols, commands, inputs, assertions, and expected output.
+Do not write `TBD`, `TODO`, "add validation", "handle edge cases", "write tests",
+"similar to Task N", or reference an interface that no task defines. Include
+enough code or pseudocode to remove ambiguity, but do not paste large finished
+implementations that will go stale before execution.
+
+Treat 2–5 minutes as a useful micro-step sizing heuristic, not a rigid limit.
+For non-obvious code changes, include exact signatures, assertions, control
+flow, validation behavior, and transformation snippets. Boilerplate may be
+omitted only when the plan names the exact existing symbol or repository pattern
+to follow.
+
+Prefer DRY and YAGNI.
+
+## Plan template
 
 Use this template for every phased implementation plan. Replace every angle-
 bracket placeholder before execution. Remove optional rows or bullets that do
@@ -127,3 +195,25 @@ removals and retained API/dynamic contracts; scanner/search evidence to collect>
   test. When no practical seam exists (for example docs, generated output, or a
   mechanical config change), replace them with an exact characterization or
   pre-change verification and state why test-first is not practical.
+
+## Plan self-review
+
+Before implementation or handoff:
+
+1. Re-read every requirement and map it to a task and verification command.
+2. Scan for placeholders, vague verbs, missing paths, undefined interfaces, and
+   commands without expected outcomes; replace them with executable detail.
+3. Confirm every modified existing symbol has source-backed current-state
+   evidence, and every evidence claim points to an inspected path plus a stable
+   symbol, heading, or config key when one exists.
+4. Confirm intended edits state target behavior and identifiers without
+   duplicating the same prose in actions, interfaces, and acceptance criteria;
+   ensure line-number drift cannot invalidate a task.
+5. Check type, schema, route, event, and property names across tasks for exact
+   consistency.
+6. Check task ordering and ensure every dependency is produced before it is
+   consumed.
+7. Check documentation claims against code/config evidence and verify planned
+   files follow corpus placement, metadata, index, and cross-link rules.
+8. Confirm every task leaves the repository in a working, independently
+   testable state, with a dead-code check and cleanup result defined for every step.
