@@ -1,6 +1,32 @@
-# Structured Review Output Schema
+# Review Mode: Scope and Structured Output
 
-When running review mode, you can optionally request structured JSON output.
+Read this file in review mode before collecting the diff.
+
+## Scope options
+
+Ask the user (or infer from context):
+
+**Scope:**
+- Uncommitted changes: `git diff HEAD`
+- Branch diff: `git diff <base>...HEAD` (auto-detect base with
+  `git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'`)
+- Specific commit: `git diff <sha>~1..<sha>`
+
+**Focus areas** (optional):
+- General review (default)
+- Security & auth
+- Performance
+- Error handling
+- Race conditions & concurrency
+- Custom focus (user specifies)
+
+Show `git diff --stat` before running so the user sees what's being reviewed.
+Warn if diff exceeds 2000 lines.
+
+## Structured Review Output Schema
+
+When running review mode, you can optionally request structured JSON output,
+used with Codex's `--output-schema` to get machine-parseable review findings.
 
 This is the canonical machine-readable review contract for skills in this
 repository. Human-facing skills may use `High`, `Medium`, `Low`, and `Nit`; map
@@ -12,7 +38,7 @@ does not change existing human-facing blocking rules or dual-verdict workflows.
 > provider. For OpenCode, include "Respond with JSON matching this schema:"
 > in the prompt and append the schema below.
 
-## Schema
+### Schema
 
 ```json
 {
@@ -60,9 +86,9 @@ does not change existing human-facing blocking rules or dual-verdict workflows.
 }
 ```
 
-## Usage
+### Usage
 
-### Codex
+#### Codex
 
 ```bash
 test -n "${LLM_ASSIST_TMPDIR:-}" && test -d "$LLM_ASSIST_TMPDIR" || {
@@ -98,7 +124,7 @@ existing `cleanup_llm_assist` EXIT/HUP/INT/TERM trap removes it with the other
 sensitive artifacts. Keep that trap active through schema creation and Codex
 execution.
 
-### OpenCode
+#### OpenCode
 
 Append the schema to the prompt file before the `## Instructions` section:
 
@@ -110,7 +136,7 @@ Respond ONLY with valid JSON matching this schema:
 
 Then run: `opencode run "Follow the instructions in the attached file" -f "$PROMPT_FILE" > "$OUTPUT_FILE" 2>&1`
 
-## Parsing
+### Parsing
 
 The output file will contain JSON matching the schema. Parse it to
 extract findings by severity and compare with your own review:

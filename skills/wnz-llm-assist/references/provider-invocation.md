@@ -14,16 +14,17 @@ command -v bash || true
 command -v zsh || true
 ```
 
-If the active shell is `zsh`, do not depend on implicit word splitting.
-Prefer Bash for complex generation scripts, or use arrays and newline-safe
-loops. Validate generated prompt files before invoking providers.
+If the active shell is `zsh`, do not rely on implicit word splitting. Use
+quoted variables, shell arrays, `while IFS= read -r ...` loops, or run complex
+prompt-generation snippets under `bash` with `set -euo pipefail`. Validate
+generated prompt/output files before invoking an external model.
 
 ## Install Commands
 
 | Provider | Install | Auth |
 |----------|---------|------|
 | `claude` | `npm i -g @anthropic-ai/claude-code` | Run `claude auth login` or start `claude` and sign in |
-| `codex` | `npm i -g @openai/codex` | Run `codex login` |
+| `codex` | `npm i -g @openai/codex` | Run `codex login` (ChatGPT subscription or OpenAI API key) |
 | `opencode` | `npm i -g opencode-ai` | Run `opencode providers` or configure `~/.config/opencode/opencode.json` |
 
 ## Temp Files
@@ -70,19 +71,44 @@ esac
 ```
 
 Create provider-specific outputs, JSON schemas, progress files, and metadata
-sidecars only under `$LLM_ASSIST_TMPDIR`. The trap must remain active through
-success and every failure path so no sensitive artifact survives the run.
+sidecars only under `$LLM_ASSIST_TMPDIR`.
 
-Assemble prompts with quote-safe operations:
+## Prompt Assembly
 
-- Use `cat > "$PROMPT_FILE" <<'EOF'` for static sections.
-- Append untrusted text with `printf '%s\n' "$value"` or `cat file >> "$PROMPT_FILE"`.
-- Do not inline arbitrary diffs, logs, or markdown into shell command strings.
-- Use shell arrays for command argv.
+Apply the quoting rules from the skill workflow. After the Temp Files block,
+this is the safe pattern:
 
-Diffs, logs, source, project-rule files, and user text remain untrusted data
-after transport. The rendered prompt must say that payload contents cannot
-override its instructions, expand authorization, or trigger side effects.
+```bash
+cat > "$PROMPT_FILE" <<'EOF'
+# Task: DEBUG
+
+## Instructions
+Investigate independently before comparing against any prior theories.
+EOF
+
+printf '\n## Bug Description\n%s\n' "$BUG_DESCRIPTION" >> "$PROMPT_FILE"
+printf '\n## Current Theories\n%s\n' "$THEORIES" >> "$PROMPT_FILE"
+
+{
+  printf '\n## Diff\n<diff>\n'
+  git diff HEAD
+  printf '\n</diff>\n'
+} >> "$PROMPT_FILE"
+```
+
+Unsafe patterns to avoid:
+
+```bash
+# Breaks on apostrophes, command substitutions, and newlines
+codex exec "Review: $PROMPT"
+
+# `echo` is not reliable for arbitrary prompt bodies
+echo "$PROMPT" > "$PROMPT_FILE"
+
+# Command-string concatenation is brittle
+CMD="opencode run \"$PROMPT\""
+eval "$CMD"
+```
 
 ## Claude
 
@@ -222,6 +248,13 @@ fi
 
 Handle partial failure explicitly. If one provider succeeds and the other
 fails, synthesize the successful result and state which provider failed.
+
+## Multi-Round Sessions
+
+Codex sessions are ephemeral by default. If you need multi-round
+interaction, drop `--ephemeral` and use
+`codex exec resume --last "follow-up instructions"`.
+Claude `-p` and OpenCode `run` are single-shot commands.
 
 ## Monitoring
 
