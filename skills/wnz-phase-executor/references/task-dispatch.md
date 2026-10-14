@@ -87,7 +87,10 @@ review itself changes code.
 ## Reviewer instructions
 
 Delegate a fresh-context review of only the current task's requirements, diff,
-evidence, and relevant repository contracts. Instruct the reviewer to:
+evidence, and relevant repository contracts. Mark every task, fix re-review, and
+final aggregate code-review prompt `INDEPENDENT_REVIEWER_LEAF` so the dispatched
+reviewer performs the review directly rather than delegating again. Instruct the
+reviewer to:
 
 - Use the `wnz-code-reviewer` skill when available and return both the requirements
   verdict and quality verdict from the reviewer contract.

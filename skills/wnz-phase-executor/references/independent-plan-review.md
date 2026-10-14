@@ -7,8 +7,10 @@ assumptions, missing requirements, and unsafe sequencing.
 ## Reviewer independence
 
 - Use a fresh subagent that did not draft or edit the plan and will not
-  implement tasks from it. Explicitly require the `wnz-code-reviewer` skill
-  when available; this reference defines the plan-specific verdict contract.
+  implement tasks from it. Give it this reference as its adversarial design-review
+  contract and instruct it to perform the review directly without further
+  delegation. Plan review does not invoke `wnz-code-reviewer`: that skill owns
+  review of implemented changes, not proposed designs.
 - Do not reuse a reviewer for a revised plan; each iteration gets a fresh
   subagent so prior conclusions do not anchor the new review.
 - Give the reviewer the original user requirements, user annotations and
@@ -22,7 +24,9 @@ assumptions, missing requirements, and unsafe sequencing.
 
 ## Review contract
 
-Ask the reviewer to evaluate:
+Ask the reviewer to challenge the plan against the original requirements and
+repository evidence, looking for concrete failure paths and unsupported
+assumptions. Evaluate:
 
 - complete requirement and acceptance-criteria coverage;
 - factual grounding in inspected repository evidence;

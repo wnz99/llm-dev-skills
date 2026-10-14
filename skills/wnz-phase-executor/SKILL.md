@@ -138,13 +138,15 @@ Include atomic commits only when the user authorized commits and the
 repository workflow permits them; use the repository's commit convention and
 do not prescribe commits that would split a required test/implementation pair.
 
-## Independent Plan Review Gate
+## Independent Adversarial Plan Review Gate
 
 After self-review and before requesting parallel permission or dispatching any
 implementer, follow the complete
 [`references/independent-plan-review.md`](references/independent-plan-review.md)
 gate. Read that reference in full every time this skill produces or revises a
-plan. It defines reviewer independence, the unbiased review package, the
+plan. A fresh design reviewer applies its contract directly; reserve
+`wnz-code-reviewer` for implemented task and aggregate changes. The reference
+defines reviewer independence, the unbiased review package, the
 design-altitude review scope, verdicts, automatic correction and re-review,
 annotation triage, clarification handling, and ledger fields.
 
@@ -233,8 +235,8 @@ failed dispatch and hope for a different result.
 
 ### Reviewer contract
 
-Dispatch a separate fresh reviewer with the task-dispatch review package. Do
-not bias it with instructions about what not to flag or how severe a suspected
+Dispatch a separate fresh reviewer with the task-dispatch review package and
+its `INDEPENDENT_REVIEWER_LEAF` marker. Do not bias it with instructions about what not to flag or how severe a suspected
 issue should be. The reviewer must return
 two explicit verdicts:
 
@@ -358,9 +360,10 @@ After the last task:
 3. Inspect the final code paths end to end.
 4. Run the broadest appropriate local verification gate for the owning subtree.
 5. Build an aggregate review package from the branch merge base through the
-   final state and run a fresh, capable independent reviewer over requirements
-   compliance and code quality across the whole change. This final review is required for multi-task work, not
-   optional based on module count.
+   final state and dispatch a fresh, capable independent reviewer with
+   `INDEPENDENT_REVIEWER_LEAF`, using `wnz-code-reviewer` when available, over
+   requirements compliance and code quality across the whole change. This final
+   review is required for multi-task work, not optional based on module count.
 6. If the final review finds issues, dispatch one fix subagent with the complete
    final finding set, rerun affected verification, rebuild the package, and
    re-review until both verdicts approve with no unresolved High or Medium
@@ -410,6 +413,8 @@ Do not mark the task complete while blocked.
 
 ## Maintaining This Skill
 
+- When changing plan/code review routing or reviewer delegation, run
+  [`references/review-routing-evals.md`](references/review-routing-evals.md).
 - When asked to update, reinstall, download, or replace this skill, or when a
   legacy `phased-implementation-review-loop` copy is installed, read
   [`references/skill-maintenance.md`](references/skill-maintenance.md).
