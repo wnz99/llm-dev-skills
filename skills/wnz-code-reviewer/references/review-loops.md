@@ -67,10 +67,10 @@ scope to only the latest fix commit.
         limitations. Keep user overrides and unavailable-control handling as in
         `SKILL.md`. Fixers do not review their own fixes; fresh re-review uses
         the reviewer defaults.
-    *   For confirmed dead-code findings, remove confirmed leftovers and update
-        their consumers, then rerun relevant checks and independently review the
-        complete scope again. Do not add compatibility wrappers without a
-        supported consumer or weaken behavior tests to make deletions pass.
+    *   For confirmed dead-code findings, require discovered `wnz-dead-code`
+        in cleanup mode within the authorized fix scope. Attach its evidence
+        contract, run fresh checks, then require a fresh independent audit of
+        the complete original scope. Missing dependency blocks the fix/review.
     *   If a finding is incorrect or intentionally accepted, document the reason
         in the next loop comment and treat it as resolved only when the reasoning
         is concrete and evidence-backed.

@@ -6,9 +6,11 @@ template that is the plan's output contract, and the plan self-review.
 
 ## Scope and structure before tasks
 
-Write the plan for a capable implementer who has fresh context: they understand
-software engineering, but not this repository, its domain, or its testing
-conventions.
+Write one plan for two readers: a human deciding whether the proposed change
+is complete and appropriately simple, and a capable implementer with fresh
+context. Explain features, effects and design before execution mechanics.
+The implementer understands software engineering, but not this repository,
+its domain or testing conventions.
 
 Before defining tasks:
 
@@ -58,13 +60,39 @@ Do not write `TBD`, `TODO`, "add validation", "handle edge cases", "write tests"
 enough code or pseudocode to remove ambiguity, but do not paste large finished
 implementations that will go stale before execution.
 
-Treat 2–5 minutes as a useful micro-step sizing heuristic, not a rigid limit.
 For non-obvious code changes, include exact signatures, assertions, control
 flow, validation behavior, and transformation snippets. Boilerplate may be
 omitted only when the plan names the exact existing symbol or repository pattern
 to follow.
 
 Prefer DRY and YAGNI.
+
+## Progressive disclosure
+
+Start from the template below. Keep the first two sections useful on their own:
+a human should understand what changes, what it affects and why the design is
+reasonable without reading the execution instructions. Introduce domain
+concepts before internal identifiers; defer exact paths, signatures, commands
+and substantial code examples to the execution section.
+
+Give each feature or cohesive change a stable ID such as `F1`. Describe its
+intent once, then map it to tasks and verification. Keep review-critical risks,
+compatibility changes, unresolved choices and acceptance outcomes visible in
+the human-facing sections; do not bury them in task checkboxes. Summaries must
+agree with the detailed instructions. Do not create two independently maintained
+plans or repeat the same implementation narrative in both halves.
+
+Include the design-diagram section only when an ASCII diagram clarifies
+boundaries, dependencies, state or interactions better than prose. Use meaningful
+labels, a legend when necessary and text explaining what the diagram shows.
+Diagrams describe the real proposed design, not hypothetical architecture.
+
+Include data-flow analysis when the change affects data movement, representation,
+validation, access boundaries, storage or outputs. Trace relevant inputs through
+transformations to observable results, including material failure paths. Explain
+what changes from current behavior and which contracts remain. Do not invent a
+pipeline for a prose, naming or other change with no relevant data-flow impact.
+Omit inapplicable optional sections entirely rather than leaving empty headings.
 
 ## Plan template
 
@@ -77,26 +105,68 @@ contract, sibling pattern, and/or registration/composition point that exists
 under **Read first**, then define the new identifiers under **Intended edits** and
 **Interfaces**.
 
-```markdown
+````markdown
 # <Feature> Implementation Plan
 
-**Goal:** <one sentence describing the observable result>
+## Features and effects
 
-**Architecture:** <two or three sentences describing boundaries and data flow>
+<Briefly explain the overall observable result in familiar domain language.>
 
-**Tech stack:** <languages, frameworks, libraries, and tools relevant to this change>
+### F1: <Feature or cohesive change>
 
-## Global constraints
+- Problem and current behavior: <what happens now and why it needs to change>
+- Proposed behavior: <what will happen after this change, with a concrete example when useful>
+- Effect on the code: <affected components and how their responsibilities or interactions change>
+- Scope and compatibility: <boundaries, relevant non-goals and supported contracts affected>
+- Acceptance outcomes: <observable results that establish this feature is complete>
+- Execution mapping: <Task 1 and any other tasks delivering F1>
+
+## High-level design and rationale
+
+<Explain the proposed components, their responsibilities and how they fit the
+existing system. Identify what is reused, changed, removed or added and why.>
+
+- Design choices: <why this is the simplest complete approach; material alternatives and tradeoffs only>
+- Risks and safeguards: <material compatibility, security, data integrity, migration/rollback or operational consequences>
+- Open decisions: <unresolved choices requiring human input; omit when none>
+
+## Design diagrams
+
+<Optional: include only when an ASCII diagram makes the design easier to assess.>
+
+```text
+[<entrypoint>] --> [<owning component>] --> [<existing dependency>]
+```
+
+<Explain the relationships and any change from the current design.>
+
+## Data-flow analysis
+
+<Conditional: explain relevant current-to-proposed changes in inputs, processing,
+validation/access boundaries, storage and outputs before presenting the steps.>
+
+| Stage | Input and source | Processing and owner | Output or side effect | Material failure handling |
+| --- | --- | --- | --- | --- |
+| <stage> | <meaning, trust boundary and relevant shape> | <transformation/validation and responsible component> | <next consumer, persistence or observable result> | <rejection, recovery or propagated error> |
+
+<Include representative data examples or another ASCII flow only when they
+clarify a changed contract. Do not repeat unchanged or irrelevant stages.>
+
+## Execution instructions
+
+**Tech stack:** <languages, frameworks, libraries and tools relevant to execution>
+
+### Global constraints
 
 - <binding requirement or repository rule>
 
-## Acceptance criteria traceability
+### Acceptance criteria traceability
 
-| Requirement | Task(s) | Verification |
+| Feature and requirement | Task(s) | Verification |
 | --- | --- | --- |
-| <observable requirement> | Task 1 | `<exact command or inspection>` |
+| F1: <observable requirement> | Task 1 | `<exact command or inspection>` |
 
-## Execution topology
+### Execution topology
 
 | Wave | Tasks | Mode | Prerequisites | Isolation and integration | Wave verification |
 | --- | --- | --- | --- | --- | --- |
@@ -109,6 +179,8 @@ under **Read first**, then define the new identifiers under **Intended edits** a
 ### Task N: <independently testable deliverable>
 
 **Goal:** <behavior completed by this task>
+
+**Delivers:** <feature IDs such as F1; refer to their intent without repeating it>
 
 **Execution:**
 
@@ -140,6 +212,10 @@ under **Read first**, then define the new identifiers under **Intended edits** a
 - `path/to/test.ext:test_new_case` — add <inputs, observable assertions, and intended initial failure>.
 - `path/to/current.ext:ExistingSymbol` — change <control flow, validation, or mapping>; preserve <invariant>.
 - `path/to/contract.ext:NewOrChangedContract` — create/update <exact exported signature, schema, event, or artifact> consumed by <named symbol/task>.
+
+<Include short code examples or pseudocode for non-obvious changes, showing exact
+signatures, validation or control flow. Follow the actual source language; omit
+routine boilerplate and large finished implementations.>
 
 **Interfaces:**
 
@@ -173,7 +249,7 @@ removals and retained API/dynamic contracts; scanner/search evidence to collect>
   - Review: <independent review scope>
   - Record: <verification, loop count, and residual risk>
   - Cleanup: <review per-step evidence/removals and confirm no known dead code remains in scope>
-```
+````
 
 ## Reference rules
 
@@ -200,20 +276,26 @@ removals and retained API/dynamic contracts; scanner/search evidence to collect>
 
 Before implementation or handoff:
 
-1. Re-read every requirement and map it to a task and verification command.
-2. Scan for placeholders, vague verbs, missing paths, undefined interfaces, and
+1. Read only the human-facing sections first. Confirm they explain the changes,
+   effects, responsibilities, design rationale, material risks and acceptance
+   outcomes without requiring task details. Check that conditional diagrams and
+   data-flow analysis are present when useful and absent when irrelevant.
+2. Re-read every requirement and map it through a feature ID to a task and
+   verification command. Confirm overview, diagrams, data flows and task details
+   describe the same behavior; resolve contradictions and hidden decisions.
+3. Scan for placeholders, vague verbs, missing paths, undefined interfaces, and
    commands without expected outcomes; replace them with executable detail.
-3. Confirm every modified existing symbol has source-backed current-state
+4. Confirm every modified existing symbol has source-backed current-state
    evidence, and every evidence claim points to an inspected path plus a stable
    symbol, heading, or config key when one exists.
-4. Confirm intended edits state target behavior and identifiers without
+5. Confirm intended edits state target behavior and identifiers without
    duplicating the same prose in actions, interfaces, and acceptance criteria;
    ensure line-number drift cannot invalidate a task.
-5. Check type, schema, route, event, and property names across tasks for exact
+6. Check type, schema, route, event, and property names across tasks for exact
    consistency.
-6. Check task ordering and ensure every dependency is produced before it is
+7. Check task ordering and ensure every dependency is produced before it is
    consumed.
-7. Check documentation claims against code/config evidence and verify planned
+8. Check documentation claims against code/config evidence and verify planned
    files follow corpus placement, metadata, index, and cross-link rules.
-8. Confirm every task leaves the repository in a working, independently
+9. Confirm every task leaves the repository in a working, independently
    testable state, with a dead-code check and cleanup result defined for every step.

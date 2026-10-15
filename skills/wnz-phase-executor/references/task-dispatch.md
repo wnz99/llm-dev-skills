@@ -2,8 +2,8 @@
 
 Read this file in full before preparing task briefs or dispatching any
 implementer, fix, or reviewer subagent. It defines what each subagent receives
-and how approved parallel waves run. The statuses, verdicts, and loop rules
-that the controller enforces stay in `SKILL.md`.
+and how approved parallel waves run. The worker owns statuses/reports in `wnz-task-implementer`; the controller
+enforces verdicts and loop rules in `SKILL.md`.
 
 ## Task brief
 
@@ -21,30 +21,12 @@ Give each fresh implementer:
 - Exact repository instructions and allowed scope.
 - Interfaces and decisions from completed prerequisite tasks.
 - The baseline commit or diff boundary.
-- A task report path and the required status contract from `SKILL.md`.
+- A task report path and the required status/report contract from `wnz-task-implementer`.
 
-The implementer must reread the task requirements before editing, execute the
-task's planned micro-steps in order (TDD steps where planned), use the repo's
-established patterns, keep edits scoped to the current task, run fresh
-verification after the final edit, self-review the diff against the task, and
-report one status.
-
-When the task changes public behavior, update the relevant docs or runbooks in
-the same task unless the plan intentionally separates documentation. Verify
-documentation claims against live code/config evidence, preserve local corpus
-metadata and placement, and update indexes and inbound links when concepts move
-or are created.
-
-Verification should include, as appropriate:
-
-- Unit tests for new pure logic and edge cases.
-- CLI/help or dry-run tests for operator-facing commands.
-- Type/lint checks for the touched subtree.
-
-The task report records changed files, requirement-by-requirement coverage,
-commands and outputs, per-step dead-code scope/evidence/removals or retention
-reasons, commits if authorized, self-review findings, and concerns.
-The implementer's chat response stays short and points to that report.
+Require the worker to discover and apply `wnz-task-implementer` directly.
+That skill owns micro-step execution, documentation, verification, cleanup and
+the status/report contract. Include its report destination and pass through its
+required fields rather than copying a second execution checklist.
 
 ## Parallel wave execution
 
@@ -77,8 +59,8 @@ After implementation, assemble a task-scoped review package containing:
 - Current repository-graph paths or impact evidence that materially informed
   the task, including provenance labels. Omit this item when no graph evidence
   was used.
-- Clean-code guidance: the `wnz-clean-code-*` skill to apply for each changed
-  language, or the bundled checklist text when that skill is not installed.
+- Changed languages and available skill catalog; `wnz-code-reviewer` owns
+  language guidance discovery and its bundled checklist fallback.
 
 Do not ask the reviewer to rerun verification already captured in the fresh
 implementer report unless the evidence is missing, stale, suspicious, or the
@@ -92,7 +74,7 @@ final aggregate code-review prompt `INDEPENDENT_REVIEWER_LEAF` so the dispatched
 reviewer performs the review directly rather than delegating again. Instruct the
 reviewer to:
 
-- Use the `wnz-code-reviewer` skill when available and return both the requirements
+- Use required `wnz-code-reviewer` and return both the requirements
   verdict and quality verdict from the reviewer contract.
 - Review requirement compliance before code quality so well-written code cannot
   hide missing or extra behavior.

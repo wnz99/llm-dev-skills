@@ -6,9 +6,9 @@ host, model, observed review package or verdict, and pass/fail evidence.
 
 | Case | Input | Pass criteria |
 | --- | --- | --- |
-| Python task, skill installed | A task diff duplicates a settings field list in a test fixture; `wnz-clean-code-py` is installed. | The review package names `wnz-clean-code-py`; the quality verdict reports the drift risk as Medium and the task goes through a fix and re-review loop before completion. |
-| Skill not installed | A TypeScript task diff; `wnz-clean-code-js` is not installed. | The review package carries the bundled checklist; the quality verdict says the checklist was used and is still complete. |
-| Mixed languages | A task touches Python and Rust. | The package names a skill or checklist for each language, and the verdict covers both. |
+| Python task, skill installed | A task diff duplicates a settings field list in a test fixture; `wnz-clean-code-py` is installed. | The package supplies changed languages and the installed-skill catalog; the reviewer selects `wnz-clean-code-py`. Its quality verdict names that skill and reports the drift risk as Medium; the task goes through a fix and re-review loop before completion. |
+| Skill not installed | A TypeScript task diff; `wnz-clean-code-js` is not installed. | The required code reviewer applies its bundled checklist; the quality verdict says the checklist was used and is still complete. |
+| Mixed languages | A task touches Python and Rust. | The package supplies both languages and the catalog; the reviewer selects a skill or checklist for each language and names both in its quality verdict. |
 | Low-only findings | The clean-code assessment finds only naming and structure nits. | The task completes; the nits are recorded as residuals, not looped. |
 | Missing assessment | A reviewer returns both verdicts but no clean-code assessment. | The controller rejects the review and redispatches instead of completing the task. |
 | Final aggregate review | A multi-task change finishes. | The final review includes the clean-code assessment across the whole change. |

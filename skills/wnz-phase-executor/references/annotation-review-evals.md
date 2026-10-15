@@ -1,7 +1,7 @@
 # Annotation review behavior checks
 
 Run when changing annotation handling or the review-cycle boundary. Use fresh
-contexts with the standalone package and fixtures below. Record observed actions,
+contexts with the package and its declared dependencies and fixtures below. Record observed actions,
 questions, gate status, cycle/round counts, and pass/fail evidence. Simulate
 workflow decisions only; do not implement or mutate external state.
 

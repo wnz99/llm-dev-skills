@@ -77,7 +77,7 @@ class ReviewSkillContractsTest(unittest.TestCase):
 
     def test_review_skills_require_clean_code_assessment(self) -> None:
         language_skills = ("wnz-clean-code-py", "wnz-clean-code-js", "wnz-clean-code-rust")
-        for skill_dir in (CODE_REVIEWER, PHASE_EXECUTOR):
+        for skill_dir in (CODE_REVIEWER,):
             with self.subTest(skill=skill_dir.name):
                 skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
                 checklist = skill_dir / "references" / "clean-code-checklist.md"
@@ -113,7 +113,7 @@ class ReviewSkillContractsTest(unittest.TestCase):
         executor = " ".join(
             (PHASE_EXECUTOR / "SKILL.md").read_text(encoding="utf-8").split()
         )
-        self.assertIn("## Clean-Code Review", executor)
+        self.assertIn("## Dead-code evidence and clean-code review", executor)
         self.assertIn(
             "a quality verdict that omits the clean-code assessment", executor
         )
@@ -121,17 +121,10 @@ class ReviewSkillContractsTest(unittest.TestCase):
         self.assertTrue(
             (PHASE_EXECUTOR / "references" / "clean-code-evals.md").is_file()
         )
-        for text in (reviewer, executor):
-            self.assertIn("not applicable", text)
-            self.assertIn("a boolean flag, a magic value, or a naming choice", text)
-        self.assertEqual(
-            (CODE_REVIEWER / "references" / "clean-code-checklist.md").read_text(
-                encoding="utf-8"
-            ),
-            (PHASE_EXECUTOR / "references" / "clean-code-checklist.md").read_text(
-                encoding="utf-8"
-            ),
-        )
+        self.assertIn("not applicable", reviewer)
+        self.assertIn("a boolean flag, a magic value, or a naming choice", reviewer)
+        self.assertIn("`wnz-code-reviewer` owns changed-language skill discovery", executor)
+        self.assertIn("its bundled clean-code fallback", executor)
 
     def test_doc_writer_requires_progressive_reader_context(self) -> None:
         skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
@@ -155,7 +148,8 @@ class ReviewSkillContractsTest(unittest.TestCase):
         )
         normalized = " ".join(review.split())
         self.assertIn("Each review cycle is capped at two independent design reviews", skill)
-        self.assertIn("Keep plan review at design altitude", review)
+        self.assertIn("Keep plan review at design altitude",
+                      (ROOT / "skills/wnz-plan-reviewer/SKILL.md").read_text(encoding="utf-8"))
         self.assertIn("Never dispatch Round 3 within the same cycle", normalized)
         self.assertIn("open a new review cycle automatically", normalized)
         self.assertIn("Even annotations accepted without questions require this review", normalized)

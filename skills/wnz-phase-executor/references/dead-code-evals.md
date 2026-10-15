@@ -1,7 +1,7 @@
 # Per-step cleanup behavior checks
 
 Run when modifying the per-step dead-code requirement or plan template. Use a
-fresh planning context with the skill package and raw fixture, and record the
+fresh planning context with `wnz-implementation-planner`, required `wnz-dead-code`, and raw fixture, and record the
 actual plan and pass/fail evidence. Planning alone must not mutate source.
 
 | Case | Input | Pass criteria |

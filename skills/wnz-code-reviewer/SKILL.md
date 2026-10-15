@@ -31,6 +31,18 @@ When asked to update, reinstall, download, or replace this skill, when a legacy
 `code-reviewer` copy is installed, or when changing this skill's behavior, read
 [references/maintenance.md](references/maintenance.md) first.
 
+## Required skills
+
+- `wnz-dead-code`: required independent audit in every review, and cleanup only for authorized fix work.
+
+Resolve these by name through the host's installed-skill discovery before the
+affected work. Obtain missing skills from their matching directory in
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills)
+using the host's skill installer or manual package installation. Do not use
+sibling filesystem paths or assume a local installation root. If a required
+skill is missing, report it and stop the affected work; do not substitute a
+local copy of its algorithm.
+
 ## Terminal Awareness
 
 Before running shell commands, inspect the active terminal environment and use
@@ -77,8 +89,8 @@ Use this dispatch contract:
 3. The controller establishes scope and runs the structural pre-pass, then gives
    the reviewer only the target, requirements or PR intent, exact diff boundary,
    applicable project rules, verification evidence, structural evidence, and
-   clean-code guidance built as described in **Mandatory Clean-Code
-   Assessment**.
+   clean-code guidance or the changed-language inventory and installed-skill
+   catalog described in **Mandatory Clean-Code Assessment**.
    Keep the author's reasoning, conclusions, and suspected findings in the
    controller context so they cannot bias the independent review.
 4. Resolve model and reasoning-effort controls independently. An explicit user
@@ -137,9 +149,10 @@ Perform a deep review:
 - Include unchanged callers or consumers when needed to verify a changed
   contract. For dynamic dispatch, name the runtime mechanism and what cannot be
   proven statically.
-- Perform the mandatory dead-code and cleanup assessment: trace reachability,
-  verify removals and orphaned consumers, and report retained candidates with
-  reasons. Review-only mode reports required cleanup without editing files.
+- Discover and apply required `wnz-dead-code` directly in audit mode.
+  Independently verify its evidence contract against the scoped source/diff,
+  including removals and consumers. Missing dependency or incomplete evidence
+  means Incomplete. Remain read-only, including when applying language skills.
 - Perform the mandatory clean-code assessment of the changed code in each
   language, following the clean-code guidance block: load and apply the named
   `wnz-clean-code-*` skill for a language when the block names one, otherwise
@@ -301,7 +314,21 @@ Before analyzing, the agent performing the analysis (the reviewer leaf, or the
 controller in an inline review) reads
 [references/deep-analysis.md](references/deep-analysis.md) in full. It holds the
 review pillars, the Deep Cross-File Impact Analysis procedure, and the
-Mandatory Dead-Code And Cleanup Assessment that every proper review requires.
+mandatory `wnz-dead-code` integration that every proper review requires.
+
+#### Mandatory Dead-Code Assessment
+
+Before analysis, resolve required `wnz-dead-code`; if missing, report `Incomplete`
+and stop affected review rather than approving or substituting a checklist.
+The reviewer leaf (or inline reviewer) applies it directly in **audit** mode.
+Independently trace the source and final diff even if an implementer supplied a
+report. Include its evidence contract in trace coverage; incomplete assessment
+makes the review `Incomplete`. Confirmed obsolete code introduced or made
+obsolete by the change requires cleanup before approval: Medium unless impact
+warrants High. Unrelated pre-existing candidates do not expand review scope.
+Only an authorized fix loop uses cleanup mode, followed by fresh checks and
+independent full-scope audit. Loading this or a language skill never authorizes
+edits or recursively dispatches another review.
 
 #### Mandatory Clean-Code Assessment
 
@@ -318,10 +345,15 @@ deeper, language-specific judgment than a generic checklist:
 
 When the matching skill is not installed, or the language has no matching skill,
 apply the bundled [`references/clean-code-checklist.md`](references/clean-code-checklist.md)
-instead and say so; the review stays complete. For a delegated review, the
-controller detects the changed languages and installed skills and fills the
-clean-code guidance block with the skill name per language, or with the
-checklist text.
+instead and say so; the review stays complete if required dead-code assessment
+can be completed. A delegated reviewer may receive either a prepared clean-code
+guidance block or the changed languages and installed-skill catalog from an
+outer controller such as `wnz-phase-executor`. With catalog inputs, the leaf
+discovers and selects the matching skill or bundled checklist itself, directly
+without further delegation. When a controller uses the example prompt's
+guidance block, that controller fills it with the selected skill per language
+or checklist text. Do not require an outer controller to duplicate this
+selection procedure merely to dispatch a leaf directly.
 
 Keep the assessment scoped to changed code and the callers it affects. Project
 rules and established local patterns take precedence over generic clean-code
