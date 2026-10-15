@@ -33,110 +33,52 @@ Before editing code:
    host as it defines, and resolve the model and effort for each role. Record
    selections, overrides, and host limitations.
 
-## Engineering Quality Constraints
+## Required skills
 
-Every plan and implementation must apply the DRY, KISS, SOLID, and Clean Code
-decision rules in
-[`references/engineering-quality.md`](references/engineering-quality.md). Read
-it before writing, revising, or self-reviewing a plan and before each task's
-controller check and review triage.
+- `wnz-implementation-planner`: owns plan authoring, template and self-review before plan review and final plan conformance checks.
+- `wnz-plan-reviewer`: owns the read-only independent design verdict at each plan gate.
+- `wnz-task-implementer`: owns bounded implementation/fixes and their status/report contract.
+- `wnz-code-reviewer`: owns implemented task and aggregate review, including clean-code assessment.
+- `wnz-dead-code`: owns mandatory audit/cleanup evidence for plan steps and independent code-review audits.
 
-## Dead Code Detection And Cleanup
+Resolve these by name through the host's installed-skill discovery before the
+affected work. Obtain missing skills from their matching directory in
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills)
+using the host's skill installer or manual package installation. Do not use
+sibling filesystem paths or assume a local installation root. If a required
+skill is missing, report it and stop the affected work; do not substitute a
+local copy of its algorithm.
 
-Every plan step must include a scoped dead-code check and cleanup before it is
-complete. This prevents a replacement from leaving its predecessor, exports,
-or tests behind even when the new behavior passes. Apply the check to the
-step's changed paths and affected callers; reuse earlier evidence when nothing
-relevant changed rather than rescanning the whole repository at every step.
+## Plan artifact and worker boundaries
 
-Trace entrypoints, call sites, exports, configuration, dynamic registration,
-framework hooks, and supported external APIs before classifying a candidate.
-Zero direct callers, test-only references, or a scanner warning are leads, not
-proof. Remove confirmed unused code, obsolete wrappers, unreachable branches,
-and orphaned imports/exports/tests/docs within the task's ownership. Preserve
-supported behavior tests; remove tests whose only purpose is retaining obsolete
-code. Record uncertain candidates and the concrete reason they remain.
+Use `wnz-implementation-planner` for the written plan and semantic revisions.
+Save it in the user/repository-defined location, otherwise present it in chat.
+The planner owns its template, engineering decisions, self-review and optional
+graph evidence; do not reproduce its algorithms here. It cannot independently
+approve or implement its own plan. Commits require existing user authorization.
 
-Each step records its checked scope, reachability evidence, and cleanup result
-(or a specific no-code-impact reason). Include anticipated removals and their
-consumer updates in the plan's file ownership and verification. A step cannot
-close with confirmed dead code in scope; newly discovered cleanup outside its
-ownership goes to the controller for scope resolution. Cleanup does not itself
-authorize API breaks or unrelated repository-wide deletions. Run affected
-checks after the final cleanup, and have the independent reviewer verify the
-removals and remaining references.
+Create a durable progress ledger before self-review or independent review,
+using an approved ignored location or a temporary path outside the repository.
+Initialize the gate `PENDING`. Keep reviewer identities, cycles, findings and
+corrections in the ledger rather than the semantic review artifact. Bind
+approval to the latest semantic plan revision; changes to requirements,
+architecture, tasks, topology, interfaces or verification invalidate approval.
+Audit-only ledger changes do not change the semantic revision.
 
-## Clean-Code Review
+## Dead-code evidence and clean-code review
 
-Every task review and the final aggregate review include a clean-code
-assessment of the changed code. Passing tests and linters show the code works
-today; this assessment catches drift-prone duplication, misleading contracts,
-and tangled structure while each task's author context is still fresh and the
-fix is cheap. The reviewer applies the matching language skill when it is
-installed:
+Require the planner and implementer to apply `wnz-dead-code` and return its
+per-step evidence contract. The controller checks that evidence is complete;
+it does not copy the reachability algorithm. Missing evidence, unresolved
+confirmed leftovers or unavailable required skills prevent step completion.
+Require the independent code reviewer to repeat the audit read-only and verify
+removals/consumer updates against source, not accept the implementer report.
 
-| Changed language | Skill |
-| --- | --- |
-| Python | `wnz-clean-code-py` |
-| JavaScript, TypeScript, React | `wnz-clean-code-js` |
-| Rust | `wnz-clean-code-rust` |
-
-When the matching skill is not installed, or no skill covers the language, the
-reviewer applies the bundled
-[`references/clean-code-checklist.md`](references/clean-code-checklist.md) and
-says so. The controller detects the changed languages and installed skills and
-puts that guidance in every task and final review package.
-
-Clean-code findings feed the quality verdict. A finding that creates a concrete
-risk of future defects, such as a duplicated source of truth that can drift, is
-Medium and goes through the normal fix-and-re-review loop. Readability or
-structure improvements without that risk, including style items such as a
-boolean flag, a magic value, or a naming choice with no shown defect path, are
-Low or Nit and are recorded as residuals. When a reviewer rates a clean-code
-finding Medium without showing a defect path, the controller records it as a
-residual instead of looping, and notes the downgrade and reason in the ledger.
-Project rules win over generic advice, and linter output is not repeated. The
-reviewer records how many candidates it considered and dismissed; an assessment
-that could not cover part of the changed code makes the review incomplete, not
-clean. A task with no source-code changes records the assessment as not
-applicable.
-
-## Optional Repository Graph Evidence
-
-When a repository knowledge graph, such as Graphify, is available and could
-reduce uncertainty about cross-module dependencies, blast radius, architectural
-hubs, task ordering, or overlapping pull requests, read
-[`references/repository-graph-evidence.md`](references/repository-graph-evidence.md)
-before relying on its results. Continue normally when no graph tool or current
-graph is available.
-
-## Plan Artifact
-
-Create a written plan before implementation. Save it when the repository or
-user defines a plan location; otherwise present it in the conversation. If the
-plan itself is stored in a governed documentation corpus, follow that corpus's
-frontmatter, filename, placement, index, and linking rules.
-
-After writing the plan, create the durable progress ledger described under
-Subagent Execution Control before self-review or independent review. Initialize
-the plan-review status as `PENDING`; store reviewer identities, iterations,
-findings, corrections, clarifications, and the final verdict in the ledger, not
-in the semantic plan sent to reviewers. Audit-only ledger updates do not change
-the plan revision. Any change to requirements, architecture, tasks, topology,
-interfaces, or verification does and requires a fresh review.
-
-Before writing or revising a plan, read
-[`references/implementation-plan-template.md`](references/implementation-plan-template.md)
-in full. It holds the scope and structure analysis that precedes tasks, the
-rules for populating the plan, the template that is the plan's output contract,
-and the plan self-review checklist. The template is the single source of truth
-for plan structure. Do not reproduce or maintain a second template in this
-file. Before implementation or handoff, run that self-review checklist and fix
-every gap it finds.
-
-Include atomic commits only when the user authorized commits and the
-repository workflow permits them; use the repository's commit convention and
-do not prescribe commits that would split a required test/implementation pair.
+`wnz-code-reviewer` owns changed-language skill discovery and its bundled
+clean-code fallback. Require its assessment in both task and aggregate quality
+verdicts, including per-language skill/checklist and considered/dismissed counts,
+or a specific not-applicable result. Apply its severity calibration during
+triage; style-only findings without a demonstrated defect path remain residuals.
 
 ## Independent Adversarial Plan Review Gate
 
@@ -144,10 +86,10 @@ After self-review and before requesting parallel permission or dispatching any
 implementer, follow the complete
 [`references/independent-plan-review.md`](references/independent-plan-review.md)
 gate. Read that reference in full every time this skill produces or revises a
-plan. A fresh design reviewer applies its contract directly; reserve
+plan. A fresh design reviewer uses required `wnz-plan-reviewer` directly; reserve
 `wnz-code-reviewer` for implemented task and aggregate changes. The reference
 defines reviewer independence, the unbiased review package, the
-design-altitude review scope, verdicts, automatic correction and re-review,
+worker routing, automatic correction and re-review,
 annotation triage, clarification handling, and ledger fields.
 
 Each review cycle is capped at two independent design reviews; user annotations,
@@ -220,12 +162,9 @@ execution and review.
 
 ### Implementer status contract
 
-Each fresh implementer reports one status:
-
-- `DONE`: implementation, focused verification, and self-review completed.
-- `DONE_WITH_CONCERNS`: completed, with explicit correctness or scope concerns.
-- `NEEDS_CONTEXT`: missing information prevents a safe implementation.
-- `BLOCKED`: the plan, environment, or task size prevents completion.
+Read and enforce the status/report contract in discovered `wnz-task-implementer`.
+Accept `DONE` only with its required evidence; `DONE_WITH_CONCERNS` cannot hide
+missing requirements or checks. `NEEDS_CONTEXT` and `BLOCKED` need resolution.
 
 Handle statuses deliberately: provide missing context and redispatch;
 consider a stronger model for a reasoning mismatch only when permitted by the
@@ -277,12 +216,12 @@ Before changing code for the task:
 ### 2. Implement The Task
 
 Dispatch the task to a fresh implementer subagent as the task-dispatch
-reference defines, under the status contract above.
+reference defines, using required `wnz-task-implementer` and its status/report contract.
 
 ### 3. Verify Locally
 
 Run focused verification for the changed behavior after the last code edit,
-using the task-dispatch verification mix. Run live provider or integration
+using the required `wnz-task-implementer` verification contract. Run live provider or integration
 checks only when explicitly requested or already required by the task. Do not
 claim the task is complete until fresh verification output exists after
 the latest edit.
@@ -355,13 +294,13 @@ task. Never rely only on conversation todos for completion state.
 After the last task:
 
 1. Re-read the original plan and acceptance criteria.
-2. Re-run the plan self-review checklist from
-   [`references/implementation-plan-template.md`](references/implementation-plan-template.md).
+2. Ask `wnz-implementation-planner` to rerun its plan self-review against final
+   requirement-to-evidence coverage. A semantic revision returns to the plan gate.
 3. Inspect the final code paths end to end.
 4. Run the broadest appropriate local verification gate for the owning subtree.
 5. Build an aggregate review package from the branch merge base through the
    final state and dispatch a fresh, capable independent reviewer with
-   `INDEPENDENT_REVIEWER_LEAF`, using `wnz-code-reviewer` when available, over
+   `INDEPENDENT_REVIEWER_LEAF`, using required `wnz-code-reviewer`, over
    requirements compliance and code quality across the whole change. This final
    review is required for multi-task work, not optional based on module count.
 6. If the final review finds issues, dispatch one fix subagent with the complete

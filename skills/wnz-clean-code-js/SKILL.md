@@ -24,6 +24,33 @@ This skill was previously published as `clean-code-js`. Prefer
 `wnz-clean-code-js` in prompts and installed skill directories. Remove the
 legacy `clean-code-js` copy after upgrading to avoid ambiguous routing.
 
+## Required skills
+
+- `wnz-dead-code`: required reachability audit for source refactors/reviews and cleanup within authorized edits.
+
+Resolve these by name through the host's installed-skill discovery before the
+affected work. Obtain missing skills from their matching directory in
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills)
+using the host's skill installer or manual package installation. Do not use
+sibling filesystem paths or assume a local installation root. If a required
+skill is missing, report it and stop the affected work; do not substitute a
+local copy of its algorithm.
+
+## Dead-code mode and review boundary
+
+Before a source refactor or source review, apply `wnz-dead-code` directly in the
+same agent context. Review/audit requests use **audit** mode and report findings
+without editing. Authorized refactors run audit and then **cleanup** for
+confirmed leftovers within scope, followed by fresh checks; attach that skill's
+evidence contract. Missing required dependency or incomplete reachability
+evidence blocks completion; in a code review return `Incomplete`.
+
+When called by `wnz-code-reviewer`, remain its read-only analysis step. Do not
+invoke code review, a planner, or another agent. A sufficiently current audit
+already performed by the same reviewer on the same scope may be reused with
+its evidence reference; do not recursively repeat it. Standalone refactoring
+still performs its own audit and authorized cleanup.
+
 ## Operating Rules
 
 Follow the user request, repository instructions, and established local

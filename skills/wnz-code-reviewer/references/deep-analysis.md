@@ -63,28 +63,11 @@ whole-repo review.
 
 ## Mandatory Dead-Code And Cleanup Assessment
 
-Inspect changed code and affected callers for unused helpers, obsolete wrappers,
-unreachable branches, redundant checks already guaranteed by earlier control
-flow, and orphaned imports, exports, tests, configuration, or documentation.
-Trace deletions as well as additions: verify replacement callers and check that
-removing a symbol did not strand consumers. Use available static tools as leads,
-then validate each candidate against source and contracts.
+Apply required `wnz-dead-code` through host discovery as `SKILL.md` directs.
+That package is the single owner of the reachability procedure, audit/cleanup
+modes and evidence contract. Every independent review repeats its audit against
+source and the complete diff; never accept an author's report as proof.
+Missing dependency or incomplete evidence yields `Incomplete`.
 
-Before declaring code dead, check entrypoints, public API consumers, dynamic
-registries, framework hooks, reflection, and configuration-driven use. No direct
-callers or only test references is insufficient evidence: tests may protect a
-supported API. Conversely, an export and a test that merely preserve an obsolete
-internal wrapper do not justify keeping it after its role has been replaced.
-Preserve behavior tests when removing implementation-only tests.
-
-Record checked paths, reachability evidence, confirmed removals or required
-cleanup, and reasons for retaining uncertain candidates in the review's trace
-coverage. If this assessment cannot be completed, report `Incomplete`, not
-`Clean`. Confirmed dead code introduced or made obsolete by the change requires
-cleanup before approval; treat that as a Medium requirement gap unless its
-impact warrants High. Pre-existing unrelated candidates do not expand the review
-scope. When the user requested broader cleanup, apply the same evidence standard
-throughout that authorized scope.
-
-Review-only requests report the cleanup and remain read-only; fix-loop cleanup
-rules live in [`review-loops.md`](review-loops.md) section B, step 3.
+Review-only requests remain read-only. Authorized fix-loop mode selection is
+in [review-loops.md](review-loops.md), section B, step 3.
