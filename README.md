@@ -110,6 +110,10 @@ npx skills add wnz99/llm-dev-skills -g
 
 To refresh a single skill, use its individual installation command from the section above.
 
+## Standard development flow and Herdr dashboard
+
+[Flow Status](plugins/flow-status/README.md) is one read-only Herdr plugin for the standard 13-step `FLOW.json` workflow in any project. Its [reusable setup prompt](plugins/flow-status/setup/PROMPT.md) and [procedure](plugins/flow-status/setup/PROCEDURE.md) configure one private workflow shared by Claude Code and Codex, with client loader templates and an approval-free flow example. The bundle discovers the skills above through the host rather than copying their algorithms.
+
 ## Contributing
 
 Open pull requests against `main` for all updates. Use short-lived feature

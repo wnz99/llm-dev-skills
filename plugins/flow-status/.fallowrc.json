@@ -1,0 +1,7 @@
+{
+  "duplicates": {
+    "threshold": 1
+  },
+  "entry": ["tests/**/*.test.ts", "eslint.config.mjs", "src/main.ts", "src/checkFlow.ts"],
+  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "**/.venv/**", "**/.nx/**"]
+}

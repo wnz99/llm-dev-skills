@@ -1,0 +1,9 @@
+{
+  "workspaces": {
+    ".": {
+      "entry": ["tests/**/*.test.ts", "eslint.config.mjs", "src/main.ts", "src/checkFlow.ts"],
+      "project": ["src/**/*.ts", "tests/**/*.ts", "*.mjs", "tools/quality/*.mjs"]
+    }
+  },
+  "ignoreBinaries": ["uv"]
+}

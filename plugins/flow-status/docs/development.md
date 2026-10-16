@@ -1,0 +1,19 @@
+---
+type: Reference
+title: Flow plugin development
+description: Runtime ownership, quality commands and extraction provenance for the shared flow plugin.
+---
+
+# Flow plugin development
+
+This component runs directly from Bun source and is private. `herdr-plugin.toml` declares the dynamic runtime entrypoint; `launch.sh` preserves the target pane's cwd. `src/main.ts` launches the terminal dashboard and `src/checkFlow.ts` validates drafts read-only. `src/flowCore.ts` owns schema 1 and the 13 steps. Setup assets live under `setup/` and are part of the same versioned bundle.
+
+Run `bun run check` for formatting, Knip, Fallow, strict TypeScript, ESLint and Bun tests. `bun run format` explicitly formats component-owned files. `bun run build` is a source-component compile check rather than a distribution bundle; Herdr launches source. Tests cover schema rejection, terminal-control injection, linked-worktree discovery, network/process cancellation, stale live results, raw-mode cleanup and CLI diagnostics. Fixture validation covers the bundled setup example.
+
+The working TypeScript quality baseline comes from `wnz99/repo-starters/profiles/typescript`; component tool pins live in `package.json` and `bun.lock`. Git hooks, repository CI, skill installation and release decisions remain owned by the existing parent repository. No root hook or cloud configuration is introduced by this extraction. Starter tooling is CC0-1.0; parent-repository licensing applies to this component.
+
+Runtime source was extracted from the cc-monorepo `.agents/feature-flow/status` implementation, compared against ma-ai `tools/herdr/flow-status`. Both use the same schema-1 13-step format. The newer Zod validation is retained. Project-specific plugin IDs and the Linear environment variable were replaced with `herdr.flow-status` and `LINEAR_API_KEY`. Terminal rendering and runtime lifecycle are separated to satisfy the reused quality gates while retaining behavior tests.
+
+The old repository-local source files still have their own tests/documentation consumers and are not removed by this machine-level plugin migration. Herdr's old per-project registrations and VM snapshot installations are retired only after the shared plugin passes smoke verification. Historic repo workflow loaders need a separate scoped migration; the bundled setup procedure performs that safely when invoked for each repository. This bundle does not rewrite old approvals, drafts or GSD records.
+
+Git worktree inventory owns primary-checkout discovery. Separate metadata is not treated as a project directory. A primary checkout with separate metadata falls back to its actual top-level directory. If a linked worktree has separate metadata and Git cannot identify the primary checkout, status reports unavailable rather than reading another checkout's records.

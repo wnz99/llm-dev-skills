@@ -1,0 +1,12 @@
+id = "herdr.flow-status"
+name = "Flow Status"
+version = "0.1.0"
+min_herdr_version = "0.9.1"
+description = "Read shared ticket workflow, Linear state and PR checks"
+platforms = ["macos", "linux"]
+
+[[panes]]
+id = "flow"
+title = "Flow status"
+placement = "split"
+command = ["sh", "-c", "exec sh \"$HERDR_PLUGIN_ROOT/launch.sh\""]
