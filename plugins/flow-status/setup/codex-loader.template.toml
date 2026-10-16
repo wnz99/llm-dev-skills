@@ -1,0 +1,2 @@
+# Merge this root-level setting into the existing config; preserve existing instructions.
+developer_instructions = "Before responding to repository tasks, read {{WORKFLOW_FILE}} and follow its personal development flow. This is a default preference; explicit user instructions and repository policies take precedence."

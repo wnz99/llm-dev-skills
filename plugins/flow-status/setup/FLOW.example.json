@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "ticket": "TASK-1",
+  "linear_id": null,
+  "title": "Example task; replace before use",
+  "status": "active",
+  "step": 1,
+  "updated_at": "2026-10-16T00:00:00Z",
+  "branches": [],
+  "prs": [],
+  "gsd_quick": null,
+  "plan_revision": null,
+  "steps": {},
+  "approvals": {
+    "plan": null,
+    "content": null
+  },
+  "simplicity": [],
+  "reviews": [],
+  "tasks": {},
+  "baseline": null,
+  "next": "Confirm scope and prepare the plan after the user requests formal planning"
+}
