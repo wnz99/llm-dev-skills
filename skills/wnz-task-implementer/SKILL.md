@@ -42,6 +42,12 @@ Identify missing context before dependent edits; do not use accumulated session
 history as a substitute for an explicit interface. In standalone work infer
 routine details from repository evidence, but request material product decisions.
 
+Carry relevant design rationale with the brief: workload, accepted tradeoffs,
+non-goals and rejected heavier alternatives. On resume, recover these from the
+brief and authoritative plan rather than only a completion summary. Missing
+rationale alone does not block routine work; recover available evidence and
+report only decisions that materially affect the design.
+
 ## Execute the task
 
 1. Re-read task requirements and relevant source/tests before editing. Confirm
@@ -51,6 +57,14 @@ routine details from repository evidence, but request material product decisions
    practical. Use existing patterns and the smallest design that satisfies
    production requirements: keep each invariant owned once, cohesive
    responsibilities, explicit contracts/errors and no speculative layers.
+   Trace the invariant and its current owner before adding a mechanism. Prefer
+   existing behavior, then an owning helper or native facility, before custom
+   state, protocols or recovery. A removed limit is not a constant-memory promise;
+   an awaited operation is not a durable-job requirement. Check actual workload
+   and supported failure behavior. Preserve trust boundaries, concurrency and
+   data safety. If the brief mandates machinery without a demonstrated need,
+   report the conflict and simpler alternative to the controller; do not silently
+   redesign an approved interface or add another approval ceremony.
 3. Apply `wnz-dead-code` directly in audit mode as each step changes reachability,
    then cleanup mode within existing task edit authorization. Attach its
    per-step evidence contract. An unresolved out-of-scope removal or unavailable

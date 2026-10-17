@@ -74,6 +74,13 @@ approval to the latest semantic plan revision; changes to requirements,
 architecture, tasks, topology, interfaces or verification invalidate approval.
 Audit-only ledger changes do not change the semantic revision.
 
+Keep a short design rationale in the existing plan or ledger: required outcomes,
+workload evidence and assumptions, accepted operational tradeoffs, explicit
+non-goals, and rejected heavier alternatives with their reasons. Link the authoritative decisions rather
+than duplicating a new document. Task completion records alone cannot preserve
+why the design is deliberately small. Distinguish proposed tradeoffs from
+recorded decisions; absence of a requirement does not establish user acceptance.
+
 ## Dead-code evidence and clean-code review
 
 Require the planner and implementer to apply `wnz-dead-code` and return its
@@ -145,7 +152,12 @@ Before Task 1:
 4. Confirm the durable progress ledger created before plan review remains in
    the repository-approved ignored scratch location. Record every task, status,
    baseline, commits, verification, review verdicts, and residual findings.
-   After context compaction or resume, trust the ledger and Git history.
+   After context compaction or resume, recover status from the ledger and Git
+   history, then reread the original requirements and current plan's design
+   rationale before dispatch. Preserve accepted tradeoffs and rejected
+   alternatives in the next handoff. A summary, passing tests or prior approval
+   cannot turn an implementation assumption into a user requirement. Resolve
+   conflicting revisions from recorded authority; do not replay completed tasks.
    If no approved ignored repository location exists, use a host-local temporary
    path outside the repository and record that path in the session. Do not edit
    `.gitignore` solely to create a ledger location without authorization.
@@ -221,6 +233,13 @@ Before changing code for the task:
 - Re-check the relevant code path to confirm the task still makes sense.
 - If discoveries invalidate the plan, update the plan before editing and explain
   why.
+- Compare the task's proposed machinery with the design rationale and the system
+  built so far. Prefer the existing owner or native facility that preserves the
+  required invariant. Removing an arbitrary capacity ceiling does not itself
+  require constant memory; reliable completion does not itself require durable
+  jobs, online switching or automatic recovery. Require workload or failure-path
+  evidence before introducing those properties. Preserve security, concurrency,
+  data integrity and supported compatibility; simpler code cannot waive them.
 
 ### 2. Implement The Task
 
@@ -243,6 +262,11 @@ Before delegating review:
   task.
 - Inspect the diff and the implemented code path.
 - Confirm every promised behavior for the task is present in code.
+- Check cumulative complexity across affected tasks, not only this task's diff:
+  new state, protocols, caches, recovery and operator steps need a requirement or
+  demonstrated benefit over reuse/native behavior. Local clean reviews do not
+  establish that the whole design remains proportionate. Use this existing
+  check; do not add a scheduled review ceremony or numeric complexity budget.
 - Confirm tests exercise the behavior, not just implementation details.
 - Verify each step recorded its dead-code check, removed confirmed leftovers,
   and updated affected exports, tests, and documentation.
@@ -262,9 +286,18 @@ contract.
 
 ### 6. Fix And Loop
 
-If either verdict fails, dispatch one bounded fix subagent with the complete
-task finding set, task brief, current report, and covering test files. For every
-substantiated requirement, High, or Medium finding whose correction is small
+Before dispatching fixes, validate each finding's violated requirement and
+failure path separately from its suggested mechanism. A reviewer recommendation
+is not a new requirement. Check whether reuse, deletion or a native operation
+fixes the same gap; record unsupported findings as dismissed with evidence.
+If the approved plan itself demands unnecessary machinery, return the semantic
+correction to the existing plan gate rather than silently implementing a
+different design. Ask the user only for material unresolved choices under the
+existing workflow; do not add blanket approvals for routine simplifications.
+
+If either verdict still fails, dispatch one bounded fix subagent with the
+validated task finding set, task brief, current report, and covering test files.
+For every substantiated requirement, High, or Medium finding whose correction is small
 and stays within the phase's scope and implementation radius:
 
 1. Fix the issue in the current task.
@@ -378,3 +411,5 @@ Do not mark the task complete while blocked.
   [`references/clean-code-evals.md`](references/clean-code-evals.md).
 - When changing annotation handling or the review-cycle boundary, read and run
   [`references/annotation-review-evals.md`](references/annotation-review-evals.md).
+- When changing design retention, complexity checks or finding triage, run
+  [evals/evals.json](evals/evals.json), including resumed and safety cases.

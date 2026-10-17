@@ -12,6 +12,11 @@ global constraints that apply verbatim, earlier-task interfaces it consumes,
 exact acceptance criteria, and report contract. Do not send the whole plan or
 accumulated session history to a fresh subagent.
 
+Include the relevant design rationale: workload, accepted operational tradeoffs,
+non-goals and rejected heavier alternatives with reasons. These constrain design
+choices, not which defects a reviewer may report. If a task needs a property the
+plan never required, surface that mismatch instead of inferring new requirements.
+
 ## Implementer dispatch
 
 Give each fresh implementer:
@@ -56,6 +61,9 @@ After implementation, assemble a task-scoped review package containing:
 - The complete diff from the recorded task baseline to the current state,
   including every task commit.
 - Relevant unchanged contracts that the diff depends on.
+- The affected cross-task flow and its design rationale, including accepted
+  failure behavior and operational tradeoffs. Keep the review target task-scoped
+  while supplying enough adjacent context to assess cumulative machinery.
 - Current repository-graph paths or impact evidence that materially informed
   the task, including provenance labels. Omit this item when no graph evidence
   was used.

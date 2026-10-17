@@ -105,6 +105,8 @@ installability gates for contributors and coding agents.
 
 See [executor extraction validation](docs/skill-split-validation.md) for the
 recorded package checks, behavior evaluations and their limits.
+See [executor complexity drift validation](docs/executor-complexity-validation.md)
+for the long-plan/context-restoration investigation and focused behavior checks.
 
 When updating, reinstalling, downloading, or replacing an installed skill, compare it with the matching `skills/<name>/` directory here and use the newest compatible upstream version. Preserve intentional local adaptations and review divergences before overwriting them.
 

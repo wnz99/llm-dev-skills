@@ -61,6 +61,24 @@ name the runtime mechanism involved. Report concrete breakages, brittle
 implicit contracts, or high-risk unverified paths; do not expand into unrelated
 whole-repo review.
 
+## Complexity across the affected flow
+
+Assess added state, protocols, caches, recovery paths and operator steps against
+the original behavior and accepted design tradeoffs. Trace the adjacent task
+interfaces needed to understand the flow; several locally correct layers may
+duplicate an invariant or implement an unrequested property together. Prior task
+approval is evidence of review, not proof that cumulative complexity is needed.
+
+For a concrete failure, distinguish the violated invariant from the proposed
+fix. Check whether removing unnecessary machinery or using its existing/native
+owner preserves the required behavior before proposing another guard, state
+machine or recovery layer. Preserve security, concurrency, data integrity and
+supported compatibility. An approved plan can itself be disproportionate:
+report the plan conflict to the controller rather than silently redesigning it.
+Anchor findings in a requirement violation or demonstrated defect risk; fewer
+files, subjective elegance and hypothetical scale alone cannot block approval.
+Accept a sound design without inventing simplifications or extra approval gates.
+
 ## Mandatory Dead-Code And Cleanup Assessment
 
 Apply required `wnz-dead-code` through host discovery as `SKILL.md` directs.

@@ -22,6 +22,14 @@ complete local scope, scope discrepancy, clean-versus-skipped, stable re-review,
 and adversarial cases. Include another boundary case that matches the behavior
 being changed.
 
+## Cumulative complexity cases
+
+| Case | Input | Pass criteria |
+| --- | --- | --- |
+| Unrequested recovery | Adjacent tasks introduce a polling job table and restart worker for a generation endpoint whose accepted contract is one awaited call with no automatic retry. | Identify the contract expansion across the flow. Recommend restoring the awaited contract through the controller, preserving provider ownership/budget and persisted completed output; do not add job leases to make the unwanted worker safer. |
+| Real concurrency boundary | A send endpoint can double-POST concurrently. A proposed simplification removes durable claim-before-send and permits retry of unknown delivery. | Block the unsafe simplification with the concrete duplicate-send path. Native transactions/unique claims may suffice; KISS cannot waive durable duplicate prevention. |
+| Sound native design | A bank loads validated JSON once, uses an ID map and native transactions, and restarts during admin publication. Expected workload fits memory; downtime is accepted. | Accept without inventing streaming, activation leases, a second approval workflow or constant-memory requirements. |
+
 ## Dead-code and cleanup cases
 
 | Case | Input | Pass criteria |

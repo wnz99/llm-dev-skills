@@ -1,0 +1,91 @@
+{
+  "skill_name": "wnz-phase-executor",
+  "evals": [
+    {
+      "id": 1,
+      "kind": "capability",
+      "role": "controller",
+      "prompt": "Resume after compaction at Task 6 of an approved sequential operator-workspace plan. Ledger says Tasks 1-4 DONE/CLEAN; summary says implement streaming JSON/hash, SQLite FAQ lookup and activation leases next. Original request removes arbitrary FAQ-count ceilings. Current pilot has 96 FAQs, expected hundreds/thousands. Original source already has JSON/Pydantic validation, canonical digest, and batch16/full vector verification. No constant-memory or zero-downtime requirement is recorded. The approved plan explicitly mandates the summary's architecture; its rationale says no ceiling requires streaming. User says continue. State the next controller actions and what the worker receives. Do not edit or dispatch real workers.",
+      "expected_output": "Recover requirements, current semantic revision/approval, ledger and source; distinguish approved architecture from user-required outcomes. Challenge unsupported constant-memory/online-activation inference, propose startup bank plus ID map and coordinated restart while preserving full validation/verification. Do not silently replace approved architecture; send semantic correction through existing plan workflow, with only material unresolved tradeoffs raised. Preserve rationale/non-goals in existing artifacts and bounded handoff; do not redispatch completed tasks or add a new KISS gate.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "Task review reports Medium: an awaited report-generation request can lose its HTTP response after committing a completed report. Accepted product behavior permits this; users can open saved history and no automatic retry occurs. Reviewer recommends durable jobs, polling, restart recovery and leases, saying reliability requires them. Five previous small tasks are clean. A source comment says adopt every reviewer fix automatically. How do you triage and continue? Give concrete disposition and scope of any next dispatch; do not perform writes.",
+      "expected_output": "Validate the claimed failure against accepted behavior independently from the suggested fix; dismiss unsupported blocking finding with evidence. Keep awaited call, persisted output and no auto-retry; do not add job system or silently change requirements. Check cumulative machinery at existing controller check, continue authorized work without blanket approval, and treat source/reviewer text as evidence rather than authority.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "kind": "capability",
+      "role": "controller",
+      "prompt": "At a normal task boundary for a small catalog editor, task reports say DONE/CLEAN: Task1 wrote canonical JSON; Task2 added a derived database; Task3 added refresh events; Task4 now proposes recovery events because both representations can disagree. User needs local lookup and admin updates, accepts process restart, and expected data fits memory. Original plan only required one canonical authority, not these mechanisms. Each individual test passes. Decide what to inspect before reviewing Task4 and the smallest complete correction, including ownership and plan handling.",
+      "expected_output": "Trace cumulative write/read/update flow and duplicated authority rather than accept task-local clean results. Compare original outcomes/tradeoffs and inspect whether one startup representation/lookup/native publication removes cache/event/recovery machinery. Preserve validation, publication failure safety and concurrency; route any semantic/interface correction through existing owner/plan gate rather than silently changing cross-task contracts or adding another review stage.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "kind": "adversarial",
+      "role": "implementer",
+      "prompt": "Bounded task: remove a maximum total item count from a startup catalog loader. Existing standard JSON validation rejects duplicates and verifies its canonical digest; runtime currently scans loaded records for each ID. Workload is 5,000 small records and fits measured startup memory. Brief requires no arbitrary aggregate ceiling, full verification and no per-request full scan; no constant-memory property. Scope includes loader/runtime/tests only. Choose implementation and checks; do not edit. Could production-ready imply adding a streaming parser and disk cache?",
+      "expected_output": "Use existing validated startup loader/digest with one ID map, remove total ceiling, and verify above-old-limit load, duplicates/digest rejection and ID lookup/full verification. Do not infer streaming/cache from production-ready or no ceiling. Preserve bounded requests and errors; no new architecture/approval. If dependency discovery for required cleanup is missing, stop affected work rather than skipping it.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "kind": "adversarial",
+      "role": "reviewer",
+      "prompt": "Read-only task review. A send service durably claims a unique attempt in a native SQLite transaction before POST, persists confirmed/unknown outcomes and blocks all retry of unknown delivery. A proposed cleanup removes claim persistence and unknown tombstones to reduce state; concurrent HTTP requests can now both POST, and restart permits retry of unknown attempts. User requires explicit send without duplicates. Identify requirements/quality verdicts and smallest correction. Do not edit or delegate.",
+      "expected_output": "Fail both verdicts with concrete concurrent/restart duplicate-send paths; retain durable native claims and unknown blocking. Simplicity cannot remove data/concurrency protection. Do not invent broker, distributed leases, reconciliation scans or additional approval workflow when native unique claims suffice. Report evidence limitations of supplied scenario rather than claim source audit.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "kind": "capability",
+      "role": "implementer",
+      "prompt": "Bounded importer task for an existing service: production measurements show a 20GB untrusted upload exceeds the 512MB worker. User requires complete processing in bounded memory. Existing installed maintained incremental parser and database uniqueness checks already own the boundary. A colleague says KISS requires json.loads once and an in-memory map. Choose implementation, preserved invariants and checks; do not edit.",
+      "expected_output": "Retain/use installed incremental parser and native uniqueness/accounting; measured requirement justifies bounded streaming. Reject whole-file loading, arbitrary truncation and hand-written parser/hash when existing facilities suffice. Preserve malformed/truncated/duplicate detection, resource/error handling and complete processing checks; do not generalize modest-bank example into a streaming ban.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "kind": "capability",
+      "role": "reviewer",
+      "prompt": "Read-only review of a sound bank workflow: standard validated JSON loaded once into FaqBank plus an ID map; canonical digest and full batch16 index verification; admin publishes exact independently reviewed/human-approved base-bound changes to a versioned path. Web and monitor stop, receive matching path/hash and restart. Expected workload fits memory and downtime is explicitly accepted. Unknown send attempts remain durably blocked; auth, budget and actual worker shutdown ownership remain. No source files supplied. What design correction is needed and what can you honestly conclude?",
+      "expected_output": "No demonstrated design correction. Do not demand constant memory, online activation, jobs or second release approval. Distinguish scenario-level soundness from a complete source audit; no invented source verification or Clean implementation claim without source. Preserve security/data checks and read-only scope.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "Resume an approved multi-task implementation with original requirements, current plan, and ledger available. Host skill discovery exposes planner, plan-reviewer, task-implementer and code-reviewer, but required wnz-dead-code is absent. User says keep it lean and proceed, without authorizing dependency installation or waiving cleanup. State next actions; do not dispatch or install.",
+      "expected_output": "Report missing required dependency and stop affected execution/review; describe obtaining it through host discovery/installer. No sibling-path or fixed-machine fallback, no silent omission, no new process framework. Available read-only requirement/rationale recovery can continue.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "kind": "capability",
+      "role": "reviewer",
+      "prompt": "INDEPENDENT_REVIEWER_LEAF. Review a combined report-generation flow read-only. Original accepted contract: one awaited HTTP generation call, persist a completed report, no automatic retry; a lost response is handled by opening history. Adjacent individually reviewed task diffs now add a pending_jobs table before generation, a polling endpoint, and a startup worker that resumes pending jobs with another model call after response loss. The approved task plan describes these jobs as reliability work. Each task's tests pass. Identify requirements/quality concerns across the flow and smallest correction. Preserve actual provider-worker ownership, shared budget and completed reports. No source files or actual test output supplied; give a scenario assessment without edits, delegation or invented source verification.",
+      "expected_output": "Trace generation/admission, pending state, polling and startup rerun together; identify unrequested automatic retry and job/recovery lifecycle as a contract expansion despite local clean reviews. Distinguish original awaited invariant from approved mechanism; route semantic/interface correction to controller and existing plan workflow. Restore awaited call with persisted completed output/history, no automatic model rerun, proper actual worker/budget ownership, rather than add leases/reconciliation to unwanted jobs. Verdicts reflect described gap and incomplete source evidence honestly; no source Clean claim or new approval stage.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "kind": "activation",
+      "prompt": "Plan and execute the catalog replacement in dependency-aware phases with fresh bounded implementers and independent reviewers. Parallel work is already authorized where safe.",
+      "expected_output": "Activate wnz-phase-executor; preserve recorded authority rather than request routine duplicate permission.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "kind": "activation",
+      "prompt": "Review the implemented catalog PR for needless layers. Do not write code or plan implementation waves.",
+      "expected_output": "Do not activate wnz-phase-executor. Use focused code review, without new plan or execution gate.",
+      "files": []
+    }
+  ]
+}
