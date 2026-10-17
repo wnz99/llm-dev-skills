@@ -68,7 +68,16 @@ Report unresolved product or authorization choices rather than guessing.
    approval. On handoff, identify the artifact/revision without claiming execution
    readiness under a controller's approval gate.
 
-## Optional adjunct
+## Optional adjuncts
+
+Before drawing or revising applicable diagrams in a plan file, discover
+`wnz-ascii-diagrams` by name through the host and apply it when available.
+It supplies layout and verification guidance; this planner's template still
+owns the plan structure and when diagrams help. Obtain it from
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-ascii-diagrams).
+If absent, continue with the template's built-in ASCII guidance, checking
+width, alignment and meaning manually. Do not block planning, install the
+optional skill automatically, or add irrelevant diagrams merely to use it.
 
 Discover `wnz-plan-simplicity-review` by name when a separate complexity challenge
 would help. If absent, use the engineering-quality self-review above. This

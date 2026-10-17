@@ -57,6 +57,15 @@ The planner owns its template, engineering decisions, self-review and optional
 graph evidence; do not reproduce its algorithms here. It cannot independently
 approve or implement its own plan. Commits require existing user authorization.
 
+For diagrams in plan files, have the planner discover optional
+`wnz-ascii-diagrams` through the host and apply it when available, including
+when revising a plan. Pass diagram constraints and discovered availability in
+the planner brief. Obtain the optional package from its matching directory in
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-ascii-diagrams).
+If absent, continue with the planner's built-in ASCII diagram guidance; do not
+block planning or install it automatically. Diagram sections remain conditional
+on helping explain the design.
+
 Create a durable progress ledger before self-review or independent review,
 using an approved ignored location or a temporary path outside the repository.
 Initialize the gate `PENDING`. Keep reviewer identities, cycles, findings and
@@ -352,6 +361,8 @@ Do not mark the task complete while blocked.
 
 ## Maintaining This Skill
 
+- When changing optional plan-diagram integration, run
+  [`references/ascii-diagram-evals.md`](references/ascii-diagram-evals.md).
 - When changing plan/code review routing or reviewer delegation, run
   [`references/review-routing-evals.md`](references/review-routing-evals.md).
 - When asked to update, reinstall, download, or replace this skill, or when a

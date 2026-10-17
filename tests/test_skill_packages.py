@@ -34,7 +34,7 @@ class SkillPackageTests(unittest.TestCase):
 
     def test_installed_packages_resolve_local_resources(self):
         # Missing moved resources break installed behavior even if repo siblings exist.
-        for name in WORKERS + CONSUMERS:
+        for name in WORKERS + CONSUMERS + ("wnz-ascii-diagrams",):
             package = SKILLS / name
             for document in package.rglob("*.md"):
                 with self.subTest(document=str(document.relative_to(SKILLS))):
