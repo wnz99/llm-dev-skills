@@ -89,6 +89,10 @@ These skills are designed to complement each other:
 5. **wnz-phase-executor** owns authorization, annotation cycles, scheduling, integration and convergence. **wnz-implementation-planner** owns plan structure and self-review; **wnz-plan-reviewer** owns the independent design verdict; **wnz-task-implementer** owns bounded execution and task reports. **wnz-code-reviewer** assesses implemented task and aggregate changes. **wnz-dead-code** supplies the shared reachability and cleanup evidence contract.
 6. **wnz-doc-write-expert** writes new technical and non-technical documents from authoritative evidence and keeps existing documentation honest. It establishes the reader and intended action, follows local corpus rules, inventories and verifies checkable claims, gates review edits behind a findings report, and cold-reads the result before completion.
 
+**wnz-cross-review-pr** supports any combination of Claude, Codex, and OpenCode as Reviewer A / Reviewer B via `--from` / `--to` flags. The default is `--from claude --to codex`. Running `--from codex --to claude` starts with Codex's independent review, then asks Claude for an independent review before Codex validates Claude's findings.
+
+The cross-model approach helps reduce sycophancy bias and can catch bugs that any single model might miss.
+
 ## Canonical source and updates
 
 This repository is the canonical source for every skill it contains. Each `SKILL.md` links back to its own upstream directory so an installed copy can locate its origin.
@@ -121,34 +125,6 @@ To refresh a single skill, use its individual installation command from the sect
 Open pull requests against `main` for all updates. Use short-lived feature
 branches; this repository does not maintain development or staging branches.
 Before changing a skill, follow [`AGENTS.md`](AGENTS.md), validate its installed package and declared dependencies, and run the relevant behavior evaluations and regression tests.
-
-## Migration from legacy names
-
-The skills now use a `wnz-` prefix to avoid collisions with similarly named
-skills from other packages. `phased-implementation-review-loop` was also
-renamed to `wnz-phase-executor` so review-only requests route to
-`wnz-code-reviewer`.
-
-When upgrading an existing install, remove legacy skill directories after
-installing the new names. Leaving both copies installed can make skill routing
-ambiguous.
-
-| Legacy name | Current name |
-|-------------|--------------|
-| `llm-assist` | `wnz-llm-assist` |
-| `cross-review-pr` | `wnz-cross-review-pr` |
-| `code-reviewer` | `wnz-code-reviewer` |
-| `clean-code-js` | `wnz-clean-code-js` |
-| `clean-code-py` | `wnz-clean-code-py` |
-| `clean-code-rust` | `wnz-clean-code-rust` |
-| `doc-write-expert` | `wnz-doc-write-expert` |
-| `phased-implementation-review-loop` | `wnz-phase-executor` |
-| `pr-release-notes` | `wnz-pr-release-notes` |
-| `wnz-test-value` | `wnz-test-quality` |
-
-**wnz-cross-review-pr** supports any combination of Claude, Codex, and OpenCode as Reviewer A / Reviewer B via `--from` / `--to` flags. The default is `--from claude --to codex`. Running `--from codex --to claude` starts with Codex's independent review, then asks Claude for an independent review before Codex validates Claude's findings.
-
-The cross-model approach helps reduce sycophancy bias and can catch bugs that any single model might miss.
 
 ## Attribution
 
