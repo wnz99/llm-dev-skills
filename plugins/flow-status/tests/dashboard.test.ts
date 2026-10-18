@@ -65,7 +65,7 @@ test("branch selection, done toggle, arrows and directory preservation on reload
   expect(state.selectedDir).toBe("active");
   expect(renderDashboard(state, 80, 20).join("\n")).not.toContain("> done");
   for (const offline of [false, true]) {
-    const output = renderDashboard({ ...state, offline }, 80, 20).join("\n");
+    const output = renderDashboard({ ...state, offline }, 89, 51).join("\n");
     expect(output).toContain("Linear: not linked");
     expect(output).not.toContain("not refreshed");
     expect(output).not.toContain("credential");
@@ -84,7 +84,17 @@ test("branch selection, done toggle, arrows and directory preservation on reload
   ).toBe("bad");
 });
 
-test("all stored details and missing steps reachable through paging at 40 columns", () => {
+test("summary stays concise and never exposes evidence or history through paging", () => {
+  const ordinary = reloadState(createState(), snapshot([{ dir: "active", flow: flow() }]));
+  for (const [columns, rows] of [
+    [80, 24],
+    [89, 51],
+  ]) {
+    const initial = renderDashboard(ordinary, columns ?? 80, rows ?? 24).join("\n");
+    for (const heading of ["IN PROGRESS", "COMPLETED", "PENDING", "NEXT"])
+      expect(initial).toContain(heading);
+    expect(initial).toContain("1/13 steps recorded done");
+  }
   let state = reloadState(createState(40, 8), snapshot([{ dir: "active", flow: flow() }]));
   const pages: string[] = [];
   for (let i = 0; i < 80; i += 1) {
@@ -98,9 +108,6 @@ test("all stored details and missing steps reachable through paging at 40 column
   for (const text of [
     "scope evidence",
     "second line",
-    "13.",
-    "missing",
-    "review next",
     "quick/3",
     "abc123",
     "plan consent",
@@ -108,11 +115,11 @@ test("all stored details and missing steps reachable through paging at 40 column
     "bank frozen",
     "unused wrapper",
     "accepted residual",
-    "A: done",
     "reviewer",
     "C1 R2",
   ])
-    expect(output).toContain(text);
+    expect(output).not.toContain(text);
+  expect(output).toContain("review next");
   const resized = renderDashboard(state, 20, 5);
   expect(resized.every((line) => Bun.stringWidth(line) <= 20)).toBe(true);
   state = reloadState(state, snapshot([{ dir: "active", flow: flow({ reviews: [] }) }]));
@@ -151,6 +158,142 @@ test("draft, validation and live text cannot inject terminal controls; Unicode f
   expect(pages.join("\n")).not.toMatch(/[\x00-\x09\x0b-\x1f\x7f-\x9f]/);
 });
 
+test("recorded states remain honest across paused, done, and absent task records", () => {
+  for (const status of ["active", "paused", "done"] as const) {
+    const value = flow({
+      status,
+      step: status === "done" ? 13 : 9,
+      tasks: {
+        T1: "done",
+        T2: "in_progress",
+        T3: "pending",
+        T4: "pending",
+        T5: "pending",
+        T6: "pending",
+      },
+      steps: {
+        "1": { state: "done", evidence: "HIDDEN".repeat(20_000) },
+        "2": { state: "skipped", evidence: "HIDDEN" },
+        "9": { state: "n/a", evidence: "HIDDEN" },
+      },
+    });
+    const state = reloadState(
+      { ...createState(89, 51), showDone: true },
+      snapshot([{ dir: "active", flow: value }]),
+    );
+    const output = renderDashboard(state, 89, 51).join("\n");
+    expect(output).toContain("1/13 steps recorded done");
+    expect(output).toContain("1 skipped · 1 n/a · 10 not recorded");
+    expect(output).toContain("1 done · 1 in progress · 4 pending");
+    expect(output).toContain("scope agreed · T1");
+    expect(output).toContain("+1 more");
+    expect(output).not.toContain("HIDDEN");
+    if (status === "paused") expect(output).toContain("Paused; tasks recorded in progress");
+    if (status === "done") {
+      expect(output).toContain("Flow marked done");
+      expect(output).not.toContain("Upcoming stage");
+    }
+  }
+  for (const steps of [{}, { "9": { state: "done" as const, evidence: "secret" } }]) {
+    const state = reloadState(
+      createState(),
+      snapshot([{ dir: "active", flow: flow({ tasks: {}, steps, next: " \n\t" }) }]),
+    );
+    const output = renderDashboard(state, 80, 24).join("\n");
+    expect(output).toContain("No next action recorded");
+    expect(output).toContain("No pending tasks recorded");
+    expect(output).toContain("Upcoming stage; not recorded: content approval");
+    expect(output).toContain(
+      "9" in steps ? "No tasks recorded in progress" : "Current stage; no task status recorded",
+    );
+  }
+});
+
+test("colored geometry matches plain rendering and external controls never survive owned styles", () => {
+  const hostile = "\x1b[31m\x1b]0;owned\x07界👩‍💻é\x9b\r\x08";
+  const value = flow({
+    title: hostile.repeat(40),
+    ticket: hostile.repeat(40),
+    next: `${hostile.repeat(100)}\nSECOND-LINE-SECRET`,
+    tasks: { [hostile.repeat(100)]: "pending" },
+  });
+  const state = reloadState(createState(), snapshot([{ dir: "active", flow: value }], hostile));
+  state.linear["MAM-1"] = { status: hostile };
+  state.prs["42"] = { error: hostile };
+  for (const [columns, rows] of [
+    [89, 51],
+    [80, 24],
+    [40, 8],
+    [20, 5],
+    [1, 1],
+    [0, 0],
+  ] as const) {
+    const plain = renderDashboard(state, columns, rows);
+    const colored = renderDashboard({ ...state, color: true }, columns, rows);
+    expect(colored.map((line) => Bun.stripANSI(line))).toEqual(plain);
+    expect(plain.length).toBeLessThanOrEqual(rows);
+    expect(plain.every((line) => Bun.stringWidth(line) <= columns)).toBe(true);
+    // eslint-disable-next-line no-control-regex -- Strip the renderer's explicit SGR allowlist before checking all other controls.
+    const controlsRemoved = colored.join("\n").replaceAll(/\x1b\[(?:0|1|2|1;3[1236])m/g, "");
+    // eslint-disable-next-line no-control-regex -- Only owned SGR may survive external text sanitization.
+    expect(controlsRemoved).not.toMatch(/[\x00-\x09\x0b-\x1f\x7f-\x9f]/);
+    expect(controlsRemoved).not.toContain("SECOND-LINE-SECRET");
+  }
+});
+
+test("summary navigation clamps, preserves selection, and bounds source and validation details", () => {
+  const tasks = Object.fromEntries(
+    Array.from({ length: 100 }, (_, i) => [`T${String(i)}`, "pending" as const]),
+  );
+  let state = reloadState(
+    createState(80, 24),
+    snapshot([
+      { dir: "active", flow: flow({ tasks }) },
+      { dir: "second", flow: flow() },
+      { dir: "third", flow: flow() },
+    ]),
+  );
+  for (const heading of ["Current focus", "IN PROGRESS", "COMPLETED", "PENDING", "NEXT"])
+    expect(renderDashboard(state, 80, 24).join("\n")).toContain(heading);
+  expect(renderDashboard(state, 80, 24).join("\n")).toContain("+97 more");
+  state = { ...state, columns: 40, rows: 8 };
+  for (const key of ["scrolldown", "ctrl-d", "pagedown", "end"]) {
+    const next = handleKey(state, key);
+    expect(next.scroll).toBeGreaterThan(state.scroll);
+    expect(next.selectedDir).toBe("active");
+    state = next;
+  }
+  expect(handleKey(state, "scrolldown").scroll).toBe(state.scroll);
+  expect(renderDashboard(state, 40, 8).join("\n")).toContain("PR #42");
+  expect(renderDashboard(state, 40, 8).join("\n")).not.toContain("T99");
+  for (const key of ["scrollup", "ctrl-u", "pageup", "home"]) state = handleKey(state, key);
+  expect(state.scroll).toBe(0);
+  expect(handleKey(handleKey(state, "end"), "j").scroll).toBe(0);
+  state = reloadState(handleKey(state, "end"), snapshot([{ dir: "active", flow: flow() }]));
+  expect(state.scroll).toBeLessThan(20);
+  const invalid = reloadState(
+    createState(),
+    snapshot([{ dir: "bad", errors: ["one", "two", "three", "HIDDEN", "HIDDEN"] }]),
+  );
+  expect(renderDashboard(invalid, 80, 24).join("\n")).toContain("+2 errors");
+  expect(renderDashboard(invalid, 80, 24).join("\n")).not.toContain("HIDDEN");
+  for (const view of [
+    undefined,
+    "loading",
+    { error: "unavailable" },
+    { state: "OPEN", checks: "fail" },
+    { state: "OPEN", checks: "pending" },
+    { state: "OPEN", checks: "none" },
+  ] as const) {
+    const live = { ...state, rows: 51, prs: view === undefined ? {} : { "42": view } };
+    const output = renderDashboard(live, 89, 51).join("\n");
+    expect(output.includes("checks failing")).toBe(
+      typeof view === "object" && "checks" in view && view.checks === "fail",
+    );
+    expect(output).not.toContain("approved");
+  }
+});
+
 const terminalFixture = () => {
   const properties = [process.stdin, process.stdout].map((stream) =>
     Object.getOwnPropertyDescriptors(stream),
@@ -170,8 +313,8 @@ const terminalFixture = () => {
   });
   Object.defineProperties(process.stdout, {
     isTTY: { value: true, configurable: true },
-    columns: { value: 40, configurable: true },
-    rows: { value: 12, configurable: true },
+    columns: { value: 89, configurable: true },
+    rows: { value: 51, configurable: true },
   });
   const output = spyOn(process.stdout, "write").mockImplementation((chunk) => {
     writes.push(String(chunk));
@@ -214,7 +357,7 @@ test("live local flows make no provider calls on open or refresh; mixed flows us
     await Bun.sleep(10);
     expect(linear).not.toHaveBeenCalled();
     expect(pr).not.toHaveBeenCalled();
-    process.stdin.emit("keypress", "r", { name: "r" });
+    process.stdin.emit("data", "r");
     await Bun.sleep(10);
     expect(linear).not.toHaveBeenCalled();
     expect(pr).not.toHaveBeenCalled();
@@ -225,14 +368,14 @@ test("live local flows make no provider calls on open or refresh; mixed flows us
         { dir: "linked", flow: flow() },
       ]),
     );
-    process.stdin.emit("keypress", "r", { name: "r" });
+    process.stdin.emit("data", "r");
     await Bun.sleep(10);
     expect(linear.mock.calls.map(([id]) => id)).toEqual(["MAM-1"]);
     expect(pr.mock.calls.map(([, number]) => number)).toEqual([43, 42]);
-    process.stdin.emit("keypress", "q", { name: "q" });
+    process.stdin.emit("data", "q");
     await running;
   } finally {
-    process.stdin.emit("keypress", "q", { name: "q" });
+    process.stdin.emit("data", "q");
     for (const mock of [load, linear, pr]) mock.mockRestore();
     terminal.restore();
   }
@@ -272,10 +415,10 @@ test("native lifecycle keeps local tick and keys responsive during hanging live 
     await Bun.sleep(10);
     expect(writes.join("")).toContain("updated locally");
     expect(linear).toHaveBeenCalledTimes(1);
-    process.stdin.emit("keypress", "r", { name: "r" });
+    process.stdin.emit("data", "r");
     await Bun.sleep(10);
     expect(linear).toHaveBeenCalledTimes(1);
-    process.stdin.emit("keypress", "q", { name: "q" });
+    process.stdin.emit("data", "q");
     await running;
     expect(raw).toEqual([true, true]);
     expect(signals.every((signal) => signal.aborted)).toBe(true);
@@ -311,12 +454,12 @@ test("removed live target cancels work and late result cannot replace reintroduc
         { dir: "active", flow: flow({ ticket: "cache-cleanup", linear_id: null, prs: [] }) },
       ]),
     );
-    process.stdin.emit("keypress", "r", { name: "r" });
+    process.stdin.emit("data", "r");
     await Bun.sleep(10);
     expect(signals[0]?.aborted).toBe(true);
     linear.mockResolvedValue({ status: "fresh state" });
     load.mockResolvedValue(snapshot([{ dir: "active", flow: flow() }]));
-    process.stdin.emit("keypress", "r", { name: "r" });
+    process.stdin.emit("data", "r");
     await Bun.sleep(10);
     oldResult?.({ status: "obsolete state" });
     await Bun.sleep(10);
@@ -327,7 +470,7 @@ test("removed live target cancels work and late result cannot replace reintroduc
     await running;
     expect(terminal.raw).toEqual([true, true]);
   } finally {
-    process.stdin.emit("keypress", "q", { name: "q" });
+    process.stdin.emit("data", "q");
     for (const mock of [load, linear, pr]) mock.mockRestore();
     terminal.restore();
   }
@@ -345,7 +488,7 @@ test("offline resize and SIGINT restore original raw state without remote calls;
   try {
     const running = runDashboard("/tmp/project", "offline");
     await Bun.sleep(10);
-    for (let i = 0; i < 20; i += 1) process.stdin.emit("keypress", "", { name: "pagedown" });
+    for (let i = 0; i < 20; i += 1) process.stdin.emit("data", "\x1b[6~");
     Object.defineProperties(process.stdout, {
       columns: { value: 20, configurable: true },
       rows: { value: 5, configurable: true },
@@ -366,8 +509,46 @@ test("offline resize and SIGINT restore original raw state without remote calls;
     expect(terminal.raw).toEqual([true, false, true, false]);
     expect(process.listenerCount("SIGINT")).toBe(before);
   } finally {
-    process.stdin.emit("keypress", "q", { name: "q" });
+    process.stdin.emit("data", "q");
     for (const mock of [load, linear, pr]) mock.mockRestore();
     terminal.restore();
+  }
+});
+
+test("Ctrl-C, stdin error and startup failure remove input listeners and restore terminal", async () => {
+  for (const mode of ["ctrl-c", "stdin-error", "startup-error"]) {
+    const terminal = terminalFixture();
+    const dataListeners = process.stdin.listenerCount("data");
+    const signals: AbortSignal[] = [];
+    const load = spyOn(sources, "loadDraftSnapshot").mockImplementation((_cwd, signal) => {
+      if (signal !== undefined) signals.push(signal);
+      return new Promise(() => undefined);
+    });
+    if (mode === "startup-error")
+      terminal.output.mockImplementationOnce(() => {
+        throw new Error("startup failed");
+      });
+    try {
+      const running = runDashboard("/tmp/project", "offline");
+      if (mode === "ctrl-c") process.stdin.emit("data", "\x1b[<64;1;\x03q");
+      if (mode === "stdin-error") process.stdin.emit("error", new Error("stdin failed"));
+      if (mode === "ctrl-c") await running;
+      else
+        expect(
+          await running.then(
+            () => "resolved",
+            () => "rejected",
+          ),
+        ).toBe("rejected");
+      expect(process.stdin.listenerCount("data")).toBe(dataListeners);
+      expect(signals.every((signal) => signal.aborted)).toBe(true);
+      expect(terminal.writes.join("")).toContain("\x1b[?1006l\x1b[?1000l\x1b[?25h\x1b[?1049l");
+      const writes = terminal.writes.length;
+      process.stdin.emit("data", "\x1b[<65;1;1Mr");
+      expect(terminal.writes.length).toBe(writes);
+    } finally {
+      load.mockRestore();
+      terminal.restore();
+    }
   }
 });

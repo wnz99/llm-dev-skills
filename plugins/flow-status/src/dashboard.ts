@@ -1,4 +1,6 @@
 import { emitKeypressEvents } from "node:readline";
+import { PassThrough } from "node:stream";
+import { createTerminalInput } from "./terminalInput";
 import { fetchLinear, fetchPr, loadDraftSnapshot } from "./sources";
 import {
   clampScroll,
@@ -19,6 +21,8 @@ const SHOW_CURSOR = "\x1b[?25h";
 const REPAINT = "\x1b[H\x1b[2J";
 const ENTER_SCREEN = "\x1b[?1049h";
 const LEAVE_SCREEN = "\x1b[?1049l";
+const ENABLE_MOUSE = "\x1b[?1000h\x1b[?1006h";
+const DISABLE_MOUSE = "\x1b[?1006l\x1b[?1000l";
 
 class DashboardSession {
   private state = createState(process.stdout.columns, process.stdout.rows);
@@ -28,6 +32,18 @@ class DashboardSession {
   private readonly pending = new Map<string, AbortController>();
   private readonly originalRaw = process.stdin.isRaw;
   private timer: ReturnType<typeof setInterval> | undefined;
+  private readonly keyboard = new PassThrough();
+  private readonly input = createTerminalInput(
+    (name) => {
+      this.onKey("", { name });
+    },
+    (text) => {
+      this.keyboard.write(text);
+    },
+  );
+  private readonly onData = (chunk: Buffer | string): void => {
+    this.input.write(String(chunk));
+  };
 
   constructor(
     private readonly cwd: string,
@@ -36,6 +52,7 @@ class DashboardSession {
     private readonly reject: (error: Error) => void,
   ) {
     this.state.offline = mode === "offline";
+    this.state.color = process.env.NO_COLOR === undefined;
   }
 
   private restoreTerminal(): boolean {
@@ -51,7 +68,7 @@ class DashboardSession {
       failed = true;
     }
     try {
-      process.stdout.write(SHOW_CURSOR + LEAVE_SCREEN);
+      process.stdout.write(DISABLE_MOUSE + SHOW_CURSOR + LEAVE_SCREEN);
     } catch {
       failed = true;
     }
@@ -65,7 +82,10 @@ class DashboardSession {
     this.local?.abort();
     for (const controller of this.pending.values()) controller.abort();
     this.pending.clear();
-    process.stdin.off("keypress", this.onKey);
+    process.stdin.off("data", this.onData);
+    this.keyboard.off("keypress", this.onKey);
+    this.input.close();
+    this.keyboard.destroy();
     process.stdin.off("error", this.finish);
     process.stdout.off("error", this.finish);
     process.stdout.off("resize", this.onResize);
@@ -197,7 +217,7 @@ class DashboardSession {
   private readonly onKey = (_text: string, key: { name?: string; ctrl?: boolean }): void => {
     this.state = handleKey(
       this.state,
-      key.ctrl === true && key.name === "c" ? "ctrl-c" : (key.name ?? ""),
+      key.ctrl === true ? `ctrl-${key.name ?? ""}` : (key.name ?? ""),
     );
     if (this.state.quit) {
       this.finish();
@@ -226,8 +246,9 @@ class DashboardSession {
       this.reload("local");
     }, LOCAL_RELOAD_MS);
     try {
-      emitKeypressEvents(process.stdin);
-      process.stdin.on("keypress", this.onKey);
+      emitKeypressEvents(this.keyboard);
+      this.keyboard.on("keypress", this.onKey);
+      process.stdin.on("data", this.onData);
       process.stdin.on("error", this.finish);
       process.stdout.on("error", this.finish);
       process.stdout.on("resize", this.onResize);
@@ -235,7 +256,7 @@ class DashboardSession {
       process.on(TERMINATE_SIGNAL, this.onSignal);
       process.stdin.setRawMode(isRawEnabled);
       process.stdin.resume();
-      process.stdout.write(ENTER_SCREEN);
+      process.stdout.write(ENTER_SCREEN + ENABLE_MOUSE);
       this.repaint();
       this.reload("live");
     } catch (error) {

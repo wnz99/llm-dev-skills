@@ -23,7 +23,7 @@ bun install --frozen-lockfile
 herdr plugin link "$PWD" --enabled
 ```
 
-The dashboard reads `.planning/drafts/<flow-id>/FLOW.json` from the primary Git worktree, including when opened from linked worktrees. It selects the pane's current branch flow or the most recently updated active flow. Invalid/missing records stay visible with errors. It shows all 13 steps, evidence, tasks, reviews, approval records and optional Linear/PR status. It never edits workflow state or remote services.
+The dashboard reads `.planning/drafts/<flow-id>/FLOW.json` from the primary Git worktree, including when opened from linked worktrees. It selects the pane's current branch flow or the most recently updated active flow. Invalid/missing records stay visible with errors. It shows current focus, in-progress/completed/pending work, recorded next action, and optional Linear/PR status. Progress counts only steps explicitly recorded done; skipped, n/a and unrecorded steps stay separate. Task previews use recorded IDs with omitted counts because schema 1 has no task titles. Plans, evidence, approvals and review history stay outside the dashboard. It never edits workflow state or remote services.
 
 FLOW.json is a schema-1 dashboard projection written by the workflow coordinator. The executor's canonical ledger and detailed reports remain authoritative for execution gates and resume; discover their runtime contract through the installed `wnz-phase-executor` skill. Required executor evidence stays outside the draft folder in an approved ignored location or external scratch path under that contract. Put supported summaries and artifact pointers in FLOW.json's existing fields, never unsupported canonical gate/dispatch/source-state/role-status fields. Neither FLOW.json nor GSD summaries authorize executor gates; missing canonical artifacts block dependent execution even if the dashboard shows completion or approval.
 
@@ -34,7 +34,7 @@ bun src/main.ts --cwd /absolute/path/to/project --offline
 bun src/checkFlow.ts /absolute/path/to/project/.planning/drafts
 ```
 
-A terminal is required. `j`/`k` select flows, `d` toggles completed flows, PageUp/PageDown scroll details, `r` refreshes, and `q` exits. Local records reload every 30 seconds. Network requests run on initial live opening or explicit refresh, with a 15-second timeout. Offline mode makes no remote requests. Error text is sanitized before terminal rendering.
+A terminal is required. `j`/`k` or arrows select flows, `d` toggles completed flows, mouse wheel and PageUp/PageDown scroll the summary, Ctrl-U/Ctrl-D move half a page, and Home/End jump to its bounds. `r` refreshes and `q` exits. The selector and controls remain fixed while scrolling. Set `NO_COLOR` to disable decorative color, bold and dim text. Local records reload every 30 seconds. Network requests run on initial live opening or explicit refresh, with a 15-second timeout. Offline mode makes no remote requests. External text is sanitized before terminal styling.
 
 An unassociated flow shows `Linear: not linked` and never queries Linear. With no attached PRs either, live opening and refresh make no provider calls. Local IDs never imply Linear associations. Explicit PRs work even without a Linear link. Live GitHub status uses `gh pr view` and existing authentication. Linked Linear reads use `LINEAR_API_KEY` from the **Herdr server's environment**. Keep credentials in an approved external mode-600 environment file. Missing credentials for linked sources/CI checks are displayed as unavailable/none, never success. See the [procedure](setup/PROCEDURE.md) for verified pane selection, worktree setup and credential handling.
 
@@ -46,6 +46,6 @@ bun run check
 bun run format
 ```
 
-`src/flowCore.ts` owns the schema and 13-step vocabulary. `src/sources.ts` owns file/process/network boundaries. `src/dashboardView.ts` owns rendering/navigation; `src/dashboard.ts` owns terminal lifecycle and request cancellation. The plugin manifest and `launch.sh` are native Herdr entrypoints. [Development details](docs/development.md) include quality gates and extraction provenance.
+`src/flowCore.ts` owns the schema and 13-step vocabulary. `src/sources.ts` owns file/process/network boundaries. `src/dashboardSummary.ts` owns summary projection and safe typography; `src/dashboardView.ts` owns viewport/navigation. `src/terminalInput.ts` frames mouse input before readline; `src/dashboard.ts` owns terminal lifecycle and request cancellation. The plugin manifest and `launch.sh` are native Herdr entrypoints. [Development details](docs/development.md) include quality gates and extraction provenance.
 
 This component reuses the TypeScript repo starter's strict types, ESLint/Clean Code/SonarJS/Unicorn, Prettier, Knip/Fallow and pinned dependency baseline. Existing repository governance owns Git hooks, CI and publishing; this component does not install its own competing root hooks or CI. Optional integrations and repository merge/branch decisions remain with the target repository's owner.
