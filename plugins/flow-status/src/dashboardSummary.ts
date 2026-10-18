@@ -4,20 +4,36 @@ import type { fetchLinear, PrView } from "./sources";
 
 type LinearView = Awaited<ReturnType<typeof fetchLinear>> | "loading";
 type DashboardPrView = PrView | "loading";
+
+// Tone is assigned by the code that builds a row, never inferred from external text.
+type Tone = "plain" | "strong" | "dim" | "focus" | "ok" | "warn" | "error";
+export interface Row {
+  text: string;
+  tone: Tone;
+}
+
 const PREVIEW_COUNT = 3;
 const NEXT_ROWS = 2;
 const COMPACT_ROWS = 26;
-const BAR_WIDTH = 10;
-const ACTIVE = "active";
+const INDENT = 2;
+const NEXT_HEADING = "NEXT";
 const PENDING = "pending";
-const COMPLETED_HEADING = "COMPLETED";
-const PENDING_HEADING = "PENDING";
-const PENDING_EMPTY = "No pending tasks recorded";
-const PENDING_RECORDED = "Recorded pending";
+const NO_PENDING = "TODO  No pending tasks recorded";
+const NO_ACTIVE = "No active flows.";
+const SEPARATOR = " · ";
+const ACTIVE = "active";
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+const TONE_SGR: Record<Exclude<Tone, "plain">, string> = {
+  strong: "1",
+  dim: "2",
+  focus: "1;36",
+  ok: "1;32",
+  warn: "1;33",
+  error: "1;31",
+};
 
 // Split owned lines first; external text never contributes terminal control sequences.
-const safeText = (text: string): string =>
+export const safeText = (text: string): string =>
   // eslint-disable-next-line no-control-regex -- Terminal C0/C1 controls are the characters this sanitizer removes.
   Bun.stripANSI(text).replace(/[\u0000-\u001f\u007f-\u009f]/g, "");
 
@@ -49,6 +65,14 @@ export const clip = (line: string, columns: number): string => {
   );
 };
 
+export const styleRow = ({ text, tone }: Row, color: boolean): string =>
+  !color || text === "" || tone === "plain" ? text : `\x1b[${TONE_SGR[tone]}m${text}\x1b[0m`;
+
+const row = (text: string, tone: Tone = "plain"): Row => ({ text, tone });
+const detail = (text: string): Row => row(`${" ".repeat(INDENT)}${text}`);
+const plural = (count: number, noun: string): string =>
+  `${String(count)} ${noun}${count === 1 ? "" : "s"}`;
+
 const liveText = (view: LinearView | DashboardPrView | undefined, offline: boolean): string => {
   if (view === undefined) return offline ? "offline" : "not refreshed";
   if (view === "loading") return view;
@@ -56,144 +80,194 @@ const liveText = (view: LinearView | DashboardPrView | undefined, offline: boole
   return "status" in view ? view.status : `${view.state}/${view.checks}`;
 };
 
-const nextLines = (flow: Flow, columns: number): string[] => {
+const idPreview = (ids: string[]): string =>
+  [
+    ...ids.slice(0, PREVIEW_COUNT),
+    ...(ids.length > PREVIEW_COUNT ? [`+${String(ids.length - PREVIEW_COUNT)} more`] : []),
+  ].join(SEPARATOR);
+
+// Whole words per row; only a single token wider than the row is split by grapheme.
+const wrapWords = (text: string, columns: number): string[] => {
+  const lines: string[] = [];
+  let current = "";
+  for (const word of safeText(text).split(/\s+/).filter(Boolean)) {
+    const joined = current === "" ? word : `${current} ${word}`;
+    if (Bun.stringWidth(joined) <= columns) {
+      current = joined;
+      continue;
+    }
+    if (current !== "") lines.push(current);
+    const pieces = wrapLine(word, columns);
+    current = pieces.pop() ?? "";
+    lines.push(...pieces);
+  }
+  return [...lines, current];
+};
+
+const nextRows = (flow: Flow, columns: number): Row[] => {
   const next =
     flow.next
       .split(/\r?\n/)
       .map(safeText)
       .find((line) => line.trim() !== "")
       ?.trim() ?? "No next action recorded";
-  const all = wrapLine(next, columns);
+  const width = Math.max(1, columns - INDENT);
+  const all = wrapWords(next, width);
   const rows = all.slice(0, NEXT_ROWS);
-  if (all.length > NEXT_ROWS) rows[1] = clip(`${rows[1] ?? ""}…`, columns);
-  return rows;
+  if (all.length > NEXT_ROWS) rows[NEXT_ROWS - 1] = clip(`${rows[NEXT_ROWS - 1] ?? ""}…`, width);
+  return [row(NEXT_HEADING, "strong"), ...rows.map(detail)];
 };
 
-export const summaryLines = (
-  state: DashboardState,
-  entry: FlowEntry | undefined,
-  columns: number,
-): string[] => {
-  if (entry === undefined) return ["No flows."];
-  if ("errors" in entry)
-    return [
-      `${clip(entry.dir, columns)}: invalid FLOW.json`,
-      ...entry.errors.slice(0, PREVIEW_COUNT),
-    ]
-      .map((line) => clip(line, columns))
-      .concat(
-        entry.errors.length > PREVIEW_COUNT
-          ? [`+${String(entry.errors.length - PREVIEW_COUNT)} errors`]
-          : [],
-      );
-  const flow = entry.flow;
-  const groups = taskGroups(flow);
-  const preview = groups.flatMap(([heading, ids, fallback]) => [
-    heading,
-    `  ${fallback}${ids.length > PREVIEW_COUNT ? ` · +${String(ids.length - PREVIEW_COUNT)} more` : ""}${ids.length > 0 ? ` · ${ids.slice(0, PREVIEW_COUNT).join(" · ")}` : ""}`,
-    ...(state.rows > COMPACT_ROWS ? [""] : []),
-  ]);
+const taskIds = (flow: Flow, status: string): string[] =>
+  Object.entries(flow.tasks)
+    .filter(([, value]) => value === status)
+    .map(([id]) => safeText(id));
+
+const nowRows = (flow: Flow): Row[] => {
+  const tone: Tone = flow.status === "paused" ? "warn" : flow.status === "done" ? "ok" : "focus";
+  const working = taskIds(flow, "in_progress");
+  const recorded = working.length > 0;
+  const fallback =
+    flow.status === ACTIVE
+      ? flow.steps[String(flow.step)] === undefined
+        ? "Current stage; no task status recorded"
+        : "No tasks recorded in progress"
+      : "";
+  const lead =
+    flow.status === ACTIVE
+      ? "In progress"
+      : `${flow.status === "paused" ? "Paused" : "Flow marked done"}${recorded ? "; tasks recorded in progress" : ""}`;
   return [
-    clip(flow.title, columns),
-    clip(`Current focus  ${flow.status} · ${stepLabel(flow)}`, columns),
-    clip(`Updated ${flow.updated_at}`, columns),
-    ...recordedProgress(flow),
-    "",
-    ...preview,
-    ...upcomingLines(flow),
-    ...blockerLines(flow, state),
-    "NEXT",
-    ...nextLines(flow, columns),
-    "",
-    ...sourceLines(flow, state).map((line) => clip(line, columns)),
+    row(`NOW  ${flow.status} · ${stepLabel(flow)}`, tone),
+    detail(recorded ? `${lead}: ${idPreview(working)}` : fallback || lead),
   ];
 };
 
-const taskGroups = (flow: Flow): [string, string[], string][] => {
-  const ids = (status: string) =>
-    Object.entries(flow.tasks)
-      .filter(([, value]) => value === status)
-      .map(([id]) => safeText(id));
-  const done = ids("done");
-  const completed = done.slice(-PREVIEW_COUNT).concat(done.slice(0, -PREVIEW_COUNT));
-  const stages = FLOW_STEPS.filter(
-    (_, index) => flow.steps[String(index + 1)]?.state === "done",
-  ).slice(-PREVIEW_COUNT);
-  const active =
-    flow.status === ACTIVE && flow.steps[String(flow.step)] === undefined
-      ? "Current stage; no task status recorded"
-      : "No tasks recorded in progress";
-  const recorded = ids("in_progress").length > 0;
-  const status = flow.status === "paused" ? "Paused" : "Flow marked done";
+const doneRows = (flow: Flow): Row[] => {
+  const stages = FLOW_STEPS.filter((_, index) => flow.steps[String(index + 1)]?.state === "done");
+  const tasks = taskIds(flow, "done");
+  const counts = [
+    `${String(stages.length)}/${String(FLOW_STEPS.length)} stages`,
+    ...(tasks.length > 0 ? [plural(tasks.length, "task")] : []),
+  ].join(SEPARATOR);
   return [
-    [
-      "IN PROGRESS",
-      ids("in_progress"),
-      flow.status === ACTIVE
-        ? recorded
-          ? "Recorded in progress"
-          : active
-        : `${status}${recorded ? "; tasks recorded in progress" : ""}`,
-    ],
-    [
-      COMPLETED_HEADING,
-      completed,
-      stages.join(" · ") || (done.length > 0 ? "Tasks recorded done" : "None recorded"),
-    ],
-    [PENDING_HEADING, ids(PENDING), ids(PENDING).length > 0 ? PENDING_RECORDED : PENDING_EMPTY],
+    row(`DONE  ${counts}`, "ok"),
+    ...(stages.length > 0 ? [detail(`Stages: ${idPreview(stages.slice(-PREVIEW_COUNT))}`)] : []),
+    ...(tasks.length > 0 ? [detail(`Tasks: ${idPreview(tasks)}`)] : []),
   ];
 };
-const upcomingLines = (flow: Flow): string[] => {
-  if (flow.status === "done") return [];
-  const upcoming = FLOW_STEPS.find(
-    (_, index) => index + 1 > flow.step && flow.steps[String(index + 1)] === undefined,
-  );
-  return upcoming === undefined ? [] : [`  Upcoming stage; not recorded: ${upcoming}`];
-};
-const recordedProgress = (flow: Flow): string[] => {
-  const steps = Object.values(flow.steps);
-  const count = (status: string) => steps.filter((step) => step.state === status).length;
-  const done = count("done");
-  const filled = Math.floor((done / FLOW_STEPS.length) * BAR_WIDTH);
+
+const todoRows = (flow: Flow): Row[] => {
+  const pending = taskIds(flow, PENDING);
+  const upcoming =
+    flow.status === "done"
+      ? undefined
+      : FLOW_STEPS.find(
+          (_, index) => index + 1 > flow.step && flow.steps[String(index + 1)] === undefined,
+        );
   return [
-    `[${"#".repeat(filled)}${"-".repeat(BAR_WIDTH - filled)}] ${String(done)}/13 steps recorded done`,
-    `${String(count("skipped"))} skipped · ${String(count("n/a"))} n/a · ${String(13 - steps.length)} not recorded`,
-    `Tasks  ${String(Object.values(flow.tasks).filter((s) => s === "done").length)} done · ${String(Object.values(flow.tasks).filter((s) => s === "in_progress").length)} in progress · ${String(Object.values(flow.tasks).filter((s) => s === PENDING).length)} pending`,
+    row(
+      pending.length > 0 ? `TODO  ${plural(pending.length, `${PENDING} task`)}` : NO_PENDING,
+      "warn",
+    ),
+    ...(pending.length > 0 ? [detail(`Tasks: ${idPreview(pending)}`)] : []),
+    ...(upcoming === undefined ? [] : [detail(`Upcoming stage; not recorded: ${upcoming}`)]),
   ];
 };
-const blockerLines = (flow: Flow, state: DashboardState): string[] => [
-  ...(flow.status === "paused" ? ["Blockers  Flow paused; reason not recorded"] : []),
+
+const blockerRows = (flow: Flow, state: DashboardState): Row[] => [
+  ...(flow.status === "paused" ? [row("Blockers  Flow paused; reason not recorded", "error")] : []),
   ...flow.prs
     .filter((n) => {
       const view = state.prs[String(n)];
       return typeof view === "object" && "checks" in view && view.checks === "fail";
     })
     .slice(0, 1)
-    .map((n) => `Blockers  PR #${String(n)} checks failing`),
-];
-const sourceLines = (flow: Flow, state: DashboardState): string[] => [
-  flow.linear_id === null
-    ? "Linear: not linked"
-    : `Linear: ${liveText(state.linear[flow.linear_id], state.offline)}`,
-  flow.prs.length === 0
-    ? "PRs: none"
-    : flow.prs
-        .slice(0, 1)
-        .map((n) => `PR #${String(n)}: ${liveText(state.prs[String(n)], state.offline)}`)
-        .join(" · ") + (flow.prs.length > 1 ? ` · +${String(flow.prs.length - 1)} PRs` : ""),
+    .map((n) => row(`Blockers  PR #${String(n)} checks failing`, "error")),
 ];
 
-const LINE_STYLES: [RegExp, string][] = [
-  [/^Blockers|\[invalid\]|invalid FLOW\.json/, "1;31"],
-  [/\[paused\]|^Current focus {2}paused/, "1;33"],
-  [/^(>|Current focus|IN PROGRESS)/, "1;36"],
-  [/^COMPLETED/, "1;32"],
-  [/^PENDING/, "1;33"],
-  [/^(Updated|Linear:|PR|Summary|wheel)/, "2"],
-  [/^(FLOW STATUS|NEXT)/, "1"],
+const metadataRows = (flow: Flow, state: DashboardState): Row[] => {
+  const states = Object.values(flow.steps).map((step) => step.state);
+  const other = [
+    [states.filter((s) => s === "skipped").length, "skipped"],
+    [states.filter((s) => s === "n/a").length, "n/a"],
+    [FLOW_STEPS.length - states.length, "not recorded"],
+  ]
+    .filter(([count]) => count !== 0)
+    .map(([count, label]) => `${String(count)} ${String(label)}`);
+  const pr = flow.prs
+    .slice(0, 1)
+    .map((n) => `PR #${String(n)}: ${liveText(state.prs[String(n)], state.offline)}`);
+  return [
+    ...(other.length > 0 ? [row(`Stages  ${other.join(SEPARATOR)}`, "dim")] : []),
+    row(
+      flow.linear_id === null
+        ? "Linear: not linked"
+        : `Linear: ${liveText(state.linear[flow.linear_id], state.offline)}`,
+      "dim",
+    ),
+    row(
+      pr.length === 0
+        ? "PRs: none"
+        : `${pr[0] ?? ""}${flow.prs.length > 1 ? ` · +${String(flow.prs.length - 1)} PRs` : ""}`,
+      "dim",
+    ),
+    row(`Updated ${flow.updated_at}`, "dim"),
+  ];
+};
+
+const invalidRows = (entry: Extract<FlowEntry, { errors: string[] }>): Row[] => [
+  row(`${entry.dir}: invalid FLOW.json`, "error"),
+  ...entry.errors.slice(0, PREVIEW_COUNT).map((error) => row(error, "error")),
+  ...(entry.errors.length > PREVIEW_COUNT
+    ? [row(`+${String(entry.errors.length - PREVIEW_COUNT)} errors`, "error")]
+    : []),
 ];
-export const styleLine = (line: string, color: boolean): string => {
-  if (!color || line === "") return line;
-  const style = LINE_STYLES.find(([pattern]) => pattern.test(line))?.[1];
-  return style === undefined ? line : `\x1b[${style}m${line}\x1b[0m`;
+
+const loadRows = (state: DashboardState, columns: number): Row[] => {
+  if (state.error === null) return [];
+  const message = wrapLine(`Load error: ${state.error}`, columns).slice(0, NEXT_ROWS);
+  return [
+    ...message.map((text) => row(text, "error")),
+    ...(state.entries.length > 0 ? [row("Showing last loaded records", "warn")] : []),
+  ];
+};
+
+const emptyRows = (state: DashboardState): Row[] => {
+  const hidden = state.entries.length;
+  if (hidden === 0) return [row("No flows found.", "dim")];
+  return [
+    row(NO_ACTIVE, "dim"),
+    row(`${plural(hidden, "completed flow")} hidden · d to show`, "dim"),
+  ];
+};
+
+export const summaryRows = (
+  state: DashboardState,
+  entry: FlowEntry | undefined,
+  columns: number,
+): Row[] => {
+  const errors = loadRows(state, columns);
+  if (entry === undefined)
+    return [
+      ...errors,
+      ...(state.error === null || state.entries.length > 0 ? emptyRows(state) : []),
+    ];
+  if ("errors" in entry) return [...errors, ...invalidRows(entry)];
+  const flow = entry.flow;
+  const gap = state.rows > COMPACT_ROWS ? [row("")] : [];
+  return [
+    ...errors,
+    row(flow.title, "strong"),
+    ...nowRows(flow),
+    ...blockerRows(flow, state),
+    ...gap,
+    ...nextRows(flow, columns),
+    ...gap,
+    ...doneRows(flow),
+    ...gap,
+    ...todoRows(flow),
+    ...gap,
+    ...metadataRows(flow, state),
+  ];
 };

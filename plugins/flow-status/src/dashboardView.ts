@@ -1,5 +1,5 @@
 import { type FlowEntry, selectCurrentTicket } from "./flowCore";
-import { clip, styleLine, summaryLines } from "./dashboardSummary";
+import { clip, type Row, safeText, styleRow, summaryRows } from "./dashboardSummary";
 import type { fetchLinear, loadDraftSnapshot, PrView } from "./sources";
 
 type Snapshot = Awaited<ReturnType<typeof loadDraftSnapshot>>;
@@ -7,12 +7,13 @@ type LinearView = Awaited<ReturnType<typeof fetchLinear>> | "loading";
 type DashboardPrView = PrView | "loading";
 const DEFAULT_COLUMNS = 80;
 const DEFAULT_ROWS = 24;
-const MIN_BODY_ROWS = 3;
+const MIN_BODY_ROWS = 2;
 const LIST_FRACTION = 4;
 const MAX_LIST_ROWS = 3;
 const HALF_PAGE = 2;
-const HELP = "wheel/PgUp/Dn Ctrl-U/D Home/End scroll · j/k flows · d done · r · q";
-const COMPACT_HELP = "wheel/PgUp/Dn scroll · j/k flows · d · r · q";
+const MIN_SELECTOR_FLOWS = 2;
+const TITLE = "FLOW";
+const SEPARATOR = " · ";
 
 export interface DashboardState extends Snapshot {
   selectedDir: string | null;
@@ -53,7 +54,7 @@ const selectedEntry = (state: DashboardState): FlowEntry | undefined =>
   visibleEntries(state).find((entry) => entry.dir === state.selectedDir);
 
 const listHeight = (state: DashboardState, rows: number): number =>
-  rows < MIN_BODY_ROWS
+  rows <= MIN_BODY_ROWS || visibleEntries(state).length < MIN_SELECTOR_FLOWS
     ? 0
     : Math.min(
         visibleEntries(state).length,
@@ -70,7 +71,7 @@ export const clampScroll = (state: DashboardState): DashboardState => ({
       state.scroll,
       Math.max(
         0,
-        summaryLines(state, selectedEntry(state), Math.max(1, state.columns)).length -
+        summaryRows(state, selectedEntry(state), Math.max(1, state.columns)).length -
           Math.max(1, detailHeight(state, state.rows)),
       ),
     ),
@@ -127,40 +128,129 @@ export const handleKey = (state: DashboardState, key: string): DashboardState =>
   return state;
 };
 
-const dashboardHeader = (state: DashboardState): string => {
-  return `FLOW STATUS · ${state.branch ?? "detached"}${state.offline ? " · offline" : ""}${state.error === null ? "" : ` · ${state.error}`}`;
+const entryLabel = (entry: FlowEntry): string =>
+  "flow" in entry
+    ? `${entry.flow.ticket}${entry.dir === entry.flow.ticket ? "" : ` (${entry.dir})`}`
+    : entry.dir;
+
+// Header parts keep display order; a lower rank survives narrower widths. Rank 0 is always kept.
+const RANK = { always: 0, status: 1, offline: 2, index: 3, branch: 4, directory: 5 } as const;
+interface HeaderPart {
+  text: string;
+  rank: number;
+}
+
+const headerPart = (text: string, rank: number, lead = SEPARATOR): HeaderPart => ({
+  text: `${lead}${safeText(text.replaceAll("\n", " "))}`,
+  rank,
+});
+
+const fitHeader = (parts: HeaderPart[], columns: number): string => {
+  const kept = parts.filter((part) => part.rank === RANK.always);
+  for (const part of parts.filter((p) => p.rank > RANK.always).sort((a, b) => a.rank - b.rank)) {
+    const text = parts
+      .filter((p) => p === part || kept.includes(p))
+      .map((p) => p.text)
+      .join("");
+    if (Bun.stringWidth(text) <= columns) kept.push(part);
+  }
+  return parts
+    .filter((part) => kept.includes(part))
+    .map((part) => part.text)
+    .join("");
+};
+
+const dashboardHeader = (state: DashboardState, entries: FlowEntry[], columns: number): string => {
+  const entry = selectedEntry(state);
+  const branch = state.branch ?? "detached";
+  const title = { text: TITLE, rank: RANK.always };
+  const offline = state.offline ? [headerPart("offline", RANK.offline)] : [];
+  if (entries.length === 1 && entry !== undefined) {
+    const status = "flow" in entry ? entry.flow.status : "invalid";
+    const id = "flow" in entry ? entry.flow.ticket : entry.dir;
+    // The flow ID yields to the status, never the reverse.
+    const idWidth = columns - Bun.stringWidth(`${TITLE}${SEPARATOR}${SEPARATOR}${status}`);
+    return fitHeader(
+      [
+        title,
+        { text: `${SEPARATOR}${clip(id.trim(), Math.max(1, idWidth))}`, rank: RANK.always },
+        ...(entry.dir === id ? [] : [headerPart(`(${entry.dir})`, RANK.directory, " ")]),
+        headerPart(branch, RANK.branch),
+        headerPart(status, RANK.status),
+        ...offline,
+      ],
+      columns,
+    );
+  }
+  const index =
+    entries.length > 1 && entry !== undefined
+      ? [headerPart(`${String(entries.indexOf(entry) + 1)}/${String(entries.length)}`, RANK.index)]
+      : [];
+  return fitHeader([title, headerPart(branch, RANK.branch), ...index, ...offline], columns);
+};
+
+const hasCompleted = (state: DashboardState): boolean =>
+  state.entries.some((entry) => "flow" in entry && entry.flow.status === "done");
+
+const footerItems = (state: DashboardState, range: string | null): string[] => [
+  "q quit",
+  ...(range === null ? [] : ["wheel/PgUpDn", range]),
+  "r refresh",
+  ...(visibleEntries(state).length >= MIN_SELECTOR_FLOWS ? ["j/k flows"] : []),
+  ...(hasCompleted(state) ? [state.showDone ? "d hide done" : "d show done"] : []),
+  ...(range === null ? [] : ["Ctrl-U/D half page", "Home/End"]),
+];
+
+// Whole items only, in priority order: an item that does not fit is dropped, never cut.
+const footer = (state: DashboardState, columns: number, range: string | null): string => {
+  const items = footerItems(state, range);
+  let line = "";
+  for (const item of items) {
+    const next = line === "" ? item : `${line}${SEPARATOR}${item}`;
+    if (Bun.stringWidth(next) <= columns) line = next;
+  }
+  return line === "" ? clip(items[0] ?? "", columns) : line;
+};
+
+const selectorRows = (
+  state: DashboardState,
+  entries: FlowEntry[],
+  height: number,
+  columns: number,
+): Row[] => {
+  const index = entries.findIndex((entry) => entry.dir === state.selectedDir);
+  const start = Math.max(0, Math.min(index, entries.length - height));
+  return entries.slice(start, start + height).map((entry) => ({
+    text: clip(
+      `${entry.dir === state.selectedDir ? ">" : " "} ${entryLabel(entry)} [${"flow" in entry ? entry.flow.status : "invalid"}]`,
+      columns,
+    ),
+    tone: "flow" in entry ? (entry.dir === state.selectedDir ? "focus" : "plain") : "error",
+  }));
 };
 
 export const renderDashboard = (state: DashboardState, columns: number, rows: number): string[] => {
   if (rows <= 0 || columns <= 0) return [];
-  const header = dashboardHeader(state);
-  if (rows === 1) return [clip(header, columns)];
   const entries = visibleEntries(state);
-  const height = listHeight(state, rows);
-  const index = entries.findIndex((entry) => entry.dir === state.selectedDir);
-  const start = Math.max(0, Math.min(index, entries.length - height));
-  const list = entries
-    .slice(start, start + height)
-    .map((entry) =>
-      clip(
-        `${entry.dir === state.selectedDir ? ">" : " "} ${"flow" in entry ? `${entry.flow.ticket}${entry.dir === entry.flow.ticket ? "" : ` (${entry.dir})`} [${entry.flow.status}]` : `${entry.dir} [invalid]`}`,
-        columns,
-      ),
-    );
-  const details = summaryLines({ ...state, rows }, selectedEntry(state), columns).map((line) =>
-    clip(line, columns),
-  );
+  const header: Row = {
+    text: clip(dashboardHeader(state, entries, columns), columns),
+    tone: "strong",
+  };
+  if (rows === 1) return [styleRow(header, state.color)];
+  const details = summaryRows({ ...state, rows }, selectedEntry(state), columns).map((line) => ({
+    ...line,
+    text: clip(line.text, columns),
+  }));
   const available = detailHeight(state, rows);
   const scroll = Math.max(0, Math.min(state.scroll, details.length - available));
-  const separator = clip(
-    `Summary ${String(scroll + 1)}–${String(Math.min(scroll + available, details.length))}/${String(details.length)} · done ${state.showDone ? "shown" : "hidden"}`,
-    columns,
-  );
-  const output = [clip(header, columns), ...list];
-  if (rows > 2) output.push(separator, ...details.slice(scroll, scroll + available));
-  while (output.length < rows - 1) output.push("");
-  return [
-    ...output.slice(0, rows - 1),
-    clip(columns < Bun.stringWidth(HELP) ? COMPACT_HELP : HELP, columns),
-  ].map((line) => styleLine(line, state.color));
+  const range =
+    available > 0 && details.length > available
+      ? `${String(scroll + 1)}–${String(Math.min(scroll + available, details.length))}/${String(details.length)}`
+      : null;
+  const body = rows > MIN_BODY_ROWS ? details.slice(scroll, scroll + available) : [];
+  const lines = [header, ...selectorRows(state, entries, listHeight(state, rows), columns), ...body]
+    .slice(0, rows - 1)
+    .map((line) => styleRow(line, state.color));
+  while (lines.length < rows - 1) lines.push("");
+  return [...lines, styleRow({ text: footer(state, columns, range), tone: "dim" }, state.color)];
 };

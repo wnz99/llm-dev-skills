@@ -91,9 +91,8 @@ test("summary stays concise and never exposes evidence or history through paging
     [89, 51],
   ]) {
     const initial = renderDashboard(ordinary, columns ?? 80, rows ?? 24).join("\n");
-    for (const heading of ["IN PROGRESS", "COMPLETED", "PENDING", "NEXT"])
-      expect(initial).toContain(heading);
-    expect(initial).toContain("1/13 steps recorded done");
+    for (const heading of ["NOW", "DONE", "TODO", "NEXT"]) expect(initial).toContain(heading);
+    expect(initial).toContain("1/13 stages");
   }
   let state = reloadState(createState(40, 8), snapshot([{ dir: "active", flow: flow() }]));
   const pages: string[] = [];
@@ -182,11 +181,12 @@ test("recorded states remain honest across paused, done, and absent task records
       snapshot([{ dir: "active", flow: value }]),
     );
     const output = renderDashboard(state, 89, 51).join("\n");
-    expect(output).toContain("1/13 steps recorded done");
+    expect(output).toContain("DONE  1/13 stages · 1 task");
     expect(output).toContain("1 skipped · 1 n/a · 10 not recorded");
-    expect(output).toContain("1 done · 1 in progress · 4 pending");
-    expect(output).toContain("scope agreed · T1");
-    expect(output).toContain("+1 more");
+    expect(output).toContain("TODO  4 pending tasks");
+    expect(output).toContain("Stages: scope agreed");
+    expect(output).toContain("Tasks: T1");
+    expect(output).toContain("T3 · T4 · T5 · +1 more");
     expect(output).not.toContain("HIDDEN");
     if (status === "paused") expect(output).toContain("Paused; tasks recorded in progress");
     if (status === "done") {
@@ -207,6 +207,104 @@ test("recorded states remain honest across paused, done, and absent task records
       "9" in steps ? "No tasks recorded in progress" : "Current stage; no task status recorded",
     );
   }
+});
+
+test("NOW and NEXT lead at 40x12 and tiny sizes stay bounded", () => {
+  const state = reloadState(createState(40, 12), snapshot([{ dir: "active", flow: flow() }]));
+  const lines = renderDashboard(state, 40, 12);
+  expect(lines[2]).toStartWith("NOW");
+  expect(lines.slice(0, 7).join("\n")).toContain("NEXT");
+  expect(lines.slice(0, 7).join("\n")).toContain("review next");
+  for (const [columns, rows] of [
+    [1, 1],
+    [2, 2],
+    [20, 5],
+    [40, 1],
+    [40, 2],
+    [40, 5],
+  ] as const) {
+    const out = renderDashboard(state, columns, rows);
+    expect(out.length).toBeLessThanOrEqual(rows);
+    expect(out.every((line) => Bun.stringWidth(line) <= columns)).toBe(true);
+  }
+});
+
+test("external text cannot acquire semantic styling from its leading words", () => {
+  const value = flow({
+    title: "Blockers [invalid] invalid FLOW.json",
+    ticket: "NEXT",
+    next: "PR #9 [paused] Blockers",
+    tasks: { "Blockers-1": "pending", "NEXT-2": "pending" },
+  });
+  const state = reloadState(
+    { ...createState(89, 30), color: true },
+    snapshot([{ dir: "NEXT", flow: value }]),
+  );
+  const lines = renderDashboard(state, 89, 30);
+  const find = (text: string) => lines.find((line) => Bun.stripANSI(line).includes(text)) ?? "";
+  expect(find("Blockers [invalid]")).toBe(
+    "\x1b[1m" + "Blockers [invalid] invalid FLOW.json\x1b[0m",
+  );
+  expect(find("PR #9 [paused]")).not.toContain("\x1b[");
+  expect(find("Tasks: Blockers-1")).not.toContain("\x1b[");
+  expect(lines.some((line) => line.includes("\x1b[1;31m"))).toBe(false);
+});
+
+test("hidden-done-only differs from genuinely empty; load errors are visible and stale is explicit", () => {
+  const done = { dir: "old", flow: flow({ status: "done", step: 13 }) };
+  const hidden = renderDashboard(reloadState(createState(), snapshot([done])), 80, 24).join("\n");
+  expect(hidden).toContain("No active flows.");
+  expect(hidden).toContain("1 completed flow hidden · d to show");
+  expect(hidden).toContain("d show done");
+  expect(hidden).not.toContain("No flows found.");
+  const empty = renderDashboard(reloadState(createState(), snapshot([])), 80, 24).join("\n");
+  expect(empty).toContain("No flows found.");
+  expect(empty).not.toContain("d show done");
+  const failed = reloadState(createState(), {
+    ...snapshot([]),
+    error: "Drafts directory unavailable or unreadable",
+  });
+  const failure = renderDashboard(failed, 80, 24);
+  expect(failure.join("\n")).toContain("Load error: Drafts directory unavailable");
+  expect(failure.join("\n")).not.toContain("Showing last loaded");
+  const stale = reloadState(failed, { ...snapshot([{ dir: "active", flow: flow() }]) });
+  const kept = { ...stale, error: "Local drafts unavailable" };
+  const output = renderDashboard(kept, 80, 24).join("\n");
+  expect(output).toContain("Load error: Local drafts unavailable");
+  expect(output).toContain("Showing last loaded records");
+  expect(output).toContain("NOW");
+});
+
+test("footer shows whole conditional items and scroll help only with overflow", () => {
+  const roomy = reloadState(createState(89, 51), snapshot([{ dir: "active", flow: flow() }]));
+  const single = renderDashboard(roomy, 89, 51).at(-1) ?? "";
+  expect(single).toBe("q quit · r refresh");
+  const many = reloadState(
+    createState(80, 24),
+    snapshot([
+      { dir: "a", flow: flow() },
+      { dir: "b", flow: flow() },
+      { dir: "c", flow: flow({ status: "done", step: 13 }) },
+    ]),
+  );
+  expect(renderDashboard(many, 80, 24).at(-1)).toBe("q quit · r refresh · j/k flows · d show done");
+  const tall = reloadState(createState(40, 6), snapshot([{ dir: "a", flow: flow() }]));
+  const full = renderDashboard(tall, 90, 6).at(-1) ?? "";
+  expect(full).toBe("q quit · wheel/PgUpDn · 1–4/14 · r refresh · Ctrl-U/D half page · Home/End");
+  const items = ["q quit", "r refresh", "wheel/PgUpDn", "Ctrl-U/D half page", "Home/End"];
+  for (let columns = 6; columns <= 90; columns += 1) {
+    const footer = renderDashboard(tall, columns, 6).at(-1) ?? "";
+    expect(Bun.stringWidth(footer)).toBeLessThanOrEqual(columns);
+    for (const part of footer.split(" · "))
+      expect(items.includes(part) || /^\d+–\d+\/\d+$/.test(part)).toBe(true);
+  }
+  expect(renderDashboard(tall, 80, 6).at(-1)).toContain("1–4/14");
+  expect(renderDashboard(tall, 40, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/14");
+  expect(renderDashboard(tall, 43, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/14 · r refresh");
+  expect(renderDashboard(tall, 30, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/14");
+  expect(renderDashboard(tall, 14, 6).at(-1)).toBe("q quit");
+  const scrolled = handleKey(tall, "end");
+  expect(renderDashboard(scrolled, 80, 6).at(-1)).toContain("11–14/14");
 });
 
 test("colored geometry matches plain rendering and external controls never survive owned styles", () => {
@@ -253,7 +351,7 @@ test("summary navigation clamps, preserves selection, and bounds source and vali
       { dir: "third", flow: flow() },
     ]),
   );
-  for (const heading of ["Current focus", "IN PROGRESS", "COMPLETED", "PENDING", "NEXT"])
+  for (const heading of ["NOW", "DONE", "TODO", "NEXT"])
     expect(renderDashboard(state, 80, 24).join("\n")).toContain(heading);
   expect(renderDashboard(state, 80, 24).join("\n")).toContain("+97 more");
   state = { ...state, columns: 40, rows: 8 };
@@ -551,4 +649,79 @@ test("Ctrl-C, stdin error and startup failure remove input listeners and restore
       terminal.restore();
     }
   }
+});
+
+test("NEXT wraps on word boundaries, splits only oversized tokens and truncates with an ellipsis", () => {
+  const render = (next: string, columns: number, color = false) =>
+    renderDashboard(
+      reloadState(
+        { ...createState(columns, 30), color },
+        snapshot([{ dir: "a", flow: flow({ next }) }]),
+      ),
+      columns,
+      30,
+    );
+  const nextRows = (lines: string[]) => {
+    const start = lines.findIndex((line) => Bun.stripANSI(line) === "NEXT");
+    return lines.slice(start + 1, start + 3).map((line) => Bun.stripANSI(line));
+  };
+  const ordinary = nextRows(render("Finish task review, then verify terminal behavior.", 40));
+  expect(ordinary).toEqual(["  Finish task review, then verify", "  terminal behavior."]);
+  const token = "界👩‍💻".repeat(12);
+  const oversized = render(`go ${token} end`, 20);
+  const rows = nextRows(oversized);
+  expect(rows[0]).toBe("  go");
+  expect(rows.join("")).toContain("👩‍💻");
+  const truncated = nextRows(render("alpha beta gamma delta epsilon zeta eta theta iota", 20));
+  expect(truncated[1]?.endsWith("…")).toBe(true);
+  for (const columns of [8, 20, 40]) {
+    const plain = render(`${token} one two\nSECOND\x1b]0;x\x07`, columns);
+    const colored = render(`${token} one two\nSECOND\x1b]0;x\x07`, columns, true);
+    expect(plain.join("\n")).not.toContain("SECOND");
+    expect(plain.every((line) => Bun.stringWidth(line) <= columns)).toBe(true);
+    expect(colored.map((line) => Bun.stripANSI(line))).toEqual(plain);
+  }
+});
+
+test("flow ID and status outrank branch and directory in the header", () => {
+  const longDir = "very-long-directory-name-for-sam-ui-redesign";
+  const header = (entry: FlowEntry, columns: number, offline = false) =>
+    renderDashboard(
+      reloadState({ ...createState(columns, 12), offline }, snapshot([entry], "develop")),
+      columns,
+      12,
+    )[0] ?? "";
+  for (const status of ["active", "paused"] as const) {
+    const line = header({ dir: longDir, flow: flow({ ticket: "sam-ui-redesign", status }) }, 40);
+    expect(line).toBe(`FLOW · sam-ui-redesign · ${status}`);
+  }
+  expect(header({ dir: "short", flow: flow({ ticket: "sam-ui-redesign" }) }, 80)).toBe(
+    "FLOW · sam-ui-redesign (short) · develop · active",
+  );
+  expect(header({ dir: longDir, errors: ["bad"] }, 40)).toBe(
+    `FLOW · ${longDir.slice(0, 22)}… · invalid`,
+  );
+  expect(header({ dir: longDir, errors: ["bad"] }, 40, true)).toContain("invalid");
+  const hostile = header(
+    { dir: "d", flow: flow({ ticket: "t\x1b]0;x\x07\n", status: "paused" }) },
+    40,
+  );
+  expect(hostile).toBe("FLOW · t (d) · develop · paused");
+  for (let columns = 1; columns <= 60; columns += 1)
+    expect(
+      Bun.stringWidth(header({ dir: longDir, flow: flow({ ticket: "sam-ui-redesign" }) }, columns)),
+    ).toBeLessThanOrEqual(columns);
+  const many = renderDashboard(
+    reloadState(
+      createState(40, 12),
+      snapshot([
+        { dir: "a", flow: flow() },
+        { dir: "b", flow: flow() },
+      ]),
+    ),
+    40,
+    12,
+  );
+  expect(many[0]).toBe("FLOW · feature/current · 1/2");
+  expect(many[1]).toStartWith(">");
 });
