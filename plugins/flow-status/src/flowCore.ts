@@ -11,7 +11,7 @@ export const FLOW_STEPS = [
   "GSD registration",
   "execution",
   "content approval",
-  "final review + PR + merge",
+  "PR + review loop + merge",
   "paid/live runs",
   "GSD state update",
 ] as const;
@@ -167,9 +167,11 @@ export type Task = Flow["tasks"][string];
 export const taskStatus = (task: Task): TaskState =>
   typeof task === "string" ? task : task.status;
 
-/** Latest plan-review cycle/round, e.g. "C2 R1"; cycle 1 is implied. */
-export const planReviewRound = (flow: Flow): string | null => {
-  const latest = flow.reviews.filter((r) => r.kind === "plan").at(-1);
+/** Latest phase review cycle/round, e.g. "C2 R1"; cycle 1 is implied. */
+export const reviewRound = (flow: Flow, kind: "plan" | "final"): string | null => {
+  const latest = flow.reviews
+    .filter((r) => r.kind === kind || (kind === "final" && r.kind === "pr"))
+    .at(-1);
   if (latest === undefined) return null;
   const round = `R${String(latest.round)}`;
   return latest.cycle > 1 ? `C${String(latest.cycle)} ${round}` : round;

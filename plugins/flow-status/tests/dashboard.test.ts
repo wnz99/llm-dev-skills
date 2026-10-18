@@ -7,7 +7,7 @@ import {
   renderDashboard,
   runDashboard,
 } from "../src/dashboard";
-import { type Flow, type FlowEntry, validateFlow } from "../src/flowCore";
+import { FLOW_STEPS, type Flow, type FlowEntry, validateFlow } from "../src/flowCore";
 import * as sources from "../src/sources";
 
 const flow = (patch: Partial<Flow> = {}): Flow => ({
@@ -187,7 +187,7 @@ test("every row reflects its own record; open items follow the flow status", () 
     expect(line(lines, "Plan drafted")).toMatch(/^- .*skipped$/);
     expect(line(lines, "Simplicity review")).toMatch(/^- .*n\/a$/);
     expect(line(lines, "Plan review")).toMatch(/^\? .*not recorded$/);
-    expect(line(lines, " T1")).toMatch(/^ {5}✓ T1$/);
+    expect(line(lines, " T1")).toMatch(/^ {5}✓ T1 .*no timing$/);
     expect(line(lines, " T3")).toMatch(/^ {5}◦ T3$/);
     const open = { active: "running", paused: "paused", done: "not closed" }[status];
     expect(line(lines, " T2")).toMatch(new RegExp(`^ {5}▸ T2 .*${open}$`));
@@ -274,7 +274,7 @@ test("hidden-done-only differs from genuinely empty; load errors are visible and
 test("footer shows whole conditional items and scroll help only with overflow", () => {
   const roomy = reloadState(createState(89, 51), snapshot([{ dir: "active", flow: flow() }]));
   const single = renderDashboard(roomy, 89, 51).at(-1) ?? "";
-  expect(single).toBe("q quit · r refresh");
+  expect(single).toBe("q quit · c copy · r refresh");
   const many = reloadState(
     createState(80, 40),
     snapshot([
@@ -283,11 +283,15 @@ test("footer shows whole conditional items and scroll help only with overflow", 
       { dir: "c", flow: flow({ status: "done", step: 13 }) },
     ]),
   );
-  expect(renderDashboard(many, 80, 40).at(-1)).toBe("q quit · r refresh · j/k flows · d show done");
+  expect(renderDashboard(many, 80, 40).at(-1)).toBe(
+    "q quit · c copy · r refresh · j/k flows · d show done",
+  );
   const tall = reloadState(createState(40, 6), snapshot([{ dir: "a", flow: flow() }]));
   const full = renderDashboard(tall, 90, 6).at(-1) ?? "";
-  expect(full).toBe("q quit · wheel/PgUpDn · 1–4/21 · r refresh · Ctrl-U/D half page · Home/End");
-  const items = ["q quit", "r refresh", "wheel/PgUpDn", "Ctrl-U/D half page", "Home/End"];
+  expect(full).toBe(
+    "q quit · c copy · wheel/PgUpDn · 1–4/21 · r refresh · Ctrl-U/D half page · Home/End",
+  );
+  const items = ["q quit", "c copy", "r refresh", "wheel/PgUpDn", "Ctrl-U/D half page", "Home/End"];
   for (let columns = 6; columns <= 90; columns += 1) {
     const footer = renderDashboard(tall, columns, 6).at(-1) ?? "";
     expect(Bun.stringWidth(footer)).toBeLessThanOrEqual(columns);
@@ -295,9 +299,9 @@ test("footer shows whole conditional items and scroll help only with overflow", 
       expect(items.includes(part) || /^\d+–\d+\/\d+$/.test(part)).toBe(true);
   }
   expect(renderDashboard(tall, 80, 6).at(-1)).toContain("1–4/21");
-  expect(renderDashboard(tall, 40, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/21");
-  expect(renderDashboard(tall, 43, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/21 · r refresh");
-  expect(renderDashboard(tall, 30, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/21");
+  expect(renderDashboard(tall, 40, 6).at(-1)).toBe("q quit · c copy · wheel/PgUpDn · 1–4/21");
+  expect(renderDashboard(tall, 43, 6).at(-1)).toBe("q quit · c copy · wheel/PgUpDn · 1–4/21");
+  expect(renderDashboard(tall, 30, 6).at(-1)).toBe("q quit · c copy · wheel/PgUpDn");
   expect(renderDashboard(tall, 14, 6).at(-1)).toBe("q quit");
   const scrolled = handleKey(tall, "end");
   expect(renderDashboard(scrolled, 80, 6).at(-1)).toContain("18–21/21");
@@ -432,6 +436,47 @@ const terminalFixture = () => {
     },
   };
 };
+
+test("copy mode releases mouse capture and freezes output until resumed, while quit still restores terminal", async () => {
+  const terminal = terminalFixture();
+  const load = spyOn(sources, "loadDraftSnapshot").mockResolvedValue(
+    snapshot([{ dir: "active", flow: flow() }]),
+  );
+  let tick: (() => void) | undefined;
+  const interval = spyOn(globalThis, "setInterval").mockImplementation(((callback: () => void) => {
+    tick = callback;
+    return 123;
+  }) as unknown as typeof setInterval);
+  const clear = spyOn(globalThis, "clearInterval").mockImplementation(() => undefined);
+  try {
+    const running = runDashboard("/tmp/project", "offline");
+    await Bun.sleep(10);
+    expect(terminal.writes.join("")).toContain("c copy");
+    process.stdin.emit("data", "c");
+    expect(terminal.writes.at(-2)).toBe("\x1b[?1006l\x1b[?1000l");
+    expect(terminal.writes.at(-1)).toContain("c resume");
+    expect(terminal.writes.at(-1)).toContain("Select text; use terminal Copy");
+    const frozenWrites = terminal.writes.length;
+    load.mockResolvedValue(snapshot([{ dir: "active", flow: flow({ title: "New title" }) }]));
+    tick?.();
+    await Bun.sleep(10);
+    process.stdin.emit("data", "rj\x1b[6~\x1b[<65;2;3M");
+    process.stdout.emit("resize");
+    expect(terminal.writes).toHaveLength(frozenWrites);
+    expect(load).toHaveBeenCalledTimes(2);
+    process.stdin.emit("data", "c");
+    expect(terminal.writes.at(-2)).toBe("\x1b[?1000h\x1b[?1006h");
+    expect(terminal.writes.at(-1)).toContain("New title");
+    expect(terminal.writes.at(-1)).toContain("c copy");
+    process.stdin.emit("data", "c\x03");
+    await running;
+    expect(terminal.writes.at(-1)).toBe("\x1b[?1006l\x1b[?1000l\x1b[?25h\x1b[?1049l");
+  } finally {
+    process.stdin.emit("data", "q");
+    for (const mock of [load, interval, clear]) mock.mockRestore();
+    terminal.restore();
+  }
+});
 
 test("live local flows make no provider calls on open or refresh; mixed flows use explicit links only", async () => {
   const terminal = terminalFixture();
@@ -783,6 +828,65 @@ const rowOf = (lines: string[], label: string): string =>
     .find((text) => text.includes(label))
     ?.replace(/\s+/g, " ")
     .trim() ?? "";
+
+test("all phases render recorded timing, and incomplete legacy timing stays explicit", () => {
+  const value = flow({
+    step: 13,
+    tasks: {},
+    reviews: [],
+    steps: Object.fromEntries(
+      FLOW_STEPS.map((_, index) => [
+        String(index + 1),
+        {
+          state: "done",
+          evidence: "",
+          started_at: "2026-10-09T09:02:00Z",
+          completed_at: "2026-10-09T09:20:00Z",
+        },
+      ]),
+    ),
+  });
+  const lines = renderDashboard(timedState(value, 100, 40), 100, 40);
+  for (const [index, name] of FLOW_STEPS.entries()) {
+    const label = `${String(index + 1)} ${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+    expect(rowOf(lines, label)).toBe(`✓ ${label} 18m 09:20`);
+  }
+  value.steps = {
+    "1": { state: "done", evidence: "" },
+    "2": { state: "done", evidence: "", completed_at: "2026-10-09T09:20:00Z" },
+    "3": { state: "done", evidence: "", started_at: "2026-10-09T09:02:00Z" },
+  };
+  const legacy = renderDashboard(timedState(value, 100, 40), 100, 40);
+  expect(rowOf(legacy, "Scope agreed")).toBe("✓ 1 Scope agreed no timing");
+  expect(rowOf(legacy, "Plan drafted")).toBe("✓ 2 Plan drafted no timing 09:20");
+  expect(rowOf(legacy, "Simplicity review")).toBe("✓ 3 Simplicity review no timing");
+});
+
+test("PR phase exposes its review loop and latest final or PR round without task review leakage", () => {
+  const review = {
+    cycle: 1,
+    round: 1,
+    verdict: "CLEAN",
+    reviewer_model: "r",
+    findings: [],
+  } as const;
+  const value = flow({
+    step: 11,
+    reviews: [
+      { ...review, findings: [], kind: "plan", cycle: 2, round: 3 },
+      { ...review, findings: [], kind: "final" },
+      { ...review, findings: [], kind: "pr", cycle: 2, round: 2 },
+      { ...review, findings: [], kind: "task", round: 5 },
+    ],
+  });
+  const render = () => renderDashboard(timedState(value, 100, 40), 100, 40);
+  expect(rowOf(render(), "11 PR")).toBe("▸ 11 PR + review loop + merge · C2 R2 running");
+  expect(rowOf(render(), "4 Plan review")).toBe("? 4 Plan review · C2 R3 not recorded");
+  value.reviews = [{ ...review, findings: [], kind: "final" }];
+  expect(rowOf(render(), "11 PR")).toBe("▸ 11 PR + review loop + merge · R1 running");
+  value.reviews = [];
+  expect(rowOf(render(), "11 PR")).toBe("▸ 11 PR + review loop + merge running");
+});
 
 test("recorded times render as elapsed and finished columns that drop by width", () => {
   const wide = renderDashboard(timedState(timedFlow(), 89, 40), 89, 40);

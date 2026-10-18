@@ -1,10 +1,11 @@
-import { FLOW_STEPS, type Flow, planReviewRound, type Task, taskStatus } from "./flowCore";
+import { FLOW_STEPS, type Flow, reviewRound, type Task, taskStatus } from "./flowCore";
 import type { DashboardState } from "./dashboardView";
 import { clip, row, type Row, safeText, type Span, type Tone } from "./terminalText";
 
 const SEPARATOR = " · ";
 const EXECUTION_STEP = FLOW_STEPS.indexOf("execution") + 1;
 const PLAN_REVIEW_STEP = FLOW_STEPS.indexOf("plan review") + 1;
+const FINAL_REVIEW_STEP = FLOW_STEPS.indexOf("PR + review loop + merge") + 1;
 const ELAPSED = "elapsed";
 const FINISHED = "finished";
 const COLUMN_GAP = 2;
@@ -77,7 +78,12 @@ const stepItems = (flow: Flow): Item[] =>
   FLOW_STEPS.map((name, index) => {
     const number = index + 1;
     const record = flow.steps[String(number)];
-    const round = number === PLAN_REVIEW_STEP ? planReviewRound(flow) : null;
+    const round =
+      number === PLAN_REVIEW_STEP
+        ? reviewRound(flow, "plan")
+        : number === FINAL_REVIEW_STEP
+          ? reviewRound(flow, "final")
+          : null;
     const label = `${String(number).padStart(NUMBER_WIDTH)} ${sentence(name)}${round === null ? "" : `${SEPARATOR}${round}`}`;
     if (record !== undefined)
       return {
@@ -116,7 +122,8 @@ const elapsedText = (item: Item, flow: Flow, now: number): Cell => {
   if (item.state === "open") return openText(item, flow, now);
   if (item.state === "unrecorded") return ["not recorded", "warn"];
   if (item.state === "skipped" || item.state === "n/a") return [item.state, quiet];
-  if (item.started_at === undefined || item.completed_at === undefined) return ["", quiet];
+  if (item.started_at === undefined || item.completed_at === undefined)
+    return item.state === "done" ? ["no timing", "dim"] : ["", quiet];
   return [formatElapsed(Date.parse(item.completed_at) - Date.parse(item.started_at)), quiet];
 };
 

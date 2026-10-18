@@ -96,8 +96,8 @@ class DashboardSession {
     else this.resolve();
   };
 
-  private repaint(): void {
-    if (this.closed) return;
+  private repaint(mode: "live" | "selection" = "live"): void {
+    if (this.closed || (this.state.selecting && mode === "live")) return;
     try {
       process.stdout.write(
         HIDE_CURSOR +
@@ -218,7 +218,17 @@ class DashboardSession {
       });
   }
 
+  private selectionChanged(): void {
+    try {
+      process.stdout.write(this.state.selecting ? DISABLE_MOUSE : ENABLE_MOUSE);
+      this.repaint("selection");
+    } catch (error) {
+      this.finish(error);
+    }
+  }
+
   private readonly onKey = (_text: string, key: { name?: string; ctrl?: boolean }): void => {
+    const selecting = this.state.selecting;
     this.state = handleKey(
       this.state,
       key.ctrl === true ? `ctrl-${key.name ?? ""}` : (key.name ?? ""),
@@ -227,6 +237,11 @@ class DashboardSession {
       this.finish();
       return;
     }
+    if (selecting !== this.state.selecting) {
+      this.selectionChanged();
+      return;
+    }
+    if (this.state.selecting) return;
     if (key.name === "r") this.reload("live");
     if (key.name === "d") this.reconcile();
     this.repaint();

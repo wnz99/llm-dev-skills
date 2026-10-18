@@ -23,6 +23,7 @@ export interface DashboardState extends Snapshot {
   columns: number;
   rows: number;
   quit: boolean;
+  selecting: boolean;
   offline: boolean;
   color: boolean;
   now: number;
@@ -41,6 +42,7 @@ export const createState = (columns = DEFAULT_COLUMNS, rows = DEFAULT_ROWS): Das
   columns,
   rows,
   quit: false,
+  selecting: false,
   offline: false,
   color: false,
   now: Date.now(),
@@ -114,6 +116,8 @@ export const handleKey = (state: DashboardState, key: string): DashboardState =>
   const entries = visibleEntries(state);
   const index = entries.findIndex((entry) => entry.dir === state.selectedDir);
   if (key === "q" || key === "ctrl-c") return { ...state, quit: true };
+  if (key === "c") return { ...state, selecting: !state.selecting };
+  if (state.selecting) return state;
   if (key === "d") return reloadState({ ...state, showDone: !state.showDone }, state);
   if (["j", "down", "k", "up"].includes(key)) return moveSelection(state, entries, index, key);
   const page = Math.max(1, detailHeight(state, state.rows));
@@ -197,6 +201,11 @@ const hasCompleted = (state: DashboardState): boolean =>
 
 const footerItems = (state: DashboardState, range: string | null): string[] => [
   "q quit",
+  ...(state.selecting ? ["c resume", "Select text; use terminal Copy"] : ["c copy"]),
+  ...(state.selecting ? [] : navigationItems(state, range)),
+];
+
+const navigationItems = (state: DashboardState, range: string | null): string[] => [
   ...(range === null ? [] : ["wheel/PgUpDn", range]),
   "r refresh",
   ...(visibleEntries(state).length >= MIN_SELECTOR_FLOWS ? ["j/k flows"] : []),

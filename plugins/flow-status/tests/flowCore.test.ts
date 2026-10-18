@@ -7,7 +7,7 @@ import { join } from "node:path";
 import {
   type Flow,
   type FlowEntry,
-  planReviewRound,
+  reviewRound,
   selectCurrentTicket,
   summarizeChecks,
   validateFlow,
@@ -115,10 +115,12 @@ test("rejects non-ISO updated_at and malformed approval dates", () => {
   expect(validateFlow({ ...baseRaw(), approvals: badDay }).ok).toBe(false);
 });
 
-test("planReviewRound reports the latest plan review; cycle 1 is implied", () => {
-  expect(planReviewRound(validFlow({ reviews: [planReview(1, 1), planReview(1, 2)] }))).toBe("R2");
-  expect(planReviewRound(validFlow({ reviews: [planReview(2, 1)] }))).toBe("C2 R1");
-  expect(planReviewRound(validFlow())).toBeNull();
+test("reviewRound reports the latest plan review; cycle 1 is implied", () => {
+  expect(reviewRound(validFlow({ reviews: [planReview(1, 1), planReview(1, 2)] }), "plan")).toBe(
+    "R2",
+  );
+  expect(reviewRound(validFlow({ reviews: [planReview(2, 1)] }), "plan")).toBe("C2 R1");
+  expect(reviewRound(validFlow(), "plan")).toBeNull();
 });
 
 const T0 = "2026-10-08T08:00:00Z";
