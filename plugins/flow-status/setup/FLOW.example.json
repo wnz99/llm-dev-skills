@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "ticket": "TASK-1",
+  "ticket": "cache-cleanup",
   "linear_id": null,
-  "title": "Example task; replace before use",
+  "title": "Example cache cleanup; replace before use",
   "status": "active",
   "step": 1,
   "updated_at": "2026-10-16T00:00:00Z",

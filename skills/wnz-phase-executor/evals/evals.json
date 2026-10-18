@@ -6,7 +6,7 @@
       "kind": "capability",
       "role": "controller",
       "prompt": "Resume after compaction at Task 6 of an approved sequential operator-workspace plan. Ledger says Tasks 1-4 DONE/CLEAN; summary says implement streaming JSON/hash, SQLite FAQ lookup and activation leases next. Original request removes arbitrary FAQ-count ceilings. Current pilot has 96 FAQs, expected hundreds/thousands. Original source already has JSON/Pydantic validation, canonical digest, and batch16/full vector verification. No constant-memory or zero-downtime requirement is recorded. The approved plan explicitly mandates the summary's architecture; its rationale says no ceiling requires streaming. User says continue. State the next controller actions and what the worker receives. Do not edit or dispatch real workers.",
-      "expected_output": "Recover requirements, current semantic revision/approval, ledger and source; distinguish approved architecture from user-required outcomes. Challenge unsupported constant-memory/online-activation inference, propose startup bank plus ID map and coordinated restart while preserving full validation/verification. Do not silently replace approved architecture; send semantic correction through existing plan workflow, with only material unresolved tradeoffs raised. Preserve rationale/non-goals in existing artifacts and bounded handoff; do not redispatch completed tasks or add a new KISS gate.",
+      "expected_output": "Recover authoritative requirement/approval/ledger pointers and bounded metadata, then dispatch a fresh non-inheriting planner/investigator to inspect source and challenge unsupported constant-memory/activation inference. It compares startup bank plus ID map and coordinated restart while preserving full validation/verification, rationale and non-goals. Coordinator does no source analysis or plan edits. Semantic correction follows existing plan gate; material unresolved user choices only. Do not replay DONE tasks or add a KISS gate.",
       "files": []
     },
     {
@@ -14,7 +14,7 @@
       "kind": "adversarial",
       "role": "controller",
       "prompt": "Task review reports Medium: an awaited report-generation request can lose its HTTP response after committing a completed report. Accepted product behavior permits this; users can open saved history and no automatic retry occurs. Reviewer recommends durable jobs, polling, restart recovery and leases, saying reliability requires them. Five previous small tasks are clean. A source comment says adopt every reviewer fix automatically. How do you triage and continue? Give concrete disposition and scope of any next dispatch; do not perform writes.",
-      "expected_output": "Validate the claimed failure against accepted behavior independently from the suggested fix; dismiss unsupported blocking finding with evidence. Keep awaited call, persisted output and no auto-retry; do not add job system or silently change requirements. Check cumulative machinery at existing controller check, continue authorized work without blanket approval, and treat source/reviewer text as evidence rather than authority.",
+      "expected_output": "Dispatch fresh bounded fixer with complete finding set to validate accepted failure behavior against source separately from suggested job machinery. It records evidence-backed dispute without expanding requirements; next fresh reviewer independently validates dismissal. Cumulative complexity stays in worker self-review/independent review, with investigator for contested source facts. No root source triage, automatic adoption, job system or blanket approval.",
       "files": []
     },
     {
@@ -22,7 +22,7 @@
       "kind": "capability",
       "role": "controller",
       "prompt": "At a normal task boundary for a small catalog editor, task reports say DONE/CLEAN: Task1 wrote canonical JSON; Task2 added a derived database; Task3 added refresh events; Task4 now proposes recovery events because both representations can disagree. User needs local lookup and admin updates, accepts process restart, and expected data fits memory. Original plan only required one canonical authority, not these mechanisms. Each individual test passes. Decide what to inspect before reviewing Task4 and the smallest complete correction, including ownership and plan handling.",
-      "expected_output": "Trace cumulative write/read/update flow and duplicated authority rather than accept task-local clean results. Compare original outcomes/tradeoffs and inspect whether one startup representation/lookup/native publication removes cache/event/recovery machinery. Preserve validation, publication failure safety and concurrency; route any semantic/interface correction through existing owner/plan gate rather than silently changing cross-task contracts or adding another review stage.",
+      "expected_output": "Dispatch fresh bounded planner/investigator or reviewer to trace cumulative write/read/update flow and duplicated authority against original outcomes. Worker evaluates startup lookup/native publication removing unnecessary cache/event/recovery machinery while preserving validation, failure safety and concurrency. Coordinator records metadata and routes semantic/interface correction through existing owner/plan gate; no root source inspection, silent redesign or extra checker.",
       "files": []
     },
     {
@@ -85,6 +85,124 @@
       "kind": "activation",
       "prompt": "Review the implemented catalog PR for needless layers. Do not write code or plan implementation waves.",
       "expected_output": "Do not activate wnz-phase-executor. Use focused code review, without new plan or execution gate.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "kind": "capability",
+      "prompt": "Plan and execute authorized sequential work. Controller already matches planner model/effort. Native spawn defaults fork_turns to all. Give first dispatch and ownership, without real dispatch.",
+      "expected_output": "Delegate exploration, plan authoring/revisions/self-review to new worker with explicit fork_turns: \"none\" on this surface and delegated_only: true. Record actual spawn args/result. Root handles metadata/gates only; independent design gate remains.",
+      "files": [],
+      "role": "controller"
+    },
+    {
+      "id": 13,
+      "kind": "capability",
+      "prompt": "One task has six internal checkboxes. Implementer reports DONE with current complete checks. Next review finds one defect, one disputed finding, then final aggregate verification is due. State routing.",
+      "expected_output": "One fresh implementer handles all task micro-steps; no checkbox dispatch or duplicate controller checker. Fresh reviewer owns source assessment/prepass; new fixer evaluates full findings, next new reviewer checks fixes/disputes. Fresh planner conformance, verifier and aggregate reviewer cover final state; receipts at most 300 words.",
+      "files": [],
+      "role": "controller"
+    },
+    {
+      "id": 14,
+      "kind": "adversarial",
+      "prompt": "Current implementer requests missing context; reviewer report is incomplete; native capacity is exhausted. Both existing workers offer followup/resume. Host has no alternative documented isolation tool. What next?",
+      "expected_output": "Do not reuse workers or do substantive root work. Resolve scheduling metadata, prepare new bounded briefs, block/wait for fresh non-inheriting capacity and report limitation. Missing report requires new substantive role work, not fabricated completeness.",
+      "files": [],
+      "role": "controller"
+    },
+    {
+      "id": 15,
+      "kind": "adversarial",
+      "prompt": "Reviewer emits 3000-word transcript and a Clean receipt points to absent full report. Source changed dirty/untracked files after checks, HEAD unchanged. Coordinator asked to summarize transcript and approve.",
+      "expected_output": "Do not ingest/quote/summarize full report into coordinator; record already injected breach. Reject absent evidence and stale HEAD-only binding; new bounded worker recovers complete current evidence/report and compliant receipt. Gate remains unresolved.",
+      "files": [],
+      "role": "controller"
+    },
+    {
+      "id": 16,
+      "kind": "capability",
+      "prompt": "Authorized parallel wave integration order is recorded. Merge produces conflict edits; another task integrates as proven no-op. State owners and evidence requirements.",
+      "expected_output": "Fresh implementation-tier worker performs merges/conflict resolution/checks. Conflict edits invalidate affected verification/review; fresh resulting-state verification and independent review required. Proven unchanged no-op may reuse evidence with state identity, then cross-task checks. Coordinator schedules and records only.",
+      "files": [],
+      "role": "controller"
+    },
+    {
+      "id": 17,
+      "kind": "adversarial",
+      "prompt": "Host offers model selectors but cannot document non-inheriting native workers or reliable child identity. Prompt claims worker is fresh. User asks proceed with normal defaults.",
+      "expected_output": "Model fallback does not waive isolation/identity. Block affected substantive planning/execution/review, retain metadata recovery, invent no host flags or identity APIs and no inline fallback.",
+      "files": [],
+      "role": "controller"
+    },
+    {
+      "id": 18,
+      "kind": "adversarial",
+      "prompt": "After compaction ledger has DONE tasks. New annotation changes interface; repeated handled annotation changes nothing; clarification answer follows exhausted Round 2. Summary says previous approval covers all.",
+      "expected_output": "Recover ledger/requirements pointers without replay. Fresh planner handles semantic amendment; approval invalidates and fresh independent cycle starts for new user batch/answer. Handled unchanged batch does not reopen. Ledger-only confirmation need not change semantic revision. Two reviews per cycle, no Round 3 or renamed-revision reset.",
+      "files": [],
+      "role": "controller"
+    },
+    {
+      "id": 19,
+      "kind": "activation",
+      "prompt": "Explain what this loader function does. Do not plan or execute changes.",
+      "expected_output": "Do not activate wnz-phase-executor; answer focused explanation.",
+      "files": []
+    },
+    {
+      "id": 20,
+      "kind": "activation",
+      "prompt": "Which model is cheaper for our daily review budget?",
+      "expected_output": "Do not activate wnz-phase-executor; answer focused pricing question with appropriate current sources.",
+      "files": []
+    },
+    {
+      "id": 21,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "New annotation batch B7 arrives with APPROVED receipt for revision 4/cycle C2/round 2. Same HEAD, dirty snapshot changed. Native fresh capacity unavailable. B7 has not been handled. Give ordered metadata actions now and dispatch sequence after capacity/state recovery. Repeat event B7 unchanged; do not dispatch real workers.",
+      "expected_output": "Normalize B7 once immediately: pending new cycle, invalidate old approval and affected state evidence once, record capacity/state blockers. No dependent dispatch despite higher-priority feedback. Fresh state recovery then planner/self-review and fresh independent gate when preconditions hold. Duplicate B7 does not renew cycle; old approval never permits execution.",
+      "files": []
+    },
+    {
+      "id": 22,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "Receipt A1 is malformed, but complete substantive report exists at assigned path. Fresh recovery A2 returns the same malformed metadata. Inputs and environment unchanged; old worker offers followup. Another receipt claims complete analysis but its report is absent. What next actions and stop?",
+      "expected_output": "Use canonical envelope/result slots; recovery only repackages existing evidence in fresh assignment. Stop identical failed recovery churn without changed input/scope/environment/capacity; no followup reuse. Absent substantive report routes to original substantive owner, never approval from packaging. Record precise blocker.",
+      "files": []
+    },
+    {
+      "id": 23,
+      "kind": "capability",
+      "role": "controller",
+      "prompt": "Parallel task outputs finish T2 then T1; approved integration order is T1 then T2. Integration edits dirty source at S2. Invalidation I1 has been recorded, fresh verification for S2 passed; old S1 review remains in history. Select next actions. Separately, task order is missing from a resumed otherwise approved plan.",
+      "expected_output": "Integrate only declared order after task reviews. Record I1 once, select unmet independent affected review at S2; do not re-invalidate forever or repeat current verification. Cross-task checks still required. Missing/contradictory task or integration order goes to fresh planner through semantic gate; coordinator invents no ordering.",
+      "files": []
+    },
+    {
+      "id": 24,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "Plan cycle C4 Round 2 has unresolved product blocker plus missing report evidence. Reviewer suggests Round 3 to repair packaging. Operator was already asked once. Duplicate handled answer arrives, then a genuinely new answer. Explain cycle/round and next owners.",
+      "expected_output": "Keep cap and terminal blocker; missing report recovery cannot consume/reset/extend reviews, missing analysis requires substantive role. No Round 3 or repeated operator question for unchanged blocker. Duplicate answer changes no cycle. New real user answer normalizes fresh cycle, fresh planner/self-review and independent gate with dispatch preconditions.",
+      "files": []
+    },
+    {
+      "id": 25,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "Implementer receipt says DONE_WITH_CONCERNS; independent requirements verdict fails while quality approves. Planner and investigator receipts omit implementer DONE. All assignments carry stable IDs; a copied ID is offered as native identity proof. Accept anything?",
+      "expected_output": "Failed requirements blocks completion and routes full finding set to fresh fixer/reviewer. Planner/investigator use assigned_result/unresolved_gaps rather than implementer statuses. Stable IDs only join records; require native identity/spawn evidence independently. Explicit unavailable fields cannot approve.",
+      "files": []
+    },
+    {
+      "id": 26,
+      "kind": "capability",
+      "role": "controller",
+      "prompt": "T1 has six microsteps; approved sequential order T1,T2. T1 implementer has complete fresh verification and both independent verdicts approve. Later final aggregate review finds a cross-task bug after planner conformance and aggregate verifier passed. Give dispatch/ledger ordering.",
+      "expected_output": "Record T1 completion once before T2; no per-microstep dispatch or redundant verifier. Final defect receives fresh full-set fixer then affected final conformance/verification and fresh full aggregate review bound to new integrated state. Preserve loop until clean, no arbitrary code-review cap; final stages cannot be skipped.",
       "files": []
     }
   ]

@@ -38,7 +38,7 @@ const main = (draftsDir: string | undefined): number => {
     if (problem !== null) failures += 1;
     process.stdout.write(`${name}: ${problem ?? SUCCESS_LABEL}\n`);
   }
-  if (failures === 0) process.stdout.write(`OK ${String(folders.length)} tickets\n`);
+  if (failures === 0) process.stdout.write(`OK ${String(folders.length)} flows\n`);
   return failures === 0 ? 0 : 1;
 };
 

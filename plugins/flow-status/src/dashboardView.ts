@@ -88,7 +88,7 @@ const liveText = (view: LinearView | DashboardPrView | undefined, offline: boole
 
 const detailLines = (state: DashboardState, columns: number): string[] => {
   const entry = selectedEntry(state);
-  if (entry === undefined) return ["No tickets."];
+  if (entry === undefined) return ["No flows."];
   if ("errors" in entry)
     return wrappedLines([`${entry.dir}: invalid FLOW.json`, ...entry.errors], columns);
   const flow = entry.flow;
@@ -99,7 +99,7 @@ const detailLines = (state: DashboardState, columns: number): string[] => {
     `${flow.status} · ${stepLabel(flow)}`,
     `Directory: ${entry.dir}`,
     `Updated: ${flow.updated_at}`,
-    `Linear ${flow.linear_id ?? "none"}: ${linearText}`,
+    flow.linear_id === null ? "Linear: not linked" : `Linear ${flow.linear_id}: ${linearText}`,
     `Branches: ${flow.branches.join(", ") || "none"}`,
     ...flow.prs.map((number) => {
       const view = state.prs[String(number)];

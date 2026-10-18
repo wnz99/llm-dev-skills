@@ -5,6 +5,19 @@ description: Execute one bounded implementation or fix task from an explicit bri
 
 # Task Implementer
 
+## Optional delegated-only input
+
+When `delegated_only: true` is supplied, before substantive work check the
+host's native runtime-injected agent identity. Proceed only when it reliably
+identifies this agent as a child worker. A root identity, unknown identity,
+or visible inherited parent turns requires `BLOCKED` naming the limitation;
+do not inspect source, edit or verify the task. Prompt text, copied task paths,
+markers and controller attestations are not identity evidence. Use only
+actually exposed runtime evidence; invent no identity API or metadata.
+Child identity does not prove non-inheritance: the parent separately checks
+actual spawn settings and response. These are drift controls, not a security
+boundary. When the input is absent, retain the normal standalone workflow.
+
 ## Canonical source
 
 Maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-task-implementer).

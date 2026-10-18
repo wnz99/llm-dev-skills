@@ -7,7 +7,7 @@ import {
   renderDashboard,
   runDashboard,
 } from "../src/dashboard";
-import { type Flow, type FlowEntry } from "../src/flowCore";
+import { type Flow, type FlowEntry, validateFlow } from "../src/flowCore";
 import * as sources from "../src/sources";
 
 const flow = (patch: Partial<Flow> = {}): Flow => ({
@@ -57,14 +57,21 @@ const snapshot = (entries: FlowEntry[], branch: string | null = "feature/current
 test("branch selection, done toggle, arrows and directory preservation on reload", () => {
   const entries: FlowEntry[] = [
     { dir: "bad", errors: ["FLOW missing"] },
-    { dir: "active", flow: flow() },
+    { dir: "active", flow: flow({ ticket: "cache-cleanup", linear_id: null, prs: [] }) },
+    { dir: "linked", flow: flow({ branches: ["feature/other"] }) },
     { dir: "done", flow: flow({ status: "done", step: 13 }) },
   ];
   let state = reloadState(createState(), snapshot(entries));
   expect(state.selectedDir).toBe("active");
   expect(renderDashboard(state, 80, 20).join("\n")).not.toContain("> done");
+  for (const offline of [false, true]) {
+    const output = renderDashboard({ ...state, offline }, 80, 20).join("\n");
+    expect(output).toContain("Linear: not linked");
+    expect(output).not.toContain("not refreshed");
+    expect(output).not.toContain("credential");
+  }
   state = handleKey(state, "down");
-  expect(state.selectedDir).toBe("active");
+  expect(state.selectedDir).toBe("linked");
   state = handleKey(state, "d");
   state = handleKey(state, "j");
   expect(state.selectedDir).toBe("done");
@@ -120,7 +127,7 @@ test("draft, validation and live text cannot inject terminal controls; Unicode f
     snapshot(
       [
         { dir: malicious, errors: [malicious] },
-        { dir: "active", flow: flow({ title: malicious, next: malicious }) },
+        { dir: "active", flow: flow({ ticket: malicious, title: malicious, next: malicious }) },
       ],
       malicious,
     ),
@@ -190,6 +197,47 @@ const terminalFixture = () => {
   };
 };
 
+test("live local flows make no provider calls on open or refresh; mixed flows use explicit links only", async () => {
+  const terminal = terminalFixture();
+  const raw: Record<string, unknown> = { ...flow(), ticket: "MAM-999", prs: [] };
+  delete raw.linear_id;
+  const result = validateFlow(raw);
+  if (!result.ok) throw new Error(result.errors.join("; "));
+  const local = result.flow;
+  const load = spyOn(sources, "loadDraftSnapshot").mockResolvedValue(
+    snapshot([{ dir: "local", flow: local }]),
+  );
+  const linear = spyOn(sources, "fetchLinear").mockResolvedValue({ status: "Started" });
+  const pr = spyOn(sources, "fetchPr").mockResolvedValue({ state: "OPEN", checks: "none" });
+  try {
+    const running = runDashboard("/tmp/project");
+    await Bun.sleep(10);
+    expect(linear).not.toHaveBeenCalled();
+    expect(pr).not.toHaveBeenCalled();
+    process.stdin.emit("keypress", "r", { name: "r" });
+    await Bun.sleep(10);
+    expect(linear).not.toHaveBeenCalled();
+    expect(pr).not.toHaveBeenCalled();
+    expect(terminal.writes.join("")).toContain("Linear: not linked");
+    load.mockResolvedValue(
+      snapshot([
+        { dir: "local", flow: { ...local, prs: [43] } },
+        { dir: "linked", flow: flow() },
+      ]),
+    );
+    process.stdin.emit("keypress", "r", { name: "r" });
+    await Bun.sleep(10);
+    expect(linear.mock.calls.map(([id]) => id)).toEqual(["MAM-1"]);
+    expect(pr.mock.calls.map(([, number]) => number)).toEqual([43, 42]);
+    process.stdin.emit("keypress", "q", { name: "q" });
+    await running;
+  } finally {
+    process.stdin.emit("keypress", "q", { name: "q" });
+    for (const mock of [load, linear, pr]) mock.mockRestore();
+    terminal.restore();
+  }
+});
+
 test("native lifecycle keeps local tick and keys responsive during hanging live requests and cleans up", async () => {
   const terminal = terminalFixture();
   const { writes, raw } = terminal;
@@ -258,7 +306,11 @@ test("removed live target cancels work and late result cannot replace reintroduc
     const running = runDashboard("/tmp/project");
     await Bun.sleep(10);
     const oldResult = obsolete;
-    load.mockResolvedValue(snapshot([{ dir: "bad", errors: ["invalid"] }]));
+    load.mockResolvedValue(
+      snapshot([
+        { dir: "active", flow: flow({ ticket: "cache-cleanup", linear_id: null, prs: [] }) },
+      ]),
+    );
     process.stdin.emit("keypress", "r", { name: "r" });
     await Bun.sleep(10);
     expect(signals[0]?.aborted).toBe(true);

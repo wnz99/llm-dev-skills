@@ -50,12 +50,25 @@ const planReview = (cycle: number, round: number): Record<string, unknown> => ({
 });
 
 test("accepts a valid minimal flow", () => {
-  expect(validateFlow(baseRaw()).ok).toBe(true);
+  expect(validateFlow(baseRaw())).toMatchObject({ ok: true, flow: { linear_id: "MAM-191" } });
+});
+
+test("local flow IDs accept null or omitted Linear association and normalize to null", () => {
+  const omitted: Record<string, unknown> = { ...baseRaw(), ticket: "cache-cleanup" };
+  delete omitted.linear_id;
+  for (const raw of [omitted, { ...omitted, linear_id: null }]) {
+    expect(validateFlow(raw)).toMatchObject({
+      ok: true,
+      flow: { ticket: "cache-cleanup", linear_id: null },
+    });
+  }
 });
 
 test("rejects bad input with named errors and never throws", () => {
   const cases: [string, unknown, string][] = [
     ["unknown key", { ...baseRaw(), extra: 1 }, "extra"],
+    ["missing local ID", { ...baseRaw(), ticket: undefined }, "ticket"],
+    ["empty local ID", { ...baseRaw(), ticket: "" }, "ticket"],
     ["step 14", { ...baseRaw(), step: 14 }, "step"],
     ["done at step 9", { ...baseRaw(), status: "done", step: 9 }, "status"],
     ["non-array prs", { ...baseRaw(), prs: "x" }, "prs"],
@@ -134,11 +147,15 @@ test("summarizeChecks reduces a status rollup", () => {
   expect(summarizeChecks([{ conclusion: "SUCCESS" }, { status: "IN_PROGRESS" }])).toBe("pending");
 });
 
-test("CLI accepts schema-1 flow through real subprocess", async () => {
+test("CLI accepts local and linked schema-1 flows through real subprocess", async () => {
   const root = await mkdtemp(join(tmpdir(), "flow-valid-"));
   try {
     await mkdir(join(root, "ticket"));
     await writeFile(join(root, "ticket/FLOW.json"), JSON.stringify(baseRaw()));
+    const local: Record<string, unknown> = { ...baseRaw(), ticket: "cache-cleanup", prs: [] };
+    delete local.linear_id;
+    await mkdir(join(root, "cache-cleanup"));
+    await writeFile(join(root, "cache-cleanup/FLOW.json"), JSON.stringify(local));
     const child = Bun.spawn(
       [process.execPath, join(import.meta.dir, "../src/checkFlow.ts"), root],
       {
@@ -148,7 +165,7 @@ test("CLI accepts schema-1 flow through real subprocess", async () => {
     );
     const [code, out] = await Promise.all([child.exited, new Response(child.stdout).text()]);
     expect(code).toBe(0);
-    expect(out).toBe("ticket: OK\nOK 1 tickets\n");
+    expect(out).toBe("cache-cleanup: OK\nticket: OK\nOK 2 flows\n");
   } finally {
     await rm(root, { recursive: true, force: true });
   }

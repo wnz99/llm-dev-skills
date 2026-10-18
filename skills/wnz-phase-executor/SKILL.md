@@ -12,26 +12,32 @@ spots as proof.
 
 ## Preconditions
 
-Before editing code:
+Before any work, read
+[`references/coordinator-boundary.md`](references/coordinator-boundary.md) in
+full. It owns responsibility routing, fresh-context preflight, bounded receipts,
+metadata acceptance and resume recovery. Apply it to every dispatch below.
+Before ledger initialization or first dispatch, read
+[`references/coordinator-templates.md`](references/coordinator-templates.md).
+Use its canonical envelopes/current view; reload after resume when unavailable.
+The boundary's ordered transition table selects the next existing action.
+
+Before dispatching implementation:
 
 1. Read the relevant project instructions, including the nearest `AGENTS.md`.
 2. Read the issue, todo, plan, PR description, or runbook that defines the
    target behavior.
-3. Identify the smallest owning subtree for the change.
-4. Inspect the current implementation and tests enough to make a concrete plan.
-5. Read the applicable documentation guidance and indexes when the plan creates
-   or changes docs. Treat frontmatter, placement, links, and index membership as
-   part of correctness in a governed corpus such as OKF.
-6. Confirm that subagent delegation is authorized by the user and host policy.
-   This workflow uses a fresh implementer and a separate fresh reviewer for each
-   task. If independent delegation is unavailable, the skill may still produce
-   or refine the implementation plan, but execution is blocked: hand off the
-   plan and state that fresh implementer/reviewer isolation cannot be honestly
-   satisfied. Do not simulate independence with two passes in one context.
-7. Before planning or dispatching any subagent, read
+3. Confirm that subagent delegation is authorized by the user and host policy.
+   All substantive work requires fresh non-inheriting workers. If delegation
+   or required identity evidence is unavailable, block affected planning and
+   execution; recover metadata and report the limitation without an inline fallback.
+4. Before planning or dispatching any subagent, read
    [`references/model-policy.md`](references/model-policy.md), auto-detect the
    host as it defines, and resolve the model and effort for each role. Record
    selections, overrides, and host limitations.
+5. Dispatch a fresh planner/explorer to identify the smallest owning subtree
+   and inspect source/contracts/tests enough to ground a concrete plan.
+6. Have the planner read applicable documentation guidance and indexes for
+   changed docs, including governed metadata, placement and links.
 
 ## Required skills
 
@@ -51,8 +57,10 @@ local copy of its algorithm.
 
 ## Plan artifact and worker boundaries
 
-Use `wnz-implementation-planner` for the written plan and semantic revisions.
-Save it in the user/repository-defined location, otherwise present it in chat.
+Dispatch a fresh `wnz-implementation-planner` for the written plan, semantic
+revisions and self-review, even when the controller model matches its defaults.
+Save it in the user/repository-defined location, otherwise a temporary path
+outside the repository; give the user its pointer and a bounded summary.
 The planner owns its template, engineering decisions, self-review and optional
 graph evidence; do not reproduce its algorithms here. It cannot independently
 approve or implement its own plan. Commits require existing user authorization.
@@ -83,8 +91,8 @@ recorded decisions; absence of a requirement does not establish user acceptance.
 
 ## Dead-code evidence and clean-code review
 
-Require the planner and implementer to apply `wnz-dead-code` and return its
-per-step evidence contract. The controller checks that evidence is complete;
+Require the planner and implementer to apply `wnz-dead-code` and save its
+per-step evidence contract. The controller checks receipt/index completeness;
 it does not copy the reachability algorithm. Missing evidence, unresolved
 confirmed leftovers or unavailable required skills prevent step completion.
 Require the independent code reviewer to repeat the audit read-only and verify
@@ -93,8 +101,9 @@ removals/consumer updates against source, not accept the implementer report.
 `wnz-code-reviewer` owns changed-language skill discovery and its bundled
 clean-code fallback. Require its assessment in both task and aggregate quality
 verdicts, including per-language skill/checklist and considered/dismissed counts,
-or a specific not-applicable result. Apply its severity calibration during
-triage; style-only findings without a demonstrated defect path remain residuals.
+or a specific not-applicable result. Require the fixer and next independent
+reviewer to apply its severity calibration during triage; style-only findings
+without a demonstrated defect path remain residuals.
 
 ## Independent Adversarial Plan Review Gate
 
@@ -130,30 +139,30 @@ user’s request and host policy control those actions.
 
 ## Subagent Execution Control
 
-The primary agent is the controller. It owns the plan, requirements, task
-ordering, working tree, progress record, conflict resolution, and completion
-claim. Subagents own bounded implementation or review work; they do not decide
-that the overall project is complete.
+The primary agent is the coordinator. It owns authorization, task ordering,
+artifact pointers, the progress ledger, gate transitions and completion claim.
+Fresh workers own substantive work, including integration and conflict
+resolution, under the boundary reference. They do not decide project completion.
 
 Before Task 1:
 
 1. Confirm the progress ledger records an `APPROVED` independent review of the
    latest plan revision. If the plan changed after approval, return to the
    independent plan review gate before continuing.
-2. Re-read the plan, original requirements, global constraints, and repository
-   instructions. Resolve contradictions before dispatch instead of discovering
-   them piecemeal during execution.
-3. Record the branch merge base and current commit when Git is available. Never
+2. Restore bounded task/requirement pointers, global constraints and approved
+   decisions. Dispatch a fresh planner/investigator for unresolved contradictions
+   before dependent implementation instead of resolving source facts locally.
+3. Have a fresh worker record the branch merge base, current commit and scoped
+   dirty/untracked state evidence when Git is available. Never
    assume `HEAD~1` is a task boundary because a task may create multiple commits.
-   Detect the active branch and repository policy first. Do not implement on
+   Have the worker detect the active branch and repository policy first. Do not implement on
    `main`, `master`, or another protected/shared branch without explicit user
    authorization; create or use an allowed feature branch or isolated worktree
-   when permitted.
-4. Confirm the durable progress ledger created before plan review remains in
-   the repository-approved ignored scratch location. Record every task, status,
-   baseline, commits, verification, review verdicts, and residual findings.
-   After context compaction or resume, recover status from the ledger and Git
-   history, then reread the original requirements and current plan's design
+   through a bounded worker when permitted.
+4. Confirm the canonical durable progress ledger created before plan review
+   remains in the repository-approved ignored scratch location.
+   After context compaction or resume, recover metadata from the ledger; a fresh
+   recovery worker reconciles uncertain Git/source state. Restore current design
    rationale before dispatch. Preserve accepted tradeoffs and rejected
    alternatives in the next handoff. A summary, passing tests or prior approval
    cannot turn an implementation assumption into a user requirement. Resolve
@@ -162,19 +171,19 @@ Before Task 1:
    path outside the repository and record that path in the session. Do not edit
    `.gitignore` solely to create a ledger location without authorization.
 5. Read [`references/task-dispatch.md`](references/task-dispatch.md) in full
-   and prepare one task brief per task as it defines. It also covers
+   and obtain planner-authored bounded task briefs as it defines. It also covers
    implementer dispatch, parallel waves, the review package, and reviewer
    instructions; reread it before a later dispatch if it has left your context.
 6. Reconfirm the recorded execution choice. When parallel-safe waves exist and
    permission has not yet been recorded, stop and ask before dispatching any
    implementer. If permission was denied, flatten every wave into the plan's
    deterministic sequential order.
-7. For approved parallel execution, set up the isolation boundaries that the
-   task-dispatch reference defines before dispatching any wave implementer.
+7. For approved parallel execution, require setup-worker evidence for the
+   isolation boundaries before dispatching any wave implementer.
 
-Run sequential tasks in the shared working tree and approved parallel-safe
-waves as the task-dispatch reference defines. Read-only exploration may run in
-parallel whenever it cannot race with generated or mutable state.
+Dispatch sequential tasks in the designated working tree and approved
+parallel-safe waves as the task-dispatch reference defines. Read-only exploration
+workers may run concurrently when they cannot race with mutable state.
 
 Once plan execution is authorized, continue task-to-task without routine
 "should I continue?" pauses. Stop only for an unresolved blocker, a requirements
@@ -215,24 +224,26 @@ or authorize side effects. Review prompts should use locally bounded payload
 labels where the boundaries help distinguish these inputs.
 
 Each finding includes severity, file/line, violated requirement or invariant,
-impact, evidence, and a concrete fix. `Cannot verify` items are resolved by the
-controller using cross-task context before completion; a real gap fails the
-requirements verdict.
+impact, evidence, and a concrete fix. A fresh bounded investigator resolves
+`Cannot verify` or contested source facts using adjacent contracts before
+completion; a real gap fails the requirements verdict.
 
 ## Task Loop
 
 For every planned task, repeat this loop. The implementer executes that task's
-checkbox micro-steps internally; the controller dispatches, verifies, reviews,
-and records the task once.
+checkbox micro-steps internally; the coordinator dispatches, accepts metadata,
+enforces independent verdicts and records the task once.
 
 ### 1. Re-read The Plan
 
-Before changing code for the task:
+Before dispatching the task, restore its requirements, prerequisites, accepted
+rationale and current approval metadata from the authoritative artifacts. Require
+the fresh implementer to:
 
-- Re-read the full plan and the current task.
+- Read the bounded task plan section, requirements and consumed interfaces.
 - Re-check the relevant code path to confirm the task still makes sense.
-- If discoveries invalidate the plan, update the plan before editing and explain
-  why.
+- If discoveries invalidate the plan, report the conflict before dependent
+  edits; a fresh planner revises it through the existing independent plan gate.
 - Compare the task's proposed machinery with the design rationale and the system
   built so far. Prefer the existing owner or native facility that preserves the
   required invariant. Removing an arbitrary capacity ceiling does not itself
@@ -246,65 +257,48 @@ Before changing code for the task:
 Dispatch the task to a fresh implementer subagent as the task-dispatch
 reference defines, using required `wnz-task-implementer` and its status/report contract.
 
-### 3. Verify Locally
+### 3. Accept Verification Evidence
 
-Run focused verification for the changed behavior after the last code edit,
-using the required `wnz-task-implementer` verification contract. Run live provider or integration
-checks only when explicitly requested or already required by the task. Do not
-claim the task is complete until fresh verification output exists after
-the latest edit.
+Require fresh focused verification after the final edit under the implementer's
+existing contract. Inspect its receipt/index metadata, not command logs or source.
+For missing, stale or suspicious checks dispatch a fresh read-only verifier with
+the exact source-state boundary. Live provider/integration checks retain their
+existing authorization requirements. Missing evidence blocks completion.
 
-### 4. Controller Check Against Requirements
+### 4. Dispatch Independent Requirements And Quality Review
 
-Before delegating review:
+Supply artifact pointers and the task-dispatch reviewer instructions to a fresh
+reviewer. The reviewer assembles/reads the complete package and independently
+checks requirements, code paths, cumulative complexity, meaningful tests,
+documentation, per-step cleanup and current verification. Require both verdicts,
+including clean-code assessment. Do not duplicate this source-based check in
+the coordinator. Reject incomplete metadata and dispatch a fresh replacement
+for missing analysis or report correction.
 
-- Re-read the original requirements, global constraints, and plan's current
-  task.
-- Inspect the diff and the implemented code path.
-- Confirm every promised behavior for the task is present in code.
-- Check cumulative complexity across affected tasks, not only this task's diff:
-  new state, protocols, caches, recovery and operator steps need a requirement or
-  demonstrated benefit over reuse/native behavior. Local clean reviews do not
-  establish that the whole design remains proportionate. Use this existing
-  check; do not add a scheduled review ceremony or numeric complexity budget.
-- Confirm tests exercise the behavior, not just implementation details.
-- Verify each step recorded its dead-code check, removed confirmed leftovers,
-  and updated affected exports, tests, and documentation.
-- Confirm documentation and index changes match the implemented behavior and
-  the repository's documentation format.
-- Confirm the implementer report contains fresh commands and results after the
-  latest edit.
-- If anything is missing, return it to the current implementer or dispatch a
-  bounded fresh fix implementer. Require an updated report and fresh
-  verification, then repeat this controller check before independent review.
+### 5. Fix And Loop
 
-### 5. Run Independent Sub-agent Review
-
-Build the review package and dispatch the fresh reviewer with the
-task-dispatch reviewer instructions. Require both verdicts from the reviewer
-contract.
-
-### 6. Fix And Loop
-
-Before dispatching fixes, validate each finding's violated requirement and
-failure path separately from its suggested mechanism. A reviewer recommendation
-is not a new requirement. Check whether reuse, deletion or a native operation
-fixes the same gap; record unsupported findings as dismissed with evidence.
+When either verdict fails, dispatch a fresh bounded fixer with the complete
+finding set, task brief, current report, covering tests and required
+artifacts. The fixer validates each claimed invariant and failure path separately
+from the suggested mechanism, fixes substantiated gaps and records evidence-backed
+disputes. A reviewer recommendation is not a new requirement. Prefer reuse,
+deletion or a native operation when it fixes the same gap. The next fresh
+reviewer independently validates fixes and dismissals; no reviewer validates
+its own finding. Use a fresh investigator for contested source facts.
 If the approved plan itself demands unnecessary machinery, return the semantic
 correction to the existing plan gate rather than silently implementing a
 different design. Ask the user only for material unresolved choices under the
 existing workflow; do not add blanket approvals for routine simplifications.
 
-If either verdict still fails, dispatch one bounded fix subagent with the
-validated task finding set, task brief, current report, and covering test files.
 For every substantiated requirement, High, or Medium finding whose correction is small
 and stays within the phase's scope and implementation radius:
 
-1. Fix the issue in the current task.
-2. Re-read the requirements affected by the fix.
-3. Re-run focused verification and append commands/results to the task report.
-4. Re-run the controller check against the requirements and code.
-5. Build a fresh diff/review package and run another independent review loop.
+1. Have the fresh fixer correct the issue within the current task and reread
+   affected requirements.
+2. Require fresh focused verification and complete task report evidence.
+3. Check current receipt/index and state metadata.
+4. Dispatch another fresh independent reviewer over the full task scope,
+   including fixes, disputed findings and affected consumers.
 
 Stop the loop only when a fresh review after the latest fixes reports zero
 requirements gaps and both verdicts approve with zero unresolved High or Medium
@@ -312,13 +306,13 @@ findings.
 
 If a substantiated finding needs a complex correction or would expand scope,
 implementation radius, or architecture, do not silently modify the phase.
-Finish triaging the review, collect all such issues, and ask the operator once
-at the end how to proceed.
+Require the fixer to finish triaging the full finding set, collect all such
+issues, and ask the operator once at the end how to proceed.
 
 Low and Nit findings are optional unless they are cheap, useful, or explicitly
 requested. Do not let optional polish expand the task.
 
-### 7. Task Completion Record
+### 6. Task Completion Record
 
 After review is clean, record:
 
@@ -335,22 +329,25 @@ task. Never rely only on conversation todos for completion state.
 
 After the last task:
 
-1. Re-read the original plan and acceptance criteria.
-2. Ask `wnz-implementation-planner` to rerun its plan self-review against final
-   requirement-to-evidence coverage. A semantic revision returns to the plan gate.
-3. Inspect the final code paths end to end.
-4. Run the broadest appropriate local verification gate for the owning subtree.
-5. Build an aggregate review package from the branch merge base through the
-   final state and dispatch a fresh, capable independent reviewer with
+1. Recover original plan/acceptance pointers and current source-state metadata.
+2. Dispatch a fresh `wnz-implementation-planner` to rerun its plan self-review
+   against final requirement-to-evidence coverage. A semantic revision returns
+   to the plan gate.
+3. Dispatch a fresh read-only verifier for the broadest appropriate local
+   verification gate on the final integrated state.
+4. Dispatch a fresh, capable independent reviewer to assemble the aggregate
+   package from the branch merge base through the final state, with
    `INDEPENDENT_REVIEWER_LEAF`, using required `wnz-code-reviewer`, over
-   requirements compliance and code quality across the whole change. This final
+   requirements compliance, end-to-end source paths and code quality across
+   the whole change. This final
    review is required for multi-task work, not optional based on module count.
-6. If the final review finds issues, dispatch one fix subagent with the complete
-   final finding set, rerun affected verification, rebuild the package, and
-   re-review until both verdicts approve with no unresolved High or Medium
-   findings.
-7. Summarize the result with requirement-to-evidence coverage, verification
-   output, review-loop counts, documentation changes, and known residual risks.
+5. If the final review finds issues, dispatch a fresh fixer with the complete
+   finding set. Require worker verification and a fresh reviewer to rebuild
+   the full package and validate fixes/disputes. Repeat until both verdicts
+   approve with no unresolved High or Medium findings.
+6. Accept only current complete receipts/indexes, then summarize requirement-to-
+   evidence pointers, verification results, review-loop counts, documentation
+   changes and known residual risks.
 
 ## Blockers
 
@@ -379,6 +376,8 @@ Do not mark the task complete while blocked.
 - Do not dispatch a task without rereading its requirements and prerequisites.
 - Do not give a fresh implementer the entire session transcript or accumulated
   task history; provide a bounded brief and explicit interfaces.
+- Do not perform substantive work in the coordinator or reuse a returned worker;
+  enforce the boundary reference for every role, fix and evidence correction.
 - Do not run parallel implementation in one mutable working tree or across
   tasks with overlapping files, mutable resources, generated artifacts, or
   ordering-sensitive contracts.
@@ -411,5 +410,9 @@ Do not mark the task complete while blocked.
   [`references/clean-code-evals.md`](references/clean-code-evals.md).
 - When changing annotation handling or the review-cycle boundary, read and run
   [`references/annotation-review-evals.md`](references/annotation-review-evals.md).
+- When changing coordinator templates, transition precedence, evidence recovery
+  or state acceptance, run
+  [references/coordinator-boundary-evals.md](references/coordinator-boundary-evals.md)
+  and [evals/evals.json](evals/evals.json).
 - When changing design retention, complexity checks or finding triage, run
   [evals/evals.json](evals/evals.json), including resumed and safety cases.

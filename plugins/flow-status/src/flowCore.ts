@@ -47,7 +47,7 @@ const flowSchema = z
   .strictObject({
     schema: z.literal(1),
     ticket: z.string().min(1),
-    linear_id: z.string().nullable(),
+    linear_id: z.string().nullable().default(null),
     title: z.string(),
     status: z.enum(FLOW_STATUSES),
     step: z.number().int().min(1).max(LAST_STEP),

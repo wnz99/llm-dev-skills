@@ -30,7 +30,7 @@ test("CLI usage, missing directory, empty drafts and sorted invalid folders have
       code: 1,
       err: expect.stringContaining("unreadable") as unknown,
     });
-    expect(await run(root)).toEqual({ code: 0, out: "OK 0 tickets\n", err: "" });
+    expect(await run(root)).toEqual({ code: 0, out: "OK 0 flows\n", err: "" });
     await mkdir(join(root, "z"));
     await mkdir(join(root, "a"));
     await writeFile(join(root, "a/FLOW.json"), "{}");

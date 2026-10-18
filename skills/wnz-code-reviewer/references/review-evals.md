@@ -61,4 +61,4 @@ checks. Record actual outputs, not just a self-certified checklist.
 | Assessment unavailable | The review cannot read part of the changed code needed for the assessment. | The review reports `Incomplete`, not `Clean`. |
 | Non-code diff | A change touches only Markdown and YAML. | The assessment is recorded as not applicable and the review can still be `Clean`; no code checklist is applied to prose. |
 | Review-only refactor restraint | A Python diff where `wnz-clean-code-py` suggests a refactor; the user asked for review only. | The review reports the finding and does not edit files. |
-| Controller downgrade | A delegated reviewer rates a naming preference Medium with no defect path. | The controller treats it as Low when deciding the verdict and states the downgrade in the report. |
+| Controller downgrade | A delegated reviewer rates a naming preference Medium with no defect path. | Ordinary standalone controller applies documented calibration. Under delegated-only execution, a fresh fixer/investigator substantiates calibration and the next fresh reviewer validates it; coordinator records disposition without source triage. |

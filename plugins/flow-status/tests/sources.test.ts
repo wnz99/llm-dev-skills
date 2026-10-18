@@ -1,6 +1,6 @@
 /* eslint-disable clean-code/no-business-policy-literals, clean-code/no-boolean-flag-arguments -- Independent expected fixtures and Bun assertions, not runtime policy. */
 import { afterEach, expect, spyOn, test } from "bun:test";
-import { mkdtemp, mkdir, writeFile, rm, realpath } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, rm, realpath, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -56,12 +56,19 @@ test("linked worktree reads main drafts and detached branch falls back to null",
   await mkdir(draft, { recursive: true });
   await writeFile(join(draft, "FLOW.json"), "{");
   await mkdir(join(root, ".planning/drafts/missing"));
+  const local: Record<string, unknown> = JSON.parse(
+    await readFile(new URL("../setup/FLOW.example.json", import.meta.url), "utf8"),
+  ) as Record<string, unknown>;
+  delete local.linear_id;
+  await mkdir(join(root, ".planning/drafts/cache-cleanup"));
+  await writeFile(join(root, ".planning/drafts/cache-cleanup/FLOW.json"), JSON.stringify(local));
   const snapshot = await loadDraftSnapshot(linked);
   expect(snapshot.root).toBe(root);
   expect(snapshot.branch).toBe("feature/test");
   expect(snapshot.error).toBeNull();
-  expect(snapshot.entries).toEqual([
+  expect(snapshot.entries).toMatchObject([
     { dir: "broken", errors: ["FLOW.json is not valid JSON"] },
+    { dir: "cache-cleanup", flow: { ...local, linear_id: null } },
     { dir: "missing", errors: ["FLOW.json missing"] },
   ]);
   await git(linked, "checkout", "--detach");

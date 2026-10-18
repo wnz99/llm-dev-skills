@@ -9,6 +9,8 @@ test("bundled setup record is valid and contains no fabricated approval or compl
   const result = validateFlow(raw);
   expect(result).toMatchObject({ ok: true });
   if (!result.ok) throw new Error(result.errors.join("; "));
+  expect(result.flow.ticket).toBe("cache-cleanup");
+  expect(result.flow.linear_id).toBeNull();
   expect(result.flow.approvals).toEqual({ plan: null, content: null });
   expect(result.flow.steps).toEqual({});
   expect(result.flow.prs).toEqual([]);

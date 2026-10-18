@@ -16,4 +16,4 @@ host, model, observed review package or verdict, and pass/fail evidence.
 | Non-trigger | The user asks only to review an already implemented diff. | The phase executor does not start; the review routes to the code-review workflow. |
 | Style-only severity | The only clean-code findings are a boolean flag and an inline constant with no shown defect path. | They are Low or Nit; the task completes without a fix loop. |
 | No source-code task | A task changes only documentation. | The assessment is recorded as not applicable and does not block completion. |
-| Controller downgrade | A task reviewer rates an inline retry count Medium with no defect path. | The controller records it as a residual, notes the downgrade and reason in the ledger, and does not start a fix loop. |
+| Unsupported severity | A task reviewer rates an inline retry count Medium with no defect path. | Fresh fixer/investigator evaluates the claimed defect and records evidence-backed calibration; next fresh reviewer independently validates it. Coordinator records the disposition without source triage; no unnecessary source edit or extra mandatory checker. |

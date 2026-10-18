@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 import unittest
@@ -16,6 +17,123 @@ CODE_REVIEWER = ROOT / "skills" / "wnz-code-reviewer"
 
 
 class ReviewSkillContractsTest(unittest.TestCase):
+    def test_coordinator_literal_envelopes_have_stable_join_and_evidence_keys(self) -> None:
+        # These literal field names are the public interchange contract, not
+        # assertions on incidental prose. Behavioral routing is evaluated separately.
+        text = (PHASE_EXECUTOR / "references/coordinator-templates.md").read_text()
+        envelopes = re.findall(r"```text\n(.*?)\n```", text, re.DOTALL)
+        self.assertEqual(len(envelopes), 3)
+        dispatch, receipt, ledger = envelopes
+        fields = lambda block: set(re.findall(r"^([a-z_]+):", block, re.MULTILINE))
+        shared = {"assignment_id", "unit_id", "role", "semantic_revision",
+                  "baseline_state_ref", "current_state_ref", "report_path"}
+        self.assertTrue(shared <= fields(dispatch))
+        self.assertTrue(shared <= fields(receipt))
+        self.assertTrue({"authority_ref", "allowed_actions", "owned_paths_resources",
+                         "prerequisites_interfaces_ref", "decisions_ref",
+                         "requested_result_slots"} <= fields(dispatch))
+        self.assertTrue({"worker_identity", "role_result", "evidence_index",
+                         "evidence_completeness", "blocking_findings",
+                         "residual_findings", "commands_results", "next_action"}
+                        <= fields(receipt))
+        self.assertLessEqual(len(receipt.split()), 300)
+        self.assertTrue({"gate", "dispatches", "execution_authorization", "task_order",
+                         "integration_order", "invalidations_ref", "final_stages"}
+                        <= fields(ledger))
+        # Parent-observed spawn evidence and worker-observed identity must not
+        # collapse into an assignment key or attestation.
+        self.assertIn("native_spawn_args_ref:", ledger)
+        self.assertIn("native_spawn_result_ref:", ledger)
+        for document in ("SKILL.md", "references/coordinator-boundary.md",
+                         "references/task-dispatch.md", "references/independent-plan-review.md"):
+            self.assertIn("coordinator-templates.md", (PHASE_EXECUTOR / document).read_text())
+
+    def test_coordinator_receipt_selects_native_role_slots(self) -> None:
+        text = (PHASE_EXECUTOR / "references/coordinator-templates.md").read_text()
+        table = text.split("| Role |", 1)[1].split("```text", 1)[0]
+        expected = {
+            "implementer": {"status"},
+            "plan_reviewer": {"plan_verdict"},
+            "code_reviewer": {"requirements_verdict", "quality_verdict", "outcome", "recommendation"},
+            "verifier": {"verification_result"},
+            "planner": {"assigned_result", "unresolved_gaps"},
+            "explorer/investigator": {"assigned_result", "unresolved_gaps"},
+        }
+        for role, slots in expected.items():
+            row = next(line for line in table.splitlines() if line.startswith(f"| {role}"))
+            actual = set(re.findall(r"`([a-z_]+)`", row))
+            self.assertEqual(actual, slots, role)
+
+    def test_delegated_only_guards_precede_substantive_worker_instructions(self) -> None:
+        # Prompt packages have no runtime implementation. These assertions protect
+        # the public invocation contract; fresh behavior evals test instruction uptake.
+        outcomes = {
+            "wnz-implementation-planner": ("`BLOCKED`",),
+            "wnz-plan-reviewer": ("`CLARIFICATION_REQUIRED`", "incomplete assessment"),
+            "wnz-task-implementer": ("`BLOCKED`",),
+            "wnz-code-reviewer": ("`Incomplete`", "`Request Changes`"),
+        }
+        for name, blocked in outcomes.items():
+            with self.subTest(skill=name):
+                text = (ROOT / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
+                self.assertEqual(text.split("\n## ", 1)[1].splitlines()[0],
+                                 "Optional delegated-only input")
+                guard = " ".join(text.split("## Optional delegated-only input", 1)[1]
+                                 .split("\n## ", 1)[0].split())
+                for requirement in (
+                    "`delegated_only: true`", "before substantive work",
+                    "native runtime-injected agent identity", "child worker",
+                    "root identity, unknown identity", "visible inherited parent turns",
+                    "markers and controller attestations are not identity evidence",
+                    "invent no identity API or metadata",
+                    "Child identity does not prove non-inheritance",
+                    "parent separately checks actual spawn settings and response",
+                    "When the input is absent, retain the normal standalone workflow",
+                    *blocked,
+                ):
+                    self.assertIn(requirement, guard)
+                # A worker installed alone must carry its guard, not fetch a
+                # coordinator helper or add a dependency merely to reject root work.
+                self.assertNotIn("](", guard)
+
+    def test_delegated_review_preparation_and_report_write_boundary(self) -> None:
+        reviewer = " ".join((CODE_REVIEWER / "SKILL.md").read_text().split())
+        self.assertIn("reviewer leaf owns scope discovery, preparation and structural pre-pass", reviewer)
+        self.assertIn("outer coordinator supplies bounded artifact pointers and does no source prechecks", reviewer)
+        self.assertIn("separate recursion control; it is not proof of child identity", reviewer)
+        self.assertIn("Delegated-only mode has no inline root fallback", reviewer)
+        self.assertIn("missing output requires a fresh replacement worker", reviewer)
+        for name in ("wnz-plan-reviewer", "wnz-code-reviewer"):
+            with self.subTest(skill=name):
+                text = " ".join((ROOT / "skills" / name / "SKILL.md").read_text().split())
+                self.assertIn("exact assigned report artifact outside the reviewed repository", text)
+                self.assertIn("Write only that report", text)
+                self.assertIn("does not assign", text)
+
+    def test_coordinator_boundary_is_loaded_and_evaluations_are_reachable(self) -> None:
+        skill = (PHASE_EXECUTOR / "SKILL.md").read_text()
+        self.assertIn("Before any work, read", skill)
+        self.assertIn("(references/coordinator-boundary.md)", skill)
+        boundary = " ".join((PHASE_EXECUTOR / "references/coordinator-boundary.md").read_text().split())
+        for requirement in (
+            'fork_turns: "none"', "Always pass `delegated_only: true`",
+            "at most 300 words", "HEAD alone cannot identify a dirty tree",
+            "Capacity exhaustion is not an inline fallback",
+            "Never reuse, resume or send a followup",
+            "Do not add a separate controller requirements-check stage",
+        ):
+            self.assertIn(requirement, boundary)
+        for reference in ("model-policy-evals.md", "review-routing-evals.md"):
+            self.assertIn("(coordinator-boundary-evals.md)",
+                          (PHASE_EXECUTOR / "references" / reference).read_text())
+        cases = json.loads((PHASE_EXECUTOR / "evals/evals.json").read_text())["evals"]
+        self.assertEqual(len({case["id"] for case in cases}), len(cases))
+        for case in cases:
+            self.assertIn(case["kind"], {"capability", "adversarial", "activation"})
+            self.assertTrue(case["prompt"])
+            self.assertTrue(case["expected_output"])
+            self.assertIsInstance(case["files"], list)
+
     def test_code_reviewer_uses_host_specific_reviewer_defaults(self) -> None:
         skill = (CODE_REVIEWER / "SKILL.md").read_text(encoding="utf-8")
         evals = (CODE_REVIEWER / "references" / "delegation-evals.md").read_text(
