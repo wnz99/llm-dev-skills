@@ -1,5 +1,6 @@
 import { type FlowEntry, selectCurrentTicket } from "./flowCore";
-import { clip, type Row, safeText, styleRow, summaryRows } from "./dashboardSummary";
+import { summaryRows } from "./dashboardSummary";
+import { clip, type Row, safeText, styleRow } from "./terminalText";
 import type { fetchLinear, loadDraftSnapshot, PrView } from "./sources";
 
 type Snapshot = Awaited<ReturnType<typeof loadDraftSnapshot>>;
@@ -24,6 +25,7 @@ export interface DashboardState extends Snapshot {
   quit: boolean;
   offline: boolean;
   color: boolean;
+  now: number;
   linear: Record<string, LinearView>;
   prs: Record<string, DashboardPrView>;
 }
@@ -41,6 +43,7 @@ export const createState = (columns = DEFAULT_COLUMNS, rows = DEFAULT_ROWS): Das
   quit: false,
   offline: false,
   color: false,
+  now: Date.now(),
   linear: {},
   prs: {},
 });
@@ -237,10 +240,11 @@ export const renderDashboard = (state: DashboardState, columns: number, rows: nu
     tone: "strong",
   };
   if (rows === 1) return [styleRow(header, state.color)];
-  const details = summaryRows({ ...state, rows }, selectedEntry(state), columns).map((line) => ({
-    ...line,
-    text: clip(line.text, columns),
-  }));
+  const details = summaryRows({ ...state, rows }, selectedEntry(state), columns).map((line) => {
+    const text = clip(line.text, columns);
+    // Clipping invalidates span boundaries; the row then falls back to its single tone.
+    return text === line.text ? line : { text, tone: line.tone };
+  });
   const available = detailHeight(state, rows);
   const scroll = Math.max(0, Math.min(state.scroll, details.length - available));
   const range =

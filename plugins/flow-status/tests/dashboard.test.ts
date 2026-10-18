@@ -47,6 +47,8 @@ const flow = (patch: Partial<Flow> = {}): Flow => ({
   ],
   ...patch,
 });
+// eslint-disable-next-line no-control-regex -- The renderer's explicit SGR allowlist, stripped before checking other controls.
+const OWNED_SGR = /\x1b\[(?:0|1|2|1;3[1236]|38;5;248)m/g;
 const snapshot = (entries: FlowEntry[], branch: string | null = "feature/current") => ({
   root: "/tmp/project",
   branch,
@@ -91,8 +93,8 @@ test("summary stays concise and never exposes evidence or history through paging
     [89, 51],
   ]) {
     const initial = renderDashboard(ordinary, columns ?? 80, rows ?? 24).join("\n");
-    for (const heading of ["NOW", "DONE", "TODO", "NEXT"]) expect(initial).toContain(heading);
-    expect(initial).toContain("1/13 stages");
+    for (const heading of ["NEXT", "PHASES", "elapsed"]) expect(initial).toContain(heading);
+    expect(initial).toContain("✓  1 Scope agreed");
   }
   let state = reloadState(createState(40, 8), snapshot([{ dir: "active", flow: flow() }]));
   const pages: string[] = [];
@@ -157,62 +159,56 @@ test("draft, validation and live text cannot inject terminal controls; Unicode f
   expect(pages.join("\n")).not.toMatch(/[\x00-\x09\x0b-\x1f\x7f-\x9f]/);
 });
 
-test("recorded states remain honest across paused, done, and absent task records", () => {
-  for (const status of ["active", "paused", "done"] as const) {
+test("every row reflects its own record; open items follow the flow status", () => {
+  const outputFor = (status: "active" | "paused" | "done") => {
     const value = flow({
       status,
       step: status === "done" ? 13 : 9,
-      tasks: {
-        T1: "done",
-        T2: "in_progress",
-        T3: "pending",
-        T4: "pending",
-        T5: "pending",
-        T6: "pending",
-      },
+      tasks: { T1: "done", T2: "in_progress", T3: "pending" },
       steps: {
         "1": { state: "done", evidence: "HIDDEN".repeat(20_000) },
         "2": { state: "skipped", evidence: "HIDDEN" },
-        "9": { state: "n/a", evidence: "HIDDEN" },
+        "3": { state: "n/a", evidence: "HIDDEN" },
       },
     });
     const state = reloadState(
       { ...createState(89, 51), showDone: true },
       snapshot([{ dir: "active", flow: value }]),
     );
-    const output = renderDashboard(state, 89, 51).join("\n");
-    expect(output).toContain("DONE  1/13 stages · 1 task");
-    expect(output).toContain("1 skipped · 1 n/a · 10 not recorded");
-    expect(output).toContain("TODO  4 pending tasks");
-    expect(output).toContain("Stages: scope agreed");
-    expect(output).toContain("Tasks: T1");
-    expect(output).toContain("T3 · T4 · T5 · +1 more");
+    return renderDashboard(state, 89, 51);
+  };
+  const line = (lines: string[], label: string): string =>
+    lines.find((text) => text.includes(label)) ?? "";
+  for (const status of ["active", "paused", "done"] as const) {
+    const lines = outputFor(status);
+    const output = lines.join("\n");
     expect(output).not.toContain("HIDDEN");
-    if (status === "paused") expect(output).toContain("Paused; tasks recorded in progress");
-    if (status === "done") {
-      expect(output).toContain("Flow marked done");
-      expect(output).not.toContain("Upcoming stage");
-    }
+    expect(line(lines, "Scope agreed")).toStartWith("✓");
+    expect(line(lines, "Plan drafted")).toMatch(/^- .*skipped$/);
+    expect(line(lines, "Simplicity review")).toMatch(/^- .*n\/a$/);
+    expect(line(lines, "Plan review")).toMatch(/^\? .*not recorded$/);
+    expect(line(lines, " T1")).toMatch(/^ {5}✓ T1$/);
+    expect(line(lines, " T3")).toMatch(/^ {5}◦ T3$/);
+    const open = { active: "running", paused: "paused", done: "not closed" }[status];
+    expect(line(lines, " T2")).toMatch(new RegExp(`^ {5}▸ T2 .*${open}$`));
   }
-  for (const steps of [{}, { "9": { state: "done" as const, evidence: "secret" } }]) {
-    const state = reloadState(
-      createState(),
-      snapshot([{ dir: "active", flow: flow({ tasks: {}, steps, next: " \n\t" }) }]),
-    );
-    const output = renderDashboard(state, 80, 24).join("\n");
-    expect(output).toContain("No next action recorded");
-    expect(output).toContain("No pending tasks recorded");
-    expect(output).toContain("Upcoming stage; not recorded: content approval");
-    expect(output).toContain(
-      "9" in steps ? "No tasks recorded in progress" : "Current stage; no task status recorded",
-    );
-  }
+  // A done flow's closed but untimed legacy rows carry no warning; only open items do.
+  expect(outputFor("done").filter((text) => text.includes("not closed"))).toHaveLength(2);
+  expect(line(outputFor("active"), "Content approval")).toMatch(/^◦ 10 Content approval$/);
+  const empty = reloadState(
+    createState(),
+    snapshot([{ dir: "active", flow: flow({ tasks: {}, steps: {}, next: " \n\t" }) }]),
+  );
+  const output = renderDashboard(empty, 80, 24);
+  expect(output.join("\n")).toContain("No next action recorded");
+  expect(line(output, "Execution")).toMatch(/^▸ {2}9 Execution .*running$/);
 });
 
-test("NOW and NEXT lead at 40x12 and tiny sizes stay bounded", () => {
+test("NEXT leads the list at 40x12 and tiny sizes stay bounded", () => {
   const state = reloadState(createState(40, 12), snapshot([{ dir: "active", flow: flow() }]));
   const lines = renderDashboard(state, 40, 12);
-  expect(lines[2]).toStartWith("NOW");
+  expect(lines[2]).toStartWith("NEXT");
+  expect(lines.slice(0, 7).join("\n")).toContain("PHASES");
   expect(lines.slice(0, 7).join("\n")).toContain("NEXT");
   expect(lines.slice(0, 7).join("\n")).toContain("review next");
   for (const [columns, rows] of [
@@ -272,7 +268,7 @@ test("hidden-done-only differs from genuinely empty; load errors are visible and
   const output = renderDashboard(kept, 80, 24).join("\n");
   expect(output).toContain("Load error: Local drafts unavailable");
   expect(output).toContain("Showing last loaded records");
-  expect(output).toContain("NOW");
+  expect(output).toContain("PHASES");
 });
 
 test("footer shows whole conditional items and scroll help only with overflow", () => {
@@ -280,17 +276,17 @@ test("footer shows whole conditional items and scroll help only with overflow", 
   const single = renderDashboard(roomy, 89, 51).at(-1) ?? "";
   expect(single).toBe("q quit · r refresh");
   const many = reloadState(
-    createState(80, 24),
+    createState(80, 40),
     snapshot([
       { dir: "a", flow: flow() },
       { dir: "b", flow: flow() },
       { dir: "c", flow: flow({ status: "done", step: 13 }) },
     ]),
   );
-  expect(renderDashboard(many, 80, 24).at(-1)).toBe("q quit · r refresh · j/k flows · d show done");
+  expect(renderDashboard(many, 80, 40).at(-1)).toBe("q quit · r refresh · j/k flows · d show done");
   const tall = reloadState(createState(40, 6), snapshot([{ dir: "a", flow: flow() }]));
   const full = renderDashboard(tall, 90, 6).at(-1) ?? "";
-  expect(full).toBe("q quit · wheel/PgUpDn · 1–4/14 · r refresh · Ctrl-U/D half page · Home/End");
+  expect(full).toBe("q quit · wheel/PgUpDn · 1–4/21 · r refresh · Ctrl-U/D half page · Home/End");
   const items = ["q quit", "r refresh", "wheel/PgUpDn", "Ctrl-U/D half page", "Home/End"];
   for (let columns = 6; columns <= 90; columns += 1) {
     const footer = renderDashboard(tall, columns, 6).at(-1) ?? "";
@@ -298,13 +294,13 @@ test("footer shows whole conditional items and scroll help only with overflow", 
     for (const part of footer.split(" · "))
       expect(items.includes(part) || /^\d+–\d+\/\d+$/.test(part)).toBe(true);
   }
-  expect(renderDashboard(tall, 80, 6).at(-1)).toContain("1–4/14");
-  expect(renderDashboard(tall, 40, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/14");
-  expect(renderDashboard(tall, 43, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/14 · r refresh");
-  expect(renderDashboard(tall, 30, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/14");
+  expect(renderDashboard(tall, 80, 6).at(-1)).toContain("1–4/21");
+  expect(renderDashboard(tall, 40, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/21");
+  expect(renderDashboard(tall, 43, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/21 · r refresh");
+  expect(renderDashboard(tall, 30, 6).at(-1)).toBe("q quit · wheel/PgUpDn · 1–4/21");
   expect(renderDashboard(tall, 14, 6).at(-1)).toBe("q quit");
   const scrolled = handleKey(tall, "end");
-  expect(renderDashboard(scrolled, 80, 6).at(-1)).toContain("11–14/14");
+  expect(renderDashboard(scrolled, 80, 6).at(-1)).toContain("18–21/21");
 });
 
 test("colored geometry matches plain rendering and external controls never survive owned styles", () => {
@@ -331,8 +327,7 @@ test("colored geometry matches plain rendering and external controls never survi
     expect(colored.map((line) => Bun.stripANSI(line))).toEqual(plain);
     expect(plain.length).toBeLessThanOrEqual(rows);
     expect(plain.every((line) => Bun.stringWidth(line) <= columns)).toBe(true);
-    // eslint-disable-next-line no-control-regex -- Strip the renderer's explicit SGR allowlist before checking all other controls.
-    const controlsRemoved = colored.join("\n").replaceAll(/\x1b\[(?:0|1|2|1;3[1236])m/g, "");
+    const controlsRemoved = colored.join("\n").replaceAll(OWNED_SGR, "");
     // eslint-disable-next-line no-control-regex -- Only owned SGR may survive external text sanitization.
     expect(controlsRemoved).not.toMatch(/[\x00-\x09\x0b-\x1f\x7f-\x9f]/);
     expect(controlsRemoved).not.toContain("SECOND-LINE-SECRET");
@@ -351,9 +346,9 @@ test("summary navigation clamps, preserves selection, and bounds source and vali
       { dir: "third", flow: flow() },
     ]),
   );
-  for (const heading of ["NOW", "DONE", "TODO", "NEXT"])
+  for (const heading of ["PHASES", "NEXT"])
     expect(renderDashboard(state, 80, 24).join("\n")).toContain(heading);
-  expect(renderDashboard(state, 80, 24).join("\n")).toContain("+97 more");
+  expect(renderDashboard(state, 80, 24).join("\n")).toContain("◦ T5");
   state = { ...state, columns: 40, rows: 8 };
   for (const key of ["scrolldown", "ctrl-d", "pagedown", "end"]) {
     const next = handleKey(state, key);
@@ -363,7 +358,7 @@ test("summary navigation clamps, preserves selection, and bounds source and vali
   }
   expect(handleKey(state, "scrolldown").scroll).toBe(state.scroll);
   expect(renderDashboard(state, 40, 8).join("\n")).toContain("PR #42");
-  expect(renderDashboard(state, 40, 8).join("\n")).not.toContain("T99");
+  expect(renderDashboard(state, 40, 8).join("\n")).toContain("Updated");
   for (const key of ["scrollup", "ctrl-u", "pageup", "home"]) state = handleKey(state, key);
   expect(state.scroll).toBe(0);
   expect(handleKey(handleKey(state, "end"), "j").scroll).toBe(0);
@@ -724,4 +719,149 @@ test("flow ID and status outrank branch and directory in the header", () => {
   );
   expect(many[0]).toBe("FLOW · feature/current · 1/2");
   expect(many[1]).toStartWith(">");
+});
+
+const timedFlow = (patch: Partial<Flow> = {}): Flow =>
+  flow({
+    step: 9,
+    updated_at: "2026-10-09T15:28:00Z",
+    steps: {
+      "1": {
+        state: "done",
+        evidence: "",
+        started_at: "2026-10-09T09:02:00Z",
+        completed_at: "2026-10-09T09:20:00Z",
+      },
+      "4": {
+        state: "done",
+        evidence: "",
+        started_at: "2026-10-08T10:22:00Z",
+        completed_at: "2026-10-08T11:40:00Z",
+      },
+      "5": { state: "skipped", evidence: "", completed_at: "2026-10-09T11:41:00Z" },
+      "9": { state: "active", evidence: "", started_at: "2026-10-09T12:18:00Z" },
+    },
+    tasks: {
+      T1: {
+        status: "done",
+        summary: "Add export schema and CSV writer",
+        started_at: "2026-10-09T12:20:00Z",
+        completed_at: "2026-10-09T13:05:00Z",
+      },
+      T4: {
+        status: "in_progress",
+        summary: "Admin export dialog",
+        started_at: "2026-10-09T14:40:00Z",
+      },
+      T5: { status: "pending", summary: "Docs and migration note" },
+    },
+    reviews: [
+      {
+        kind: "plan",
+        cycle: 2,
+        round: 1,
+        verdict: "APPROVED",
+        reviewer_model: "r",
+        findings: [],
+      },
+    ],
+    ...patch,
+  });
+
+const timedState = (value: Flow, columns: number, rows: number, color = false) => {
+  process.env.TZ = "UTC";
+  return {
+    ...reloadState(
+      { ...createState(columns, rows), color },
+      snapshot([{ dir: "active", flow: value }]),
+    ),
+    now: Date.parse("2026-10-09T15:30:00Z"),
+  };
+};
+const rowOf = (lines: string[], label: string): string =>
+  lines
+    .find((text) => text.includes(label))
+    ?.replace(/\s+/g, " ")
+    .trim() ?? "";
+
+test("recorded times render as elapsed and finished columns that drop by width", () => {
+  const wide = renderDashboard(timedState(timedFlow(), 89, 40), 89, 40);
+  expect(rowOf(wide, "PHASES")).toBe("PHASES elapsed finished");
+  expect(rowOf(wide, "Scope agreed")).toBe("✓ 1 Scope agreed 18m 09:20");
+  expect(rowOf(wide, "Plan review")).toBe("✓ 4 Plan review · C2 R1 1h18m 10-08 11:40");
+  expect(rowOf(wide, "re-check")).toBe("- 5 Simplicity re-check skipped 11:41");
+  expect(rowOf(wide, "Execution")).toBe("▸ 9 Execution running 3h12m");
+  expect(rowOf(wide, "T1 ")).toBe("✓ T1 Add export schema and CSV writer 45m 13:05");
+  expect(rowOf(wide, "T4 ")).toBe("▸ T4 Admin export dialog running 50m");
+  expect(rowOf(wide, "T5 ")).toBe("◦ T5 Docs and migration note");
+  const paused = renderDashboard(timedState(timedFlow({ status: "paused" }), 89, 40), 89, 40);
+  expect(rowOf(paused, "T4 ")).toBe("▸ T4 Admin export dialog paused 50m");
+  const narrow = renderDashboard(timedState(timedFlow(), 40, 40), 40, 40);
+  expect(rowOf(narrow, "PHASES")).toBe("PHASES elapsed");
+  expect(rowOf(narrow, "T1 ")).toBe("✓ T1 Add export sch… 45m");
+  const tiny = renderDashboard(timedState(timedFlow(), 30, 40), 30, 40);
+  expect(rowOf(tiny, "PHASES")).toBe("PHASES");
+  expect(rowOf(tiny, "Execution")).toBe("▸ 9 Execution");
+  for (const columns of [24, 30, 40, 52, 80, 89])
+    expect(
+      renderDashboard(timedState(timedFlow(), columns, 40), columns, 40).every(
+        (line) => Bun.stringWidth(line) <= columns,
+      ),
+    ).toBe(true);
+});
+
+test("row spans keep plain geometry, own every style and separate pending from skipped", () => {
+  const hostile = "\u001b[31mRED\u001b[0m 界👩‍💻é\u0007\nX".repeat(20);
+  const value = timedFlow({
+    tasks: { "T\u001b[2J9": { status: "pending", summary: hostile } },
+  });
+  for (const columns of [40, 89]) {
+    const plain = renderDashboard(timedState(value, columns, 40), columns, 40);
+    const colored = renderDashboard(timedState(value, columns, 40, true), columns, 40);
+    // eslint-disable-next-line no-control-regex -- Remove owned SGR to compare geometry.
+    const stripped = colored.map((line) => line.replaceAll(/\x1b\[[0-9;]*m/g, ""));
+    expect(stripped).toEqual(plain);
+    const owned = colored.join("\n").replaceAll(OWNED_SGR, "");
+    // eslint-disable-next-line no-control-regex -- Only owned SGR may survive.
+    expect(owned).not.toMatch(/[\x00-\x09\x0b-\x1f\x7f-\x9f]/);
+  }
+  const colored = renderDashboard(timedState(value, 89, 40, true), 89, 40);
+  expect(colored.find((line) => line.includes("T9"))).toStartWith("\u001b[38;5;248m     ◦ ");
+  expect(colored.find((line) => line.includes("re-check"))).toStartWith("\u001b[2m- ");
+  expect(colored.find((line) => line.includes("9 Execution"))).toContain(
+    "\u001b[1;36m  running 3h12m\u001b[0m",
+  );
+});
+
+test("values keep their column positions and rows carry no trailing padding", () => {
+  const lines = renderDashboard(timedState(timedFlow(), 80, 40), 80, 40);
+  const end = (label: string): number => (lines.find((text) => text.includes(label)) ?? "").length;
+  const heading = lines.find((text) => text.startsWith("PHASES")) ?? "";
+  const elapsedEnd = heading.indexOf("elapsed") + "elapsed".length;
+  expect(heading.length).toBe(80);
+  for (const label of ["Scope agreed", "re-check", "T1 "]) expect(end(label)).toBe(80);
+  // Rows without a finished value end at the elapsed column, not under "finished".
+  for (const label of ["9 Execution", "T4 ", "6 Annotation", "3 Simplicity review"])
+    expect(end(label)).toBe(elapsedEnd);
+  expect(lines.every((text) => text === text.trimEnd())).toBe(true);
+});
+
+test("backward step moves and mixed offsets render only what is recorded", () => {
+  const value = timedFlow({
+    step: 4,
+    steps: {
+      "1": {
+        state: "done",
+        evidence: "",
+        started_at: "2026-10-09T10:00:00+02:00",
+        completed_at: "2026-10-09T08:30:00Z",
+      },
+      "4": { state: "active", evidence: "cycle 2", started_at: "2026-10-09T13:30:00Z" },
+    },
+  });
+  const lines = renderDashboard(timedState(value, 89, 40), 89, 40);
+  expect(rowOf(lines, "Scope agreed")).toBe("✓ 1 Scope agreed 30m 08:30");
+  expect(rowOf(lines, "Plan review")).toBe("▸ 4 Plan review · C2 R1 running 2h00m");
+  expect(rowOf(lines, "Execution")).toBe("◦ 9 Execution");
+  expect(rowOf(lines, "T1 ")).toBe("✓ T1 Add export schema and CSV writer 45m 13:05");
 });

@@ -101,6 +101,15 @@ Same HEAD or reused state label does not prove dirty-state equivalence. Use a
 fresh recovery investigator when uncertain; require no universal hashing or
 Git-only algorithm for other environments.
 
+Task `title`, `started_at` and `completed_at` are coordinator metadata, not
+substantive work. Take times from the host clock or `date -u
++%Y-%m-%dT%H:%M:%SZ` when the event happens; never reconstruct missed times.
+When reopening a completed task, keep `started_at` and reset `completed_at` to
+`none`, so elapsed time spans every attempt. An unavailable time is only
+missing metadata. It does not make state uncertain and never justifies a
+dispatch. Projections such as a dashboard copy these values and omit
+unavailable ones.
+
 ```text
 authority:
   requirements_ref: {{original requirements}}
@@ -128,7 +137,10 @@ task_order: {{plan-defined deterministic order or unavailable: reason}}
 integration_order: {{plan-defined order or not applicable: sequential}}
 tasks:
   - unit_id: {{task}}
+    title: {{plan heading text after "### Task N:", verbatim, or unavailable: reason}}
     status: {{pending/active or role-native completion status}}
+    started_at: {{ISO-8601 time of first implementer dispatch, none before it, or unavailable: reason}}
+    completed_at: {{ISO-8601 time completion was recorded, none while open, or unavailable: reason}}
     report_refs: {{implementation, verification and review pointers}}
     accepted_state_ref: {{current accepted evidence or none}}
 current_state_ref: {{latest worker-recorded source state}}

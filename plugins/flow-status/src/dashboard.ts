@@ -102,7 +102,11 @@ class DashboardSession {
       process.stdout.write(
         HIDE_CURSOR +
           REPAINT +
-          renderDashboard(this.state, this.state.columns, this.state.rows).join("\r\n"),
+          renderDashboard(
+            { ...this.state, now: Date.now() },
+            this.state.columns,
+            this.state.rows,
+          ).join("\r\n"),
       );
     } catch (error) {
       this.finish(error);

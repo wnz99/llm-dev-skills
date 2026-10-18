@@ -7,8 +7,8 @@ import { join } from "node:path";
 import {
   type Flow,
   type FlowEntry,
+  planReviewRound,
   selectCurrentTicket,
-  stepLabel,
   summarizeChecks,
   validateFlow,
 } from "../src/flowCore";
@@ -115,13 +115,95 @@ test("rejects non-ISO updated_at and malformed approval dates", () => {
   expect(validateFlow({ ...baseRaw(), approvals: badDay }).ok).toBe(false);
 });
 
-test("stepLabel names the step, review round and cycle", () => {
-  expect(stepLabel(validFlow({ reviews: [planReview(1, 1), planReview(1, 2)] }))).toBe(
-    "4/13 plan review R2",
-  );
-  expect(stepLabel(validFlow({ reviews: [planReview(2, 1)] }))).toBe("4/13 plan review C2R1");
-  expect(stepLabel(validFlow({ step: 2 }))).toBe("2/13 plan drafted");
-  expect(stepLabel(validFlow({ status: "done", step: 13 }))).toBe("done");
+test("planReviewRound reports the latest plan review; cycle 1 is implied", () => {
+  expect(planReviewRound(validFlow({ reviews: [planReview(1, 1), planReview(1, 2)] }))).toBe("R2");
+  expect(planReviewRound(validFlow({ reviews: [planReview(2, 1)] }))).toBe("C2 R1");
+  expect(planReviewRound(validFlow())).toBeNull();
+});
+
+const T0 = "2026-10-08T08:00:00Z";
+const T1 = "2026-10-08T09:00:00+01:00"; // same instant as 08:00Z: offsets compare as instants
+const T2 = "2026-10-08T09:30:00Z";
+
+test("timed task objects, active current step and legacy strings validate together", () => {
+  const result = validateFlow({
+    ...baseRaw(),
+    steps: {
+      "1": { state: "done", evidence: "e", started_at: T0, completed_at: T1 },
+      "4": { state: "active", evidence: "", started_at: T2 },
+    },
+    tasks: {
+      A: "done",
+      B: { status: "done", summary: "  Add export schema  ", started_at: T0, completed_at: T2 },
+      C: { status: "in_progress", summary: "Mapping API", started_at: T2 },
+      D: { status: "pending", summary: "Docs" },
+      E: { status: "pending" },
+    },
+  });
+  expect(result).toMatchObject({
+    ok: true,
+    flow: { tasks: { B: { summary: "Add export schema" } } },
+  });
+});
+
+test("timing and state invariants are rejected with named paths", () => {
+  const errors = (patch: Record<string, unknown>): string[] => {
+    const result = validateFlow({ ...baseRaw(), ...patch });
+    return result.ok ? [] : result.errors;
+  };
+  const step = (fields: Record<string, unknown>) => ({ state: "done", evidence: "", ...fields });
+  const task = (fields: Record<string, unknown>) => ({ tasks: { X: fields } });
+  const cases: [Record<string, unknown>, string][] = [
+    [
+      { steps: { "2": { state: "active", evidence: "" } } },
+      "steps.2.state: active only on current step",
+    ],
+    [
+      { status: "done", step: 13, steps: { "13": { state: "active", evidence: "" } } },
+      "steps.13.state: active step in done flow",
+    ],
+    [
+      { steps: { "4": { state: "active", evidence: "", completed_at: T0 } } },
+      "steps.4.completed_at: active step cannot be completed",
+    ],
+    [
+      { steps: { "1": step({ started_at: T2, completed_at: T0 }) } },
+      "steps.1.completed_at: completed_at precedes started_at",
+    ],
+    [
+      { steps: { "1": step({ completed_at: "2026-10-09T00:00:00Z" }) } },
+      "steps.1.completed_at: later than updated_at",
+    ],
+    [task({ status: "pending", started_at: T0 }), "tasks.X: pending task cannot have times"],
+    [
+      task({ status: "in_progress", started_at: T0, completed_at: T2 }),
+      "tasks.X.completed_at: in_progress task cannot be completed",
+    ],
+    [
+      task({ status: "done", started_at: "2026-10-09T00:00:00Z" }),
+      "tasks.X.started_at: later than updated_at",
+    ],
+  ];
+  for (const [patch, message] of cases) expect(errors(patch)).toContain(message);
+  expect(errors(task({ state: "done" })).join()).toContain("expected pending, in_progress, done");
+  for (const bad of [
+    task({ status: "done", summary: " " }),
+    task({ status: "done", summary: "x".repeat(201) }),
+    task({ status: "done", started_at: "2026-10-08T08:00:00" }),
+    task({ status: "done", owner: "me" }),
+    { steps: { "1": step({ started: T0 }) } },
+  ])
+    expect(errors(bad).length).toBeGreaterThan(0);
+});
+
+test("reopened task and re-entered step keep the first start without completion", () => {
+  expect(
+    validateFlow({
+      ...baseRaw(),
+      steps: { "4": { state: "active", evidence: "cycle 2", started_at: T0 } },
+      tasks: { A: { status: "in_progress", summary: "Reopened", started_at: T0 } },
+    }).ok,
+  ).toBe(true);
 });
 
 const entry = (dir: string, patch: Record<string, unknown>): FlowEntry => ({

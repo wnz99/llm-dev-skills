@@ -317,6 +317,7 @@ requested. Do not let optional polish expand the task.
 After review is clean, record:
 
 - What changed.
+- Completion time in the ledger task's `completed_at`.
 - Verification commands and result.
 - Review loop count.
 - Any remaining Low/Nit findings or accepted risks.

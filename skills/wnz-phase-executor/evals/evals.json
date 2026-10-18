@@ -204,6 +204,14 @@
       "prompt": "T1 has six microsteps; approved sequential order T1,T2. T1 implementer has complete fresh verification and both independent verdicts approve. Later final aggregate review finds a cross-task bug after planner conformance and aggregate verifier passed. Give dispatch/ledger ordering.",
       "expected_output": "Record T1 completion once before T2; no per-microstep dispatch or redundant verifier. Final defect receives fresh full-set fixer then affected final conformance/verification and fresh full aggregate review bound to new integrated state. Preserve loop until clean, no arbitrary code-review cap; final stages cannot be skipped.",
       "files": []
+    },
+    {
+      "id": 27,
+      "kind": "capability",
+      "role": "controller",
+      "prompt": "Approved plan headings are '### Task 1: Add export schema' and '### Task 2: Admin export dialog'. Dispatch T1, record T1 completion, then dispatch T2. A later annotation invalidates T1, which reopens. After compaction, the ledger shows T2 with no recorded dispatch time and the summary claims T2 started at 14:40. Show the ledger task entries and timing metadata at each event.",
+      "expected_output": "Each ledger task gets title copied verbatim from its heading, never derived from the ID. Times are coordinator-observed ISO-8601 values: started_at at first implementer dispatch and completed_at when completion is recorded. On reopen T1 keeps started_at and resets completed_at to none. After compaction, T2 started_at stays unavailable: reason; the summary's 14:40 is not adopted or reconstructed. Timing metadata adds no dispatch, worker, gate or approval, and coordinator does not inspect source to obtain it.",
+      "files": []
     }
   ]
 }
