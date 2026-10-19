@@ -221,6 +221,14 @@ test("selectCurrentTicket prefers branch match, skips done and invalid", () => {
   expect(selectCurrentTicket([newer, older, done, invalid], "feature/a")).toBe(older);
   expect(selectCurrentTicket([older, newer, done, invalid], null)).toBe(newer);
   expect(selectCurrentTicket([done, invalid], null)).toBeNull();
+  const paused = entry("paused", {
+    status: "paused",
+    branches: ["paused-branch"],
+    updated_at: "2026-10-10T00:00:00Z",
+  });
+  expect(selectCurrentTicket([paused, older], "main")).toBe(older);
+  expect(selectCurrentTicket([paused, older], "paused-branch")).toBe(paused);
+  expect(selectCurrentTicket([paused], "main")).toBe(paused);
 });
 
 test("summarizeChecks reduces a status rollup", () => {

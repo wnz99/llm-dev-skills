@@ -18,6 +18,7 @@ const SEPARATOR = " · ";
 
 export interface DashboardState extends Snapshot {
   selectedDir: string | null;
+  selectionMode: "auto" | "manual";
   showDone: boolean;
   scroll: number;
   columns: number;
@@ -37,6 +38,7 @@ export const createState = (columns = DEFAULT_COLUMNS, rows = DEFAULT_ROWS): Das
   entries: [],
   error: null,
   selectedDir: null,
+  selectionMode: "auto",
   showDone: false,
   scroll: 0,
   columns,
@@ -83,6 +85,16 @@ export const clampScroll = (state: DashboardState): DashboardState => ({
   ),
 });
 
+const keepManualSelection = (
+  state: DashboardState,
+  snapshot: Snapshot,
+  entries: FlowEntry[],
+): boolean =>
+  state.selectionMode === "manual" &&
+  snapshot.root === state.root &&
+  snapshot.branch === state.branch &&
+  entries.some((entry) => entry.dir === state.selectedDir);
+
 export const reloadState = (state: DashboardState, snapshot: Snapshot): DashboardState => {
   const next = {
     ...state,
@@ -92,11 +104,13 @@ export const reloadState = (state: DashboardState, snapshot: Snapshot): Dashboar
     error: snapshot.error,
   };
   if (snapshot.root !== state.root) next.prs = {};
+  const contextChanged = snapshot.root !== state.root || snapshot.branch !== state.branch;
   const visible = visibleEntries(next);
-  if (!visible.some((entry) => entry.dir === next.selectedDir)) {
+  if (!keepManualSelection(state, snapshot, visible)) {
+    next.selectionMode = "auto";
     next.selectedDir =
       selectCurrentTicket(snapshot.entries, snapshot.branch)?.dir ?? visible[0]?.dir ?? null;
-    next.scroll = 0;
+    if (contextChanged || next.selectedDir !== state.selectedDir) next.scroll = 0;
   }
   return clampScroll(next);
 };
@@ -109,7 +123,7 @@ const moveSelection = (
 ): DashboardState => {
   const direction = key === "j" || key === "down" ? 1 : -1;
   const selected = entries[Math.max(0, Math.min(entries.length - 1, index + direction))];
-  return { ...state, selectedDir: selected?.dir ?? null, scroll: 0 };
+  return { ...state, selectedDir: selected?.dir ?? null, selectionMode: "manual", scroll: 0 };
 };
 
 export const handleKey = (state: DashboardState, key: string): DashboardState => {

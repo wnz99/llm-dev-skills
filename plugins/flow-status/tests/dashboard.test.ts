@@ -86,6 +86,30 @@ test("branch selection, done toggle, arrows and directory preservation on reload
   ).toBe("bad");
 });
 
+test("automatic selection follows a new flow while keyboard selection survives reloads", () => {
+  const paused: FlowEntry = {
+    dir: "old",
+    flow: flow({ status: "paused", branches: ["old-branch"] }),
+  };
+  const current: FlowEntry = { dir: "new", flow: flow({ branches: [] }) };
+  let state = reloadState(createState(), snapshot([paused], "main"));
+  expect(state.selectedDir).toBe("old");
+  state = reloadState(state, snapshot([paused, current], "main"));
+  expect(state.selectedDir).toBe("new");
+  state = handleKey(state, "k");
+  expect(state.selectedDir).toBe("old");
+  state = reloadState(state, snapshot([paused, current], "main"));
+  expect(state.selectedDir).toBe("old");
+  state = reloadState(state, snapshot([paused, current], "feature/current"));
+  expect(state.selectedDir).toBe("new");
+  state = handleKey(state, "k");
+  state = reloadState(state, { ...snapshot([paused, current], "feature/current"), root: "/other" });
+  expect(state.selectedDir).toBe("new");
+  state = handleKey(state, "k");
+  state = reloadState(state, snapshot([current], "feature/current"));
+  expect(state.selectedDir).toBe("new");
+});
+
 test("summary stays concise and never exposes evidence or history through paging", () => {
   const ordinary = reloadState(createState(), snapshot([{ dir: "active", flow: flow() }]));
   for (const [columns, rows] of [

@@ -199,7 +199,8 @@ export const selectCurrentTicket = (
   );
   const onBranch = branch === null ? undefined : live.find((e) => e.flow.branches.includes(branch));
   if (onBranch !== undefined) return onBranch;
-  const byRecency = [...live].sort(
+  const active = live.filter((entry) => entry.flow.status === ACTIVE);
+  const byRecency = [...(active.length > 0 ? active : live)].sort(
     (a, b) => Date.parse(b.flow.updated_at) - Date.parse(a.flow.updated_at),
   );
   return byRecency[0] ?? null;

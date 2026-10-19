@@ -51,6 +51,8 @@ An unassociated flow shows `Linear: not linked` and never queries Linear. With n
 
 Press `c` to enter copy mode, then drag to select text and use the terminal's Copy command. Copy mode disables mouse reporting and freezes repainting, including background refreshes and resize events, so selection stays intact. Navigation and refresh keys are ignored until `c` resumes; `q` and Ctrl-C still quit. Background data continues loading and appears on resume. The footer prioritizes `c copy` or `c resume` after `q quit` when space permits.
 
+Selection follows the current branch's unfinished flow automatically. Without a branch match, it follows the most recently updated active flow, falling back to paused flows only when none are active. Automatic selection updates on reload, so a newly created flow replaces an older paused selection. Choosing a flow with `j`/`k` or arrows preserves that choice across refreshes. Changing repository or branch, or hiding/removing the chosen flow, restores automatic selection. The panel reads flow records; it cannot identify a new conversation before that conversation creates a record.
+
 ## Development
 
 ```sh
