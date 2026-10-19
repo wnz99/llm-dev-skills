@@ -1,7 +1,11 @@
 """Package contracts; behavioral judgment remains in fresh-context evaluations."""
 from pathlib import Path
 import json
+import os
 import re
+import subprocess
+import sys
+import tempfile
 import unittest
 
 
@@ -57,7 +61,7 @@ class SkillPackageTests(unittest.TestCase):
                                 self.assertTrue(path.exists(), target)
                     self.assertIsNone(fence, "unclosed Markdown fence")
 
-    def test_worker_evaluations_have_independent_expected_outcomes(self):
+    def test_package_evaluations_have_independent_expected_outcomes(self):
         for name in WORKERS + ("wnz-repo-health",):
             with self.subTest(skill=name):
                 data = json.loads((SKILLS / name / "evals/evals.json").read_text(encoding="utf-8"))
@@ -69,6 +73,49 @@ class SkillPackageTests(unittest.TestCase):
                     self.assertTrue(case["prompt"])
                     self.assertTrue(case["expected_output"])
                     self.assertIsInstance(case["files"], list)
+                    for resource in case["files"]:
+                        path = (SKILLS / name / resource).resolve()
+                        self.assertTrue(path.is_relative_to((SKILLS / name).resolve()))
+                        self.assertTrue(path.is_file(), resource)
+
+    def test_health_fixture_manifest_detects_git_and_untracked_writes(self):
+        script = SKILLS / "wnz-repo-health/evals/live_fixture.py"
+
+        def run(*args, env=None):
+            return subprocess.run([sys.executable, str(script), *map(str, args)],
+                                  capture_output=True, text=True, env=env)
+
+        with tempfile.TemporaryDirectory(prefix="repo-health-test-") as directory:
+            base = Path(directory)
+            fixture, before, after = base / "fixture", base / "before.json", base / "after.json"
+            self.assertEqual(run("create", fixture).returncode, 0)
+            before.write_text(run("snapshot", fixture).stdout)
+            after.write_text(run("snapshot", fixture).stdout)
+            self.assertEqual(run("compare", before, after).returncode, 0)
+            index = fixture / "main/.git/index"
+            original = index.read_bytes()
+            for path in (index, fixture / "feature/untracked-change"):
+                path.write_bytes(b"controlled mutation")
+                after.write_text(run("snapshot", fixture).stdout)
+                result = run("compare", before, after)
+                self.assertEqual(result.returncode, 1)
+                self.assertEqual(json.loads(result.stdout)["changed"],
+                                 [str(path.relative_to(fixture))])
+                if path == index:
+                    path.write_bytes(original)
+                else:
+                    path.unlink()
+            clean = run("snapshot", fixture).stdout
+            hostile_env = {**os.environ,
+                           "GIT_DIR": str(fixture / "main/.git"),
+                           "GIT_WORK_TREE": str(fixture / "main"),
+                           "GIT_INDEX_FILE": str(index),
+                           "GIT_OBJECT_DIRECTORY": str(fixture / "main/.git/objects")}
+            independent = base / "independent"
+            result = run("create", independent, env=hostile_env)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue((independent / "main/.git").is_dir())
+            self.assertEqual(run("snapshot", fixture).stdout, clean)
 
     def test_required_dependency_packages_are_declared_and_discoverable(self):
         required = {

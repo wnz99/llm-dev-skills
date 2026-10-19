@@ -15,8 +15,8 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [wnz-clean-code-py](skills/wnz-clean-code-py/) | Focused Python readability, API clarity, and maintainability refactoring guidance |
 | [wnz-clean-code-rust](skills/wnz-clean-code-rust/) | Focused Rust readability, ownership, error-handling, and API maintainability guidance |
 | [wnz-doc-write-expert](skills/wnz-doc-write-expert/) | Write new or review existing technical and non-technical documentation using evidence-backed authoring, corpus-conformance, approval, and fresh-reader workflows |
-| [wnz-phase-executor](skills/wnz-phase-executor/) | Keep the main session to coordination; fresh workers own substantive work and return bounded receipts with durable evidence and independent gates |
 | [wnz-repo-health](skills/wnz-repo-health/) | Audit stale or unfinished workflows and GSD/Git/PR inconsistencies, then propose evidence-backed repairs without changing state |
+| [wnz-phase-executor](skills/wnz-phase-executor/) | Keep the main session to coordination; fresh workers own substantive work and return bounded receipts with durable evidence and independent gates |
 | [wnz-implementation-planner](skills/wnz-implementation-planner/) | Author evidence-backed plans with task interfaces, cleanup ownership, dependency waves and self-review |
 | [wnz-plan-reviewer](skills/wnz-plan-reviewer/) | Assess existing plans read-only and return a full independent design verdict |
 | [wnz-task-implementer](skills/wnz-task-implementer/) | Execute one bounded task and return status, fresh verification and cleanup evidence |
@@ -32,6 +32,7 @@ client discovery, and update without losing local changes.
 
 Choose the smallest workflow that fits the task:
 
+- **Check unfinished work and GSD drift:** `wnz-repo-health`.
 - **Review changes:** `wnz-code-reviewer`; request `wnz-cross-review-pr` when
   you want two model perspectives.
 - **Debug or get another model's help:** `wnz-llm-assist`.

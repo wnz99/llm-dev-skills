@@ -39,21 +39,20 @@ GSD work in this repository, including done records for completion contradiction
 Do not scan unrelated repositories or the user's home directory.
 
 Use native Git reads, quoting paths and avoiding shell interpolation of artifact
-values. Start with `git rev-parse --show-toplevel`,
-`git worktree list --porcelain`, `git status --short`, and
-`git branch -vv`. Use `git --no-optional-locks` where supported to avoid index
-refresh writes. Handle a non-Git target or failed command as unavailable evidence,
+values. Use `git --no-optional-locks` for every Git read, starting with
+`rev-parse --show-toplevel`, `worktree list --porcelain`, `status --short`, and
+`branch -vv`, to avoid optional index refresh writes.
+Handle a non-Git target or failed command as unavailable evidence,
 not an empty repository. Determine the primary worktree from Git's first worktree
 entry; linked worktrees can hold different tracked GSD state.
 
 Read the installed shared workflow and its client loaders when present. Follow
 explicit local pointers; do not assume a template in another checkout is the
 installed policy. Inspect known planning roots, such as `.planning`, using bounded
-file discovery that includes ignored records. Under the standard personal flow,
-private drafts live in the primary worktree's `.planning/drafts`; tracked GSD
-milestones belong to the feature branch/worktree. Inventory relevant tracked GSD
+file discovery that includes ignored records. Inventory relevant tracked GSD
 files across associated branches with `git show` or read their worktrees without
-checking them out. Do not diagnose a missing registration solely from main when
+checking them out. Derive draft and GSD locations from the installed workflow.
+Do not diagnose a missing registration solely from main when
 the registration exists on an unmerged feature branch.
 
 Optional integrations:
@@ -151,3 +150,9 @@ recommend deleting branches/drafts, marking work done, rewriting timestamps or
 reconstructing approvals merely to make records agree. Subsequent authorized
 repairs follow the existing user flow and owning tools, then rerun affected
 health checks; this skill adds no execution or review gates.
+
+## Skill maintenance
+
+When changing this skill, read [evals/README.md](evals/README.md) and run the
+relevant snapshot, selection and live-fixture cases. These are authoring checks,
+not additional work during an ordinary repository audit.
