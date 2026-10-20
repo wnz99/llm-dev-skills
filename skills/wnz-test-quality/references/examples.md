@@ -69,6 +69,23 @@ a human-facing documentation typo can be checked by reading the rendered text.
 Executable scripts and agent instructions can need behavior checks; tests that
 search their source for exact wording do not establish runtime behavior.
 
+## Faster full runs without dropping meaningful boundaries
+
+A full command runs Chromium acceptance locally, then runs the same scenarios
+against an installed archive. If the installed run proves the same browser
+behavior plus packaging, propose running those scenarios there once and retain
+any distinct local-build checks. Trace discovery so the complete command still
+includes acceptance. A second wrapper invoking the identical database lifecycle
+oracle can be a removal candidate, while source and emitted worker-loading checks
+may still protect different wiring faults.
+
+A native-work test blocks for eleven seconds despite a deliberately short request
+deadline. Propose a shorter stall only if assertions still establish rejection,
+prompt close while native work remains blocked, and safe eventual continuation.
+Do not replace that native boundary with mocked timers or silently assume that a
+green shorter run proves the original ordering. Measure the complete command
+under comparable conditions before claiming a reduction.
+
 ## Independently derived expectations
 
 ```python

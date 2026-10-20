@@ -1,5 +1,40 @@
 # Validation record
 
+## Audit streamlining update (2026-10-20)
+
+Audit mode now explicitly traces complete-run orchestration cost, recommends
+removing incidental assertions and equivalent executions, and identifies safer
+fixture, readiness and timing simplifications. Proposals name retained evidence
+and proof; distinct runtime/packaging/security obligations remain protected.
+No deletion quota, automatic audit schedule or runtime dependency was added.
+
+Fresh native workers independently answered cases 29 and 30 with the revised
+runtime package and its pre-edit snapshot. Each received only its scenario and
+runtime resources, without expected answers or other workers' outputs. Native
+capacity required scheduling the fourth run after a slot became available.
+All workers also loaded the required independent-review skill, equally in both
+configurations. Controller assessment: both versions passed all seven criteria;
+no comparative effectiveness gain is established. The update makes the desired
+audit emphasis explicit rather than claiming the prior version could not do it.
+
+The revised outputs identified duplicate acceptance/lifecycle execution and
+private-name coupling, preserved distinct worker and native timing obligations,
+and rejected quota-driven removal, mocked trust boundaries and fabricated
+speedups. A metadata-first check classified three trigger/non-trigger prompts
+as expected; this simulates routing rather than observing host activation.
+
+Package validation: all 29 repository tests passed; skill-creator quick validation
+passed; PyYAML and markdown-it-py parsed the package, checked local links and
+31 unique eval IDs; `git diff --check` passed. Full answers, criterion evidence,
+comparison JSON and a static skill-creator review viewer remain in the external
+authoring workspace. No model snapshot or timing/token metrics were exposed,
+so those cost fields were omitted rather than recorded as zero.
+
+Limits: two supplied-inventory scenarios, one run per configuration; no live
+repository audit, measured suite speedup, broad historical eval rerun or
+cross-host effectiveness claim. Existing fixtures were unchanged. The host
+exposes no agent-close control; completed turns do not establish resource cleanup.
+
 Original draft checked on 2026-10-07 under the name `wnz-test-value`.
 Historical evidence below predates the test-organization update and rename to
 `wnz-test-quality`; it does not validate the revised workflow. No comparative

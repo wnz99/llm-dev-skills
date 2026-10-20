@@ -48,6 +48,22 @@ Do not run commands that can affect production or uncontrolled external state.
 If collection imports unsafe application code, use static inventory and mark
 runtime reconciliation unavailable. Continue with accessible evidence.
 
+### Trace the cost of the full run
+
+Follow the developer's full-test command and the actual CI command through
+nested scripts, builds, packaging, consumer tests and platform jobs. Identify
+work executed more than once even when no individual test body is duplicated.
+Different environments can protect distinct faults; compare their runtime,
+dependency, packaging and platform obligations before recommending consolidation.
+Honor supported-platform requirements rather than adding or removing a CI matrix
+by default.
+
+Use existing timing reports or one safe representative baseline to locate cost:
+slow scenarios, repeated setup/builds, process or browser startup, large fixtures,
+polling and fixed sleeps. Record command, environment and what the time includes.
+Separate measured costs from suspected bottlenecks; do not invent speedups or
+launch repeated full benchmarks without a decision they would resolve.
+
 ## 3. Assess every test, preserving progress
 
 Create a ledger keyed by file and stable test ID or source location. Inspect
@@ -79,6 +95,15 @@ source/structure checks, giant fixtures, and helpers that obscure intent. Prefer
 representative input partitions and meaningful boundaries over permutations.
 Keep readable scenario detail rather than minimizing lines through abstraction.
 
+Question tests added mechanically for every helper, branch, private name,
+incidental text or structure, and unsupported malformed input. Ask which
+plausible supported failure each detects. AI authorship alone proves nothing;
+use the same evidence standard for every test. A fast test can still create
+maintenance noise, and an expensive test can be essential. Do not preserve an
+assertion solely because it already exists or covers a line. When it has no
+supported behavioral obligation, explain why it is unnecessary rather than
+inventing replacement coverage for that detail.
+
 For large suites, work in bounded batches with a persistent ledger and explicit
 remaining IDs/files. Prioritize risky areas first but finish the inventory.
 Reconcile ledger membership against collection and source inventory, not just
@@ -101,6 +126,32 @@ For questionable assertions, use realistic, reversible fault injection in an
 isolated copy when feasible; report what was actually executed and its limits.
 Fix or replace flaky evidence without losing its distinct obligation.
 
+Include a concrete streamlining pass across the accumulated findings:
+
+- Remove obsolete or incidental assertions and consolidate equivalent scenarios;
+  retain distinct input partitions and boundary failures rather than every
+  permutation, arbitrary delay value or implementation detail.
+- Run equivalent expensive acceptance coverage once at the boundary that proves
+  its obligations. Preserve source, emitted, installed-package and platform
+  checks when they expose different failures; shared assertions alone are not
+  evidence that these boundaries are interchangeable.
+- Reuse stable setup and build output where freshness and isolation permit.
+  Prefer smaller realistic fixtures and cheaper boundaries only when they retain
+  the failure detection; avoid broad mutable shared fixtures or new harnesses
+  whose complexity exceeds the benefit.
+- Replace guessed sleeps with observable readiness. Shorten deliberate timeouts
+  or stalls only while preserving the tested deadline/ordering relationship and
+  assertions that the work is still pending where required. A fake clock cannot
+  prove native process, browser gesture or database timing semantics.
+
+For each proposal, identify the exact test/assertion or command edge to change,
+its cost or maintenance burden, the obsolete obligation or named retained
+evidence, and the smallest proof needed. Prioritize clear redundant work and
+measured bottlenecks. If no safe simplification is justified, say so with reasons;
+do not manufacture deletions, a reduction quota, or replacement tests to balance
+the count. Retries, skipped tests and excluding necessary suites from the full
+run do not establish a speed improvement with equivalent confidence.
+
 When fixes are authorized, apply coherent changes in small batches, rerun
 affected tests and discovery, and update the ledger. Preserve required checks
 and repository policy. Do not turn an audit into unrelated production changes.
@@ -111,6 +162,8 @@ Lead with consequential gaps and the most useful simplifications. Provide:
 
 - Scope/revision, discovery and CI findings, commands and observed results.
 - Risk-to-evidence summary and prioritized recommendations with file/test IDs.
+- Streamlining recommendations covering removals, consolidation and full-run
+  cost; distinguish measured savings, hypotheses and changes not justified.
 - Complete ledger or its artifact path, including kept tests and reasons.
 - Inventory reconciliation: source-only, collected, assessed, unresolved,
   executed and skipped tests, with counting units explained.

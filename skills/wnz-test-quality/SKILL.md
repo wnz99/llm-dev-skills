@@ -1,6 +1,6 @@
 ---
 name: wnz-test-quality
-description: Select, write, organize, and review tests that catch meaningful failures without redundant coverage, repeated setup, or implementation coupling. Use for risk-based test design, whole-repository test setup and every-test audits, coverage decisions for features or fixes, and simplifying tests, fixtures, mocks, or suite bloat. Do not use merely to run an existing suite, troubleshoot a test runner, or edit prose without a test-design decision.
+description: Select, write, organize, and review tests that catch meaningful failures without redundant coverage, repeated setup, or implementation coupling. Use for risk-based test design, whole-repository test audits, removing low-value or AI-generated test bloat, making full test runs faster, coverage decisions for features or fixes, and simplifying tests, fixtures, mocks, or suite orchestration. Do not use merely to run an existing suite, troubleshoot a test runner, or edit prose without a test-design decision.
 ---
 
 # Test Quality
@@ -35,7 +35,11 @@ effects. Exercise destructive behavior only in an isolated test environment.
 For a repository-wide test audit or a request to assess every test, read
 [references/repository-audit.md](references/repository-audit.md) before starting.
 Use its inventory and reporting workflow, applying the test-value principles
-below to each test. An audit is read-only unless the user also authorizes fixes;
+below to each test. Audit both test value and the cost of the complete execution
+path, including duplicate suite invocations, builds, fixtures and waits. Recommend
+concrete removals, consolidation and faster equally faithful evidence where
+supported; do not limit the audit to missing coverage or formatting concerns.
+An audit is read-only unless the user also authorizes fixes;
 removal candidates are recommendations, not deletion permission.
 
 For a feature, fix, or bounded test review, use the focused workflow below.
