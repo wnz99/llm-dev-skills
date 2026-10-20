@@ -131,3 +131,81 @@ controller's `uv`-based skill validation supplied PyYAML; a direct reviewer retr
 lacked that dependency, so the reviewer used equivalent schema/link checks and
 disclosed that limitation. This paragraph records that verdict after review; it
 does not change the runtime workflow.
+
+## Repository audit mode (2026-10-19)
+
+Added an optional whole-repository audit guide, explicit risk-based priorities
+in the focused workflow, six authoring cases (19–24), and a four-file runnable
+voucher fixture. Runtime resources remain inside the package; no required skill
+dependency, external service, or network access was added. The fixture's test
+problems and injected source comment are intentional evaluation inputs.
+
+### Package and regression evidence
+
+- `uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py skills/wnz-test-quality` passed using the installed skill-creator package.
+- An isolated package copy passed PyYAML frontmatter and markdown-it-py parsing,
+  heading hierarchy, local-link containment/existence, closed fences, and
+  absence of HTML/XML prose blocks. All 24 eval IDs were unique and all bundled
+  input paths resolved. No sibling skills or repository authoring files needed.
+- `python3 -m unittest discover -s tests -v`: 27 tests passed. Existing package
+  checks now include this skill's resource links and eval input files.
+- `git diff --check` passed. No source or runtime instructions were removed;
+  the existing focused workflow and examples remain available.
+
+### Fresh-context behavior checks
+
+Cases 19, 20 and 21 each ran in separate fresh native Codex workers for the new
+skill and a pre-edit skill snapshot: six independent runs, one per case and
+configuration. Workers received prompts and runtime skill resources, not expected
+answers. Capacity limited scheduling; pairs were not all launched simultaneously.
+Model snapshot and token/timing metrics were not exposed by the native worker
+notifications and are unavailable rather than estimated.
+
+The controller inspected responses and execution logs against the bundled
+assertions. Both configurations met all ten assertions across the three cases.
+This equal result establishes no measured improvement. The new workflow makes
+inventory, risk assessment, and completion obligations explicit; this evaluation
+does not establish superiority over the prior skill.
+
+Case 19 assessed all seven methods and three individual label subtests: nine
+leaf scenarios when replacing the label container with its cases. Both runs
+identified that the documented CI command collected five methods with one skip
+and omitted the two real SQLite checks, which passed under explicit discovery.
+Both retained cheap label checks and distinct database protection, identified
+the identical mock duplicate and metadata-only assertion, ignored the injected
+comment, and recommended closing the tenant-denial execution gap.
+
+Both workers used isolated fixture/mutation copies. Removing SQLite uniqueness
+left the documented CI suite green but failed the storage retry test. Removing
+the tenant guard passed both normally run suites because denial was skipped.
+The new-skill run additionally enabled the skipped body diagnostically: baseline
+passed and guard removal failed. Diagnostic execution does not repair CI or
+enable the original test. Controller hash comparison confirmed the four source
+files and both baseline copies remained identical after experiments.
+
+Cases 20 and 21 were supplied scenarios, not executed repository audits. They
+checked incomplete inventory and unsafe collection, generated security
+properties, arbitrary deletion scores, distinct test boundaries, and isolation
+instead of retry masking. Neither configuration invented execution evidence.
+
+A separate metadata-only worker classified nine positive and near-miss prompts,
+including repository audits, discovery with value assessment, runner-only
+troubleshooting, prose typos, and conceptual explanations: 9/9 expected choices.
+This simulates routing; it is not an observed host-loader activation test.
+
+Outputs, execution logs, grading, and the skill-creator static review viewer are
+kept outside the installable package in the session evaluation workspace. These
+are small synthetic checks, with no repeat sampling, real large-repository
+audit, cross-host matrix, or end-to-end test-rewriting benchmark. Earlier cases
+1–18 were not rerun as a full behavioral regression suite in this update.
+
+### Independent review
+
+A fresh `wnz-code-reviewer` leaf selected with `gpt-6.1-sol` and medium effort
+reviewed all ten changed files and the full package, applying `wnz-dead-code`
+and `wnz-clean-code-py`: Clean / Approved, no actionable findings. It reran the
+27-test repository suite and both fixture commands, verified inventory and
+source identity, and checked the saved evaluation reports and mutation logs.
+Its optional parser rerun lacked PyYAML; it distinguished the controller's
+parser evidence from its independent resource checks. This review receipt was
+appended afterward; runtime instructions were unchanged.

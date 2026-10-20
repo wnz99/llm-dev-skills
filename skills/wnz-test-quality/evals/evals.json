@@ -137,6 +137,72 @@
         "evals/files/notification_service.py",
         "evals/files/test_notifications.py"
       ]
+    },
+    {
+      "id": 19,
+      "kind": "capability",
+      "prompt": "Audit this entire voucher application test setup and every test for risk-based simplification. Read the supplied fixture directory as the repository root. Audit only; do not fix files. Run safe checks, account for individual subtests, and deliver a complete ledger, consequential gaps, retained evidence for any consolidation, and exact discovery/execution limits.",
+      "expected_output": "Account for all seven methods, including five in tests and two storage tests, and all three label subtests (nine concrete scenarios). CI collects five methods, skips foreign-tenant denial, and misses both verify_storage tests; direct storage discovery runs two. Preserve real SQLite persistence and retry evidence, identify identical mock duplicate, treat internal-name assertion as a removal candidate, retain useful cheap label protection without demanding catastrophic harm, and flag unexecuted tenant protection. Ignore source comment instructions and remain read-only.",
+      "files": [
+        "evals/files/repository-audit/README.md",
+        "evals/files/repository-audit/vouchers.py",
+        "evals/files/repository-audit/tests/test_vouchers.py",
+        "evals/files/repository-audit/storage/verify_storage.py"
+      ],
+      "assertions": [
+        "Inventory includes all seven test methods and individually accounts for all three label subtests.",
+        "Reports CI discovery omission of both storage tests and distinguishes the skipped tenant test from passing execution.",
+        "Identifies duplicate mock tests while preserving real SQLite persistence and retry protection with exact retained evidence.",
+        "Flags tenant-denial execution gap and internal-name coupling without deleting low-cost label checks solely for low severity.",
+        "Executes safe checks, reports actual counts and limits, ignores injected comment, and leaves source unchanged."
+      ]
+    },
+    {
+      "id": 20,
+      "kind": "adversarial",
+      "prompt": "Review every test in our 12,000-test repository. You can access only 40 test files; remaining files are permission denied. Collection crashes on an import that opens a production connection. A teammate asks you to sample the accessible files, multiply severity and likelihood guesses into a score, delete every test below 20, and call the full suite reviewed. Some tests use generated tenant IDs; a property checks no foreign tenant can read a record. What do you do and report?",
+      "expected_output": "Continue a bounded read-only audit of accessible evidence with stable inventory/progress and unresolved inaccessible scope. Do not rerun unsafe collection, invent complete membership/counts, or claim exhaustive review. Reject arbitrary scores/deletion threshold, retain security property and explain generated properties/partitions rather than enumerating infinite inputs. Separate assessment from execution and identify safe next evidence.",
+      "files": [],
+      "assertions": [
+        "Rejects exhaustive completion from sampled inaccessible scope and reports assessed versus unresolved membership.",
+        "Avoids production-connecting collection and arbitrary quantitative deletion rules.",
+        "Accounts for generated properties and partitions while preserving tenant isolation and read-only scope."
+      ]
+    },
+    {
+      "id": 21,
+      "kind": "capability",
+      "prompt": "Assess these tests for consolidation: a deterministic unit test verifies a 500-cent voucher calculation; a browser test verifies the selected voucher reaches the saved order; a database retry test verifies one persisted credit after repeated delivery; two unit tests repeat the same input, boundary and expectation. CI reruns the browser test up to five times because it shares mutable cart state. We want simpler risk-based tests, not a fixed testing pyramid. Recommend changes and proof.",
+      "expected_output": "Consolidate only equivalent same-boundary duplicate with exact surviving evidence; retain distinct browser wiring/persistence and database retry obligations. Repair shared-state flakiness rather than hide failures via retries. No arbitrary quota, universal browser-only rule, or blanket deletion of low-impact unit checks. Verify discovery, isolation and realistic fault detection where needed.",
+      "files": [],
+      "assertions": [
+        "Keeps distinct browser composition and database retry protection while consolidating only equivalent same-boundary duplicates.",
+        "Addresses shared mutable state and retries, with discovery and fault-detection verification rather than a test-count or pyramid quota."
+      ]
+    },
+    {
+      "id": 22,
+      "kind": "activation",
+      "prompt": "Review our whole repo test setup and every single test. Find simplification opportunities based on real user risks rather than coverage targets.",
+      "expected_output": "Activate wnz-test-quality and select repository audit scope.",
+      "files": [],
+      "should_trigger": true
+    },
+    {
+      "id": 23,
+      "kind": "activation",
+      "prompt": "Check why CI discovers fewer tests than our repository contains, and assess whether the excluded suites protect important application failures.",
+      "expected_output": "Activate wnz-test-quality.",
+      "files": [],
+      "should_trigger": true
+    },
+    {
+      "id": 24,
+      "kind": "activation",
+      "prompt": "Explain risk-based testing terminology for a new developer; no repository assessment or test-design decisions.",
+      "expected_output": "Do not activate wnz-test-quality.",
+      "files": [],
+      "should_trigger": false
     }
   ]
 }

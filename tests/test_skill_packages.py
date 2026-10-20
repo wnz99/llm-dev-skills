@@ -38,7 +38,8 @@ class SkillPackageTests(unittest.TestCase):
 
     def test_installed_packages_resolve_local_resources(self):
         # Missing moved resources break installed behavior even if repo siblings exist.
-        for name in WORKERS + CONSUMERS + ("wnz-ascii-diagrams", "wnz-repo-health"):
+        for name in WORKERS + CONSUMERS + ("wnz-ascii-diagrams", "wnz-repo-health",
+                                          "wnz-test-quality"):
             package = SKILLS / name
             for document in package.rglob("*.md"):
                 with self.subTest(document=str(document.relative_to(SKILLS))):
@@ -62,12 +63,14 @@ class SkillPackageTests(unittest.TestCase):
                     self.assertIsNone(fence, "unclosed Markdown fence")
 
     def test_package_evaluations_have_independent_expected_outcomes(self):
-        for name in WORKERS + ("wnz-repo-health",):
+        for name in WORKERS + ("wnz-repo-health", "wnz-test-quality"):
             with self.subTest(skill=name):
                 data = json.loads((SKILLS / name / "evals/evals.json").read_text(encoding="utf-8"))
                 self.assertEqual(data["skill_name"], name)
-                self.assertEqual({case["kind"] for case in data["evals"]},
-                                 {"capability", "adversarial", "activation"})
+                kinds = {"capability", "adversarial", "activation"}
+                if name == "wnz-test-quality":
+                    kinds.add("implementation")
+                self.assertEqual({case["kind"] for case in data["evals"]}, kinds)
                 self.assertEqual(len({case["id"] for case in data["evals"]}), len(data["evals"]))
                 for case in data["evals"]:
                     self.assertTrue(case["prompt"])
