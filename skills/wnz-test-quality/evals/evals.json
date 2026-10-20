@@ -203,6 +203,60 @@
       "expected_output": "Do not activate wnz-test-quality.",
       "files": [],
       "should_trigger": false
+    },
+    {
+      "id": 25,
+      "kind": "implementation",
+      "prompt": "Use normal focused mode. In the supplied disposable voucher application, add meaningful real-store regression coverage that two distinct vouchers both add their own credit and retrying one does not add it twice. Keep production code unchanged. Integrate your coverage into the existing test setup; do not run a whole-repo audit or clean unrelated tests. Run applicable checks and report exactly which protection executes through CI versus only a direct command.",
+      "expected_output": "Adds independent real SQLite distinct-ID/amount/retry assertions, reuses existing storage suite, and ensures new regression assertions execute through workflow-selected ci.py in the supplied available environment. Does not count skipped tenant denial as passing; does not perform unrelated cleanup or claim exhaustive audit. A later independent audit finds no new value/setup defects introduced by this change and identifies inherited gaps separately.",
+      "files": [],
+      "assertions": [
+        "Adds faithful SQLite coverage for distinct voucher credits and retry, with independent totals and no production changes.",
+        "Traces actual workflow through ci.py and makes the new regression assertions execute there, distinguishing the inherited tenant skip from passing protection.",
+        "Keeps scope local; reports inherited gaps without unrelated cleanup or an exhaustive audit claim."
+      ],
+      "setup_files": [
+        "evals/normal_mode_fixture.py",
+        "evals/files/repository-audit/vouchers.py",
+        "evals/files/repository-audit/tests/test_vouchers.py",
+        "evals/files/repository-audit/storage/verify_storage.py"
+      ]
+    },
+    {
+      "id": 26,
+      "kind": "implementation",
+      "prompt": "Use normal focused mode. In the supplied disposable notification application, simplify repeated recording sender/service construction while preserving the original three delivery/denial scenarios and production behavior. Follow the existing standard-library unittest setup and CI entrypoint. Prove discovery and actual execution via that entrypoint, without a repository-wide audit or new framework.",
+      "expected_output": "Fresh sender state per test with visible scenario inputs/actions/oracles; all original named scenarios retained, production byte-identical, ci.py selects and executes all three with no skips. Independent later audit finds no new simplification, discovery or fidelity defects; faults allowing opted-out sends or suppressing valid sends still fail corresponding tests.",
+      "files": [],
+      "assertions": [
+        "Preserves all three original scenarios with visible independent expectations and fresh mutable state; production unchanged.",
+        "Verifies all three execute through workflow-selected ci.py with no relevant skips or filters.",
+        "Avoids a new harness or full audit and retains meaningful send/denial fault sensitivity."
+      ],
+      "setup_files": [
+        "evals/normal_mode_fixture.py",
+        "evals/files/notification_service.py",
+        "evals/files/test_notifications.py"
+      ]
+    },
+    {
+      "id": 27,
+      "kind": "adversarial",
+      "prompt": "A local bug fix adds test_charge_retry to integration/check_payments.py. Running that file directly passes. The real CI workflow runs ci.py, which discovers only tests/test_*.py, and a job filter excludes integration/. Teammate proposes leaving it there and marking coverage complete because green means good. Fix scope is payment retry safety, not a whole-suite cleanup. What must normal mode do?",
+      "expected_output": "Trace actual CI selection, ensure newly introduced regression check is reached by intended entrypoint within authorized scope or explicitly report blocker/gap; verify assertion executes rather than skip or filtered green. Stay local; do not demand full ledger or automatically invoke audit.",
+      "files": [],
+      "assertions": [
+        "Rejects direct-file success as CI proof and requires selected assertions to execute or reports unresolved gap.",
+        "Keeps verification local without automatic repository audit or unrelated cleanup."
+      ]
+    },
+    {
+      "id": 28,
+      "kind": "activation",
+      "prompt": "We periodically run repository test audits to correct strategy drift. Today just add regression coverage for this fix and confirm our CI actually runs it.",
+      "expected_output": "Activate wnz-test-quality in focused normal mode; do not run or schedule exhaustive audit.",
+      "files": [],
+      "should_trigger": true
     }
   ]
 }

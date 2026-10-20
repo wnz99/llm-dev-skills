@@ -39,7 +39,11 @@ below to each test. An audit is read-only unless the user also authorizes fixes;
 removal candidates are recommendations, not deletion permission.
 
 For a feature, fix, or bounded test review, use the focused workflow below.
-Do not expand a local task into an exhaustive repository audit.
+Normal mode should prevent audit findings introduced by its own changes and
+flag relevant existing problems it encounters. Keep this proportional to the
+task: no whole-suite inventory or audit ledger for ordinary work. Repository
+audit mode is a periodic steering correction for accumulated drift, not a gate
+after every task; run it when requested, without inventing a recurring schedule.
 
 ## Focused workflow
 
@@ -50,6 +54,11 @@ paths before editing tests. Inspect nearby tests, fixtures, runner commands, and
 repository conventions. Ask what can go wrong for a user or consumer, including
 security, data integrity, compatibility, concurrency, accessibility, and recovery
 where the change affects them. Do not invent obligations for unrelated surfaces.
+
+For the affected tests, identify the real local/CI entrypoints, discovery rules,
+and relevant skips or filters. Reuse the existing setup when it fits. Flag
+nearby gaps that weaken the evidence for this task; unrelated suite debt does
+not expand the task or require a repository-wide cleanup.
 
 Prioritize by plausible harm, exposure, and uncertainty, using application and
 incident evidence. Rare failures can deserve strong protection when consequences
@@ -168,6 +177,16 @@ verification when changed interfaces, shared state, dependency effects, failures
 or explicit requirements justify it. Do not repeatedly rerun an unchanged green
 suite without a new reason.
 
+Confirm new or changed tests are collected by the intended entrypoints and
+that the assertions relied on for this task actually execute. A direct test-file
+pass does not prove CI inclusion; a green command with relevant skips, disabled
+cases or selection filters does not prove the protected behavior. Check the
+actual CI configuration and its runner, not just a documented command. If CI
+cannot run locally, verify its selection path where possible and report the
+remaining execution gap. Fix discovery or selection issues introduced by this
+change within the authorized scope; report relevant pre-existing gaps rather
+than silently counting them as passing evidence.
+
 Check that assertions would fail for the named realistic fault. If unclear, use
 a small reversible mutation in an isolated copy and confirm the expected failure;
 restore the original and rerun. A mental check alone is not execution evidence.
@@ -193,3 +212,13 @@ whether to load the skill. Record model, outputs, criteria, and limitations.
 These cases are authoring material, not work to run on ordinary activation.
 Read [evals/draft-validation.md](evals/draft-validation.md) when reviewing the
 draft's recorded evidence and evaluation limitations.
+
+For normal-mode creation/refactor cases 25–26, first read and run
+[evals/normal_mode_fixture.py](evals/normal_mode_fixture.py) with `vouchers` or
+`notifications` and a new temporary destination. Their `setup_files` lists are
+controller-only seed resources, not worker inputs. Give the worker only the
+case prompt, runtime skill, and generated disposable repo. After it finishes,
+use a fresh independent auditor with repository audit mode to assess the resulting repo;
+separate newly introduced findings from inherited fixture debt. This sequence
+validates prevention during authoring; ordinary normal-mode tasks do not invoke
+an audit automatically.

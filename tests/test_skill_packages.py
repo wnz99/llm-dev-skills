@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -76,7 +77,7 @@ class SkillPackageTests(unittest.TestCase):
                     self.assertTrue(case["prompt"])
                     self.assertTrue(case["expected_output"])
                     self.assertIsInstance(case["files"], list)
-                    for resource in case["files"]:
+                    for resource in case["files"] + case.get("setup_files", []):
                         path = (SKILLS / name / resource).resolve()
                         self.assertTrue(path.is_relative_to((SKILLS / name).resolve()))
                         self.assertTrue(path.is_file(), resource)
@@ -138,3 +139,38 @@ class SkillPackageTests(unittest.TestCase):
                 for dependency in dependencies:
                     self.assertIn(f"`{dependency}`", declaration)
                     self.assertTrue((SKILLS / dependency / "SKILL.md").is_file())
+
+    def test_normal_mode_fixture_refuses_to_overwrite_existing_work(self):
+        script = SKILLS / "wnz-test-quality/evals/normal_mode_fixture.py"
+        with tempfile.TemporaryDirectory(prefix="test-quality-fixture-") as directory:
+            for kind in ("notifications", "vouchers"):
+                with self.subTest(kind=kind):
+                    fixture = Path(directory) / kind
+                    command = [sys.executable, str(script), kind, str(fixture)]
+                    first = subprocess.run(command, capture_output=True, text=True)
+                    self.assertEqual(first.returncode, 0, first.stderr)
+                    generated = fixture / "tests" / f"test_{kind}.py"
+                    self.assertTrue(generated.is_file())
+                    with generated.open("a", encoding="utf-8") as output:
+                        output.write("\n# Preserve this later test edit.\n")
+                    marker = fixture / "local-work.txt"
+                    marker.write_text("preserve my work", encoding="utf-8")
+                    before = {p.relative_to(fixture): p.read_bytes()
+                              for p in fixture.rglob("*") if p.is_file()}
+                    second = subprocess.run(command, capture_output=True, text=True)
+                    self.assertNotEqual(second.returncode, 0)
+                    after = {p.relative_to(fixture): p.read_bytes()
+                             for p in fixture.rglob("*") if p.is_file()}
+                    self.assertEqual(after, before)
+
+    def test_normal_mode_fixture_cannot_write_inside_its_source_package(self):
+        with tempfile.TemporaryDirectory(prefix="test-quality-package-") as directory:
+            package = Path(directory) / "skill"
+            shutil.copytree(SKILLS / "wnz-test-quality", package)
+            script = package / "evals/normal_mode_fixture.py"
+            destination = package / "evals/files/repository-audit/nested"
+            result = subprocess.run(
+                [sys.executable, str(script), "vouchers", str(destination)],
+                capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse(destination.exists())

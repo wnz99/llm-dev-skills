@@ -2,6 +2,17 @@
 
 These examples illustrate decisions, not mandatory test counts.
 
+## A regression test must reach the real entrypoint
+
+A payment retry test passes when its file is executed directly, but the CI
+workflow calls a runner that selects only `tests/test_*.py`; the new file lives
+under `integration/check_payments.py`. Trace the workflow's command and filters,
+then place or select the regression test through the intended entrypoint within
+the fix's scope. Confirm the relevant assertions execute, rather than accepting
+a green run that skips them. If the required environment is unavailable, report
+that limit and the verified selection path. Do not run a whole-repo audit or
+reorganize unrelated suites to validate this one fix.
+
 ## Regression without a negative-case checklist
 
 A price formatter rounds `1.005` incorrectly under the documented rounding

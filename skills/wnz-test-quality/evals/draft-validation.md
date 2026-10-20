@@ -209,3 +209,120 @@ source identity, and checked the saved evaluation reports and mutation logs.
 Its optional parser rerun lacked PyYAML; it distinguished the controller's
 parser evidence from its independent resource checks. This review receipt was
 appended afterward; runtime instructions were unchanged.
+
+## Normal-mode prevention and periodic audit (2026-10-20)
+
+Normal mode now traces affected tests through actual local/CI entrypoints,
+discovery and filters, verifies that relevant assertions execute, and separates
+skips or unavailable execution from passing protection. It prevents issues
+introduced by its own bounded changes and flags relevant inherited gaps without
+requiring unrelated cleanup. Repository audit remains a periodic steering
+correction when requested, not an automatic per-task gate or scheduled job.
+
+### Executable normal-mode evaluations
+
+Cases 25–26 use `normal_mode_fixture.py` to generate fresh disposable voucher
+and notification applications from bundled inputs, including real CI workflow
+files pointing to executable `ci.py` runners. Existing destinations and paths
+inside the source skill package are rejected before writing. Repository tests
+check both fixture variants preserve edits to generated tests and added user
+files on a rejected rerun, and cannot create a fixture inside their own package.
+
+Four fresh native Codex workers independently executed the two normal-mode
+tasks: one worker per case with the revised skill, one with its pre-edit
+snapshot. Each received only its task, runtime skill and disposable application,
+not expected answers. Scheduling respected native capacity rather than launching
+all pairs simultaneously. Controller inspection graded both versions 6/6 across
+the six bundled assertions. Equal results establish no measured effectiveness
+gain. Native model snapshots and timing/token metrics were unavailable.
+
+- Voucher work extended the existing real SQLite retry scenario with distinct
+  voucher IDs/amounts and independent intermediate/final balances. Both versions
+  wired storage discovery into the actual workflow-selected CI runner. CI
+  executed six methods and reported one inherited tenant skip; direct storage
+  discovery executed two methods. Both versions detected separate lost-distinct-
+  credit and duplicate-retry-credit faults through the CI entrypoint.
+- Notification work reused a local recording fake with fresh per-test setup,
+  retaining all three named delivery/denial scenarios and explicit expectations.
+  Both versions executed all three through CI, without skips. Both detected
+  wrong-delivery and ignored-opt-out faults; the revised-skill worker also
+  checked suppressed delivery. Production inputs remained byte-identical in all
+  four artifacts, confirmed by controller comparison.
+
+### Independent audit after normal work
+
+Two fresh reviewer leaves applied `wnz-code-reviewer`, its required dead-code
+audit, Python clean-code review, and the candidate's repository-audit mode.
+Each audited anonymous A/B final artifacts for one case against an identical
+starting baseline, without creator reports or expected answers. A maps to the
+revised skill and B to the prior skill. Cases were independent; variants within
+each case shared an auditor, so this is not independent sampling per variant.
+
+Both voucher artifacts: no newly introduced findings; local task Approved.
+The complete audit still found inherited skipped tenant protection, duplicate
+mock coverage and a metadata-only assertion. These were kept separate from
+the normal-task verdict. All seven methods and three label subcases were
+assessed, nine leaf obligations in each artifact. The auditor observed the new
+regression's three assertions executing through CI and independently confirmed
+lost-credit and duplicate-credit faults fail there. Tenant-guard removal still
+passed because the inherited denial test remains skipped.
+
+Both notification artifacts: Clean / Approved. All three scenarios and six
+assertions executed through the actual CI entrypoint, fresh mutable state was
+preserved, and independent disposable faults exposed missing/wrong delivery
+and opt-out failures. No source edits were made during either audit.
+
+Case 27 was answered independently as a supplied payment-discovery scenario:
+direct-file success was rejected as CI proof, with bounded selection repair
+and assertion execution required. No payment commands were invented. A separate
+metadata-first check matched four expected trigger/non-trigger decisions;
+after reading the runtime body, the same worker selected normal mode for a
+current local task that merely mentioned periodic audits. No full audit or
+recurring schedule was triggered. This simulates routing, not a host-loader run.
+
+### Package evidence and limits
+
+- `python3 -m unittest discover -s tests`: 29 tests passed after review fixes.
+- Installed skill-creator `quick_validate.py` passed through `uv` with PyYAML.
+- An isolated package copy passed PyYAML frontmatter and markdown-it-py checks
+  for hierarchy, local link containment/existence, closed fences and absence of
+  HTML/XML prose blocks. All 28 eval IDs were unique and input files existed.
+  Both fixture variants generated without repository sibling dependencies, and
+  their CI YAML parsed with the expected runner command.
+- `git diff --check` passed. No runtime dependency was added. Existing original
+  fixtures remain unchanged; the generator creates only disposable copies.
+
+Normal outputs, inline grading, later audit reports and a static skill-creator
+review viewer are held outside the installable package in the evaluation
+workspace. These checks establish observed prevention on two small synthetic
+tasks, not universal audit cleanliness. Hosted CI, other hosts/platforms, large
+repositories and historical cases 1–24 were not rerun as a full behavior suite.
+
+### Claude review and corrections
+
+Claude Code reported `claude-opus-5-5`, medium effort, and used the installed
+`wnz-code-reviewer` leaf workflow with dead-code and Python clean-code checks.
+Its initial verdict was Issues Found / Approved: three Low findings and one
+Nit, no blockers. Corrections strengthen generator source protection and the
+overwrite test, remove a replaced README from case 25's setup seed list, and
+fix external viewer metadata. The corrected viewer records one run per case
+and configuration, real skill path, unknown model identity, and omits unavailable
+time/token statistics rather than displaying zero as measured cost.
+
+A disposable mutation allowed reuse of the output root while later workflow
+creation still failed. The strengthened test caught a generated-test edit being
+erased through its byte comparison despite that nonzero exit. This demonstrates
+the data-preservation assertion detects a realistic partial-overwrite fault,
+independently of the return-code assertion. All mutation writes were temporary.
+
+A second fresh Claude Opus 5.5 review of the complete scope again returned
+Issues Found / Approved, with no High or Medium findings. It reran all 29 tests,
+quick validation, fixture and collision checks, and independent overwrite/guard
+mutations. Final non-blocking corrections assert the edited generated file
+already exists, distinguish controller-only `setup_files` from worker inputs,
+and consolidate audit cadence rules into the main scope section. These clarify
+the setup procedure actually used by the recorded workers. The CLI's argparse
+choices remain the authority for the private helper's two supported variants;
+its raw authoring-tool error tracebacks were left as a non-blocking style nit.
+The final small corrections and this receipt were appended after that review;
+fresh verification covers them. No normal-mode task gained an automatic audit.

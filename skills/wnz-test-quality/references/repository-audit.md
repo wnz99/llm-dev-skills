@@ -5,6 +5,9 @@ maintenance. Success means understandable evidence for material application
 risks, not a target test count, coverage percentage, or reduction quota. Apply
 the focused workflow's oracle, fidelity, fixture, and verification rules here.
 
+Use this audit to correct accumulated test-strategy and setup drift, following
+the [scope rules](../SKILL.md#choose-the-scope).
+
 ## 1. Understand the application and its risks
 
 Establish the repository/revision and requested boundaries. Read application
