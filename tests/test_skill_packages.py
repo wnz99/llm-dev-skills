@@ -18,6 +18,16 @@ CONSUMERS = ("wnz-phase-executor", "wnz-code-reviewer",
 
 
 class SkillPackageTests(unittest.TestCase):
+    def test_coordinator_resume_record_preserves_ambiguous_external_effects(self):
+        text = (SKILLS / "wnz-agent-coordinator/references/activity-record.md").read_text()
+        current = text.split("```yaml\n", 1)[1].split("\n```", 1)[0]
+        pending = current.split("pending_operations:\n", 1)[1].split("\nhistory_ref:", 1)[0]
+        fields = set(re.findall(r"^\s+(?:- )?(\w+):", pending, re.MULTILINE))
+        self.assertTrue({"operation_id", "action", "owner", "issued_at",
+                         "observed_effect", "evidence_ref", "inspect_before_retry"} <= fields)
+        event = text.split("## Significant activity event", 1)[1].split("## Bounded assignment", 1)[0]
+        self.assertRegex(event, r"(?m)^operation_id:")
+
     def test_plan_template_orders_review_context_before_execution(self):
         text = (SKILLS / "wnz-implementation-planner" / "references" /
                 "implementation-plan-template.md").read_text(encoding="utf-8")
@@ -40,7 +50,8 @@ class SkillPackageTests(unittest.TestCase):
     def test_installed_packages_resolve_local_resources(self):
         # Missing moved resources break installed behavior even if repo siblings exist.
         for name in WORKERS + CONSUMERS + ("wnz-ascii-diagrams", "wnz-repo-health",
-                                          "wnz-test-quality", "wnz-repo-cleanup"):
+                                          "wnz-test-quality", "wnz-repo-cleanup",
+                                          "wnz-agent-coordinator"):
             package = SKILLS / name
             for document in package.rglob("*.md"):
                 with self.subTest(document=str(document.relative_to(SKILLS))):
@@ -64,7 +75,8 @@ class SkillPackageTests(unittest.TestCase):
                     self.assertIsNone(fence, "unclosed Markdown fence")
 
     def test_package_evaluations_have_independent_expected_outcomes(self):
-        for name in WORKERS + ("wnz-repo-health", "wnz-test-quality", "wnz-repo-cleanup"):
+        for name in WORKERS + ("wnz-repo-health", "wnz-test-quality", "wnz-repo-cleanup",
+                               "wnz-agent-coordinator"):
             with self.subTest(skill=name):
                 data = json.loads((SKILLS / name / "evals/evals.json").read_text(encoding="utf-8"))
                 self.assertEqual(data["skill_name"], name)
