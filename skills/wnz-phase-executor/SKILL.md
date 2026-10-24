@@ -202,6 +202,19 @@ model policy and user controls; split an oversized task; or ask
 the user when the plan or product decision is wrong. Never repeat an identical
 failed dispatch and hope for a different result.
 
+When supporting tooling repeatedly fails or expands while product work stays
+blocked, reassess the dependency before another repair dispatch. Use the existing
+worker receipt to identify the exact blocked assertion, safety facts already
+established and tasks that consume the missing evidence. Dispatch a fresh planner
+to assess whether the prerequisite is justified and revise sequencing if needed
+through the existing plan gate; preserve required runtime proof at acceptance.
+Dispatch no implementation while that gate is pending. Keep data preservation,
+authorization, migration/replay safety and other action-specific safety facts
+before affected actions. Apply the gate's cycle cap and operator rule for
+controller-originated changes; add no other user approval, checker, ledger or
+process stage. If the prerequisite is justified but unavailable, report the
+environment/access blocker; redispatch only with changed input or conditions.
+
 ### Reviewer contract
 
 Dispatch a separate fresh reviewer with the task-dispatch review package and

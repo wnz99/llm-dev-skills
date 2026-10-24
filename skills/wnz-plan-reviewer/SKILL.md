@@ -80,6 +80,10 @@ assumptions. Evaluate:
   and detailed tasks, with material risks and decisions visible before execution details;
 - architecture, responsibility ownership, task boundaries, and cross-task interfaces;
 - dependency ordering, wave safety, and isolation;
+- justification for each implementation prerequisite: the consumed interface
+  or unresolved fact that makes proceeding unsafe. Challenge full runtime
+  baselines and tooling gates when focused regressions can safely enable the
+  fix; retain required acceptance proof and genuine preservation/safety gates;
 - migration, compatibility, rollback, and data-loss risks;
 - whether the verification strategy can prove observable behavior;
 - scoped dead-code detection and cleanup in every step, including ownership

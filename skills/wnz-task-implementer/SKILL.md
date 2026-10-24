@@ -102,6 +102,18 @@ report only decisions that materially affect the design.
    Run live provider checks only when authorized or required by the task.
    Once focused checks and required gates pass on the final state, stop testing;
    broaden or repeat only for a new edit, failure or specific unresolved risk.
+   Match reruns to the changed behavior: a harness-only correction does not
+   automatically require another full product suite. Run broad checks at their
+   planned integration/acceptance boundary or when affected contracts or
+   repository policy require them. Rerun checks whose evidence depends on the
+   changed harness or fixtures. Report repeated tooling failures with the
+   exact blocked assertion, preserved evidence and whether a smaller seam can
+   safely prove the product behavior. If a corrected attempt still fails at the
+   same pre-product assertion without new diagnostic evidence, or repeated
+   in-scope setup repairs keep preventing product assertions, return `BLOCKED`
+   before further repair or expansion. Request a sequencing correction through
+   the controller (standalone: the user); do not waive required proof or silently
+   bypass an approved prerequisite.
 6. Self-review the complete task diff against each requirement and interfaces.
    Self-review does not replace a separate independent reviewer. Commits and
    pushes require existing authorization. Do not switch other checkouts, expand

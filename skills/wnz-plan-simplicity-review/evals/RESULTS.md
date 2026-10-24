@@ -77,3 +77,28 @@ Independent package review reported zero High/Medium findings. These are
 simulated selection decisions on a Codex runtime, not actual Claude dispatch or
 a cost/quality benchmark. Existing nine-case substantive Claude results above
 remain historical evidence; they were not rerun in this update.
+
+## Preparation sequencing update — 2026-10-24
+
+Added cases 10 and 11 cover an unnecessary browser-harness prerequisite and
+authorization/snapshot checks that must precede an export. Fresh baseline and
+revised Claude contexts, given complete skill material and prompts without
+expected outputs, both proposed regression-first implementation while retaining
+required browser acceptance, and both rejected unsafe authorization deferral.
+A revised run retained both decisions after independent review corrections.
+The two description-only activation decisions for this skill matched expectations.
+Case 12 then added necessary bounded native diagnosis and consumed-interface
+discovery; the final fresh Claude run retained those prerequisites and acceptance.
+
+Independent Claude package review also requested coverage for legitimate
+diagnostic/interface prerequisites; those cases live in the coordinated planner
+and plan-reviewer packages. Their revised scenario responses retained bounded
+diagnosis before dependent fixes. Review suggestions about cumulative setup cost
+are incorporated without adding a process stage.
+
+All five changed workflow packages passed YAML-backed validation, contained-link,
+fence and evaluation JSON checks. Repository tests passed (29 tests), and
+`git diff --check` passed. No runtime code or obsolete references changed.
+These grouped scenario checks do not prove an improvement over baseline or
+native activation; the earlier nine simplicity cases were not rerun. Provider
+model/effort defaults were used without an overridden-control claim.

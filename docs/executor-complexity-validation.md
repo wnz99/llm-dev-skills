@@ -127,3 +127,71 @@ unknown-send blocking, worker/budget ownership and complete index verification.
 Report genuine safety defects even when a heavier alternative was rejected.
 Do not replace installed skills mid-execution; this change only edits the
 llm-dev-skills source worktree. No roam-ai or installed skill was modified.
+
+## Verification sequencing update — 2026-10-24
+
+The Itemsbase session `01a16f18-7577-77e3-8f87-2cea149ee2cd`
+spent nearly two hours preparing and repairing a runtime fixture before any
+product fix. Its planner made baseline convergence a prerequisite for all
+fixes; simplicity and independent plan review accepted that dependency. Native
+setup, a shared Maestro session/port collision and fixture defects then blocked
+all product work. This attribution comes from the session transcript, planner
+and review reports, and feature commit history; the app behavior was not rerun.
+
+The planner now distinguishes evidence needed before editing, at task completion
+and at final acceptance. Prerequisites identify a consumed interface or unresolved
+fact preventing safe implementation. Plan reviewers challenge unsupported
+dependencies; simplicity review includes cumulative preparation cost. The
+executor routes repeated tooling failures to a bounded dependency reassessment
+through the existing plan gate. Implementers report the blocked assertion and
+use affected checks after harness changes. Preservation, authorization, replay
+safety, genuine diagnostic/interface prerequisites and required acceptance proof
+remain binding. No dependency, ledger schema or approval stage was added.
+
+### Checks and observed behavior
+
+Five packages changed: `wnz-implementation-planner`, `wnz-plan-reviewer`,
+`wnz-plan-simplicity-review`, `wnz-task-implementer` and `wnz-phase-executor`.
+The added cases live in each package's existing `evals/evals.json`.
+
+- Two fresh Claude CLI contexts compared baseline `0026c73` with the initial
+  revision on ten prompts and ten metadata-only activation decisions. Expected
+  outcomes were withheld. Both selected the intended sequencing and safety
+  actions; this comparison does not demonstrate an improvement over baseline.
+- Independent Claude review applied `wnz-code-reviewer` and `wnz-dead-code`
+  read-only. It found a conflict with the existing review-cycle cap, missing
+  diagnostic-prerequisite coverage, an expected-verdict mismatch when source
+  evidence is unavailable, and the initially missing verification record.
+  Corrections preserve the cap/operator rule, add diagnostic/interface cases,
+  distinguish incomplete assessment from known findings, and record results.
+- Suggestions incorporated: planner-owned dependency judgment, no implementation
+  during a pending plan gate, standalone blocker routing, and rerunning checks
+  that depend on changed fixtures.
+- A second independent Claude review identified a remaining in-worker repair
+  loop: escalation covered expansion but not repeated in-scope repairs. The
+  implementer now returns `BLOCKED` when corrected attempts still fail without
+  new diagnostics or repeated setup repairs prevent product assertions. Added
+  regression coverage for that handoff and standalone diagnostic prerequisites.
+- A final fresh Claude simulation answered all 15 added cases consistently
+  with their expectations, including unknown-root-cause diagnosis, consumed
+  interfaces, preserved safety gates, bounded harness work and exhausted Round 2.
+  Its ten description-only activation decisions matched expectations. The author
+  compared complete responses against the independent expected-output fields.
+- `python3 -m unittest discover -s tests -q`: 29 tests passed. Package checks
+  cover contained relative resources, fences, dependency declarations/discovery
+  instructions and missing-dependency stop rules. PyYAML-backed skill validation
+  passed all five packages; evaluation JSON and unique case IDs parsed.
+- `git diff --check` passed. No runtime source, scripts, exports, dependency
+  declarations or resource links were removed or orphaned. The existing planner
+  template and review/implementer entrypoints reach the changed instructions.
+
+### Limits
+
+These are single-run Claude scenario simulations, grouped by condition rather
+than isolated per case. They do not execute a full implementation, native skill
+activation, missing-package installation, device tooling or production recovery.
+No comparative performance improvement, cross-host behavioral equivalence or
+statistical confidence is established. The last wording corrections received
+behavior checks rather than a third independent package review. Provider model/effort controls were not
+overridden; no runtime identity claim is made. Temporary prompts and provider
+streams were consumed in full and removed by invocation cleanup.

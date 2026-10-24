@@ -27,7 +27,15 @@ Before defining tasks:
 4. Capture global constraints verbatim from the requirements and repository
    instructions: supported versions, dependency limits, naming, security,
    migration order, documentation format, and release rules.
-5. Build a task dependency graph. For every task, name its prerequisites,
+5. Build a task dependency graph. For each prerequisite, name the consumed
+   interface or unresolved fact that prevents safe implementation without it.
+   Separate evidence needed before editing from evidence needed before task
+   completion or final acceptance. A required end-to-end check does not by
+   itself make its harness or successful baseline a prerequisite for every fix.
+   Use a source-backed regression at the smallest practical seam when it can
+   establish the behavior; retain required runtime proof at its justified gate.
+   Keep preservation, authorization and replay/migration safety before actions
+   that depend on them. For every task, name its prerequisites,
    produced interfaces, owned files, mutable external resources, and review
    gate. Group dependency-free tasks into explicit execution waves. Tasks may
    share a wave only when they can be implemented and verified concurrently
@@ -184,7 +192,8 @@ clarify a changed contract. Do not repeat unchanged or irrelevant stages.>
 
 **Execution:**
 
-- Prerequisites: <task IDs or `none`>
+- Prerequisites: <task IDs or `none`; for each, the consumed interface or fact required for safe implementation>
+- Verification timing: <when timing affects dependencies, name checks required before editing, at task completion, and at final acceptance; otherwise omit this field>
 - Wave: <wave number>
 - Mode: <parallel-safe or sequential-only, with reason>
 - Isolation: <worktree/branch and owned files, or shared-tree sequential>
@@ -299,7 +308,10 @@ Before implementation or handoff:
 6. Check type, schema, route, event, and property names across tasks for exact
    consistency.
 7. Check task ordering and ensure every dependency is produced before it is
-   consumed.
+   consumed. Challenge preparation on the critical path: could a focused
+   regression safely enable useful product work before the full harness is
+   ready? Keep final acceptance checks assigned without promoting them to
+   implementation prerequisites by default.
 8. Check documentation claims against code/config evidence and verify planned
    files follow corpus placement, metadata, index, and cross-link rules.
 9. Confirm every task leaves the repository in a working, independently
