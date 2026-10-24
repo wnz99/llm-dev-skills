@@ -20,8 +20,11 @@ decision tools, not as pattern quotas:
 Production-ready does not mean maximally elaborate. Scale security, data
 integrity, failure handling, observability, migration/rollback, and verification
 to the actual risk. During plan self-review and every task review, reject both
-duplicated knowledge and unjustified machinery; require a concrete current need
-for every abstraction, dependency, compatibility path, and operational layer.
+duplicated knowledge and unjustified machinery. Tie every abstraction,
+dependency, compatibility path, operational layer, test, supporting script, and
+process step to an acceptance outcome or concrete current risk. Reuse existing
+tools and checks before planning custom support machinery; temporary tooling
+still needs to justify its creation, use, and cleanup.
 
 These rules reflect DRY as avoiding duplicated knowledge, the Agile principle
 of maximizing work not done, SOLID's responsibility/interface boundaries, and

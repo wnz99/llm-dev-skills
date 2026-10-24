@@ -32,6 +32,13 @@ That skill owns micro-step execution, documentation, verification, cleanup and
 the status/report contract. Include its report destination and pass through its
 required fields rather than copying a second execution checklist.
 
+Keep the assignment focused on its acceptance criteria. Routine implementation
+details within owned files and the brief's interfaces are the worker's decision;
+changes to architecture, interfaces, ownership, scope, or planned verification
+return to the controller under the existing plan workflow. Require the
+implementer's bounded tooling and verification rules; do not add extra checkers
+or process stages to enforce them.
+
 ## Parallel wave execution
 
 For approved parallel execution, dispatch bounded setup work to create the planned isolation boundary for
