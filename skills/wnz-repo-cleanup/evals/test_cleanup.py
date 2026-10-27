@@ -164,6 +164,143 @@ class CleanupTests(unittest.TestCase):
         self.assertEqual(scan["base_tip"], self.base)
         self.assertEqual((self.repo / ".git/index").read_bytes(), before)
 
+    def scan_tree(self, path):
+        scan = json.loads(self.command("inspect", "main").stdout)
+        return next(tree for tree in scan["worktrees"] if tree["worktree"] == str(path.resolve()))
+
+    def test_inventory_classifies_merged_and_detached_tips_immediately(self):
+        worktree = self.tree()
+        self.git("checkout", "--detach", repo=worktree)
+        tree = self.scan_tree(worktree)
+        self.assertEqual(tree["decision"], "DELETE_CANDIDATE")
+        self.assertTrue(tree["ancestor_of_base"])
+        self.assertIn("--expect-tip", tree["removal_command"])
+        scan = json.loads(self.command("inspect", "main").stdout)
+        main = next(branch for branch in scan["branches"] if branch["branch"] == "main")
+        self.assertEqual(main["decision"], "KEEP")
+        self.assertIsNone(main["removal_command"])
+
+    def test_patch_equivalent_commit_reported_but_never_force_deleted(self):
+        worktree = self.tree()
+        (worktree / "feature.txt").write_text("delivered\n")
+        self.git("add", ".", repo=worktree)
+        self.git("commit", "-m", "feature", repo=worktree)
+        tip = self.git("rev-parse", "HEAD", repo=worktree).stdout.strip()
+        self.git("merge", "--squash", "done")
+        self.git("commit", "-m", "squashed feature")
+        tree = self.scan_tree(worktree)
+        self.assertEqual(tree["patch_equivalent_commits"], [tip])
+        self.assertEqual(tree["unique_patch_commits"], [])
+        self.assertTrue(tree["same_tree_as_base"])
+        self.assertEqual(tree["decision"], "KEEP")
+        self.assertIsNone(tree["removal_command"])
+
+    def test_dirty_base_identical_and_historical_content_still_protected(self):
+        worktree = self.tree()
+        (self.repo / "tracked.txt").write_text("new base\n")
+        self.git("commit", "-am", "base changed")
+        (worktree / "tracked.txt").write_text("new base\n")
+        tree = self.scan_tree(worktree)
+        self.assertTrue(tree["dirty_files"][0]["matches_base_content"])
+        self.assertTrue(tree["dirty_files"][0]["seen_in_base_history"])
+        self.assertIsInstance(tree["dirty_files"][0]["mtime_ns"], int)
+        self.assertEqual(tree["decision"], "KEEP")
+        (worktree / "tracked.txt").write_text("unique uncommitted edit\n")
+        tree = self.scan_tree(worktree)
+        self.assertFalse(tree["dirty_files"][0]["matches_base_content"])
+        self.assertEqual(tree["decision"], "KEEP")
+
+    def test_replicated_serena_not_blocker_but_unique_memory_is(self):
+        (self.repo / ".gitignore").write_text(".serena/\n")
+        self.git("commit", "-am", "ignore Serena")
+        self.base = self.git("rev-parse", "HEAD").stdout.strip()
+        worktree = self.tree()
+        for directory in (self.repo, worktree):
+            (directory / ".serena/memories").mkdir(parents=True)
+            (directory / ".serena/project.yml").write_text(f"project_name: '{directory.name}'\nother: keep\n")
+        tree = self.scan_tree(worktree)
+        self.assertEqual(tree["decision"], "DELETE_CANDIDATE")
+        self.assertEqual(len(tree["preview_commands"]), 1)
+        (worktree / ".serena/memories/unfinished.md").write_text("unique work")
+        tree = self.scan_tree(worktree)
+        self.assertEqual(tree["decision"], "KEEP")
+        self.assertEqual(tree["generated_outputs"], [])
+
+    def dependency_output(self):
+        (self.repo / "package.json").write_text('{}\n')
+        (self.repo / "package-lock.json").write_text('{}\n')
+        (self.repo / ".gitignore").write_text("node_modules/\n")
+        self.git("add", ".")
+        self.git("commit", "-m", "dependency inputs")
+        self.base = self.git("rev-parse", "HEAD").stdout.strip()
+        target = self.repo / "node_modules"
+        target.mkdir()
+        return target
+
+    def test_dependency_symlinks_unlinked_without_touching_targets(self):
+        target = self.dependency_output()
+        outside = self.home / "external-package"
+        outside.mkdir()
+        (outside / "keep.txt").write_text("do not touch")
+        (target / "package").symlink_to(outside, target_is_directory=True)
+        preview = json.loads(self.command("preview-artifact", target).stdout)
+        self.command("remove-artifact", target, "--expect-sha", preview["sha256"])
+        self.assertFalse(target.exists())
+        self.assertEqual((outside / "keep.txt").read_text(), "do not touch")
+
+    def test_changed_dependency_link_invalidates_preview_and_nested_git_refused(self):
+        target = self.dependency_output()
+        link = target / "package"
+        link.symlink_to(self.home / "missing-one")
+        preview = json.loads(self.command("preview-artifact", target).stdout)
+        link.unlink()
+        link.symlink_to(self.home / "missing-two")
+        self.command("remove-artifact", target, "--expect-sha", preview["sha256"], okay=False)
+        (target / "nested").mkdir()
+        (target / "nested/.git").write_text("preserve repository")
+        self.command("preview-artifact", target, okay=False)
+
+    def test_ignored_dependencies_are_candidates_but_not_removed_without_preview(self):
+        self.dependency_output().rmdir()
+        worktree = self.tree()
+        (worktree / "node_modules").mkdir()
+        (worktree / "node_modules/package").symlink_to(self.home / "missing")
+        tree = self.scan_tree(worktree)
+        self.assertEqual(tree["decision"], "DELETE_CANDIDATE")
+        self.assertEqual(tree["generated_outputs"][0]["path"], "node_modules/")
+        self.remove_tree(worktree, okay=False)
+
+    def test_sibling_folders_include_registered_orphan_and_separate_repo(self):
+        registered = self.home / (self.repo.name + "-feature")
+        self.git("worktree", "add", "-b", "feature", str(registered))
+        orphan = self.home / (self.repo.name + "-leftover")
+        orphan.mkdir()
+        (orphan / ".git").write_text("gitdir: /nonexistent/registration\n")
+        separate = self.home / (self.repo.name + "-other")
+        separate.mkdir()
+        self.git("init", repo=separate)
+        unrelated = self.home / "unrelated"
+        unrelated.mkdir()
+        broken_link = self.home / (self.repo.name + "-link")
+        broken_link.symlink_to(self.home / "missing")
+        scan = json.loads(self.command("inspect", "main").stdout)
+        siblings = {Path(item["path"]).name: item for item in scan["sibling_directories"]}
+        self.assertEqual(siblings[registered.name]["kind"], "registered_worktree")
+        self.assertEqual(siblings[orphan.name]["kind"], "unregistered_or_unknown")
+        self.assertEqual(siblings[separate.name]["kind"], "separate_repository")
+        self.assertEqual(siblings[orphan.name]["decision"], "KEEP")
+        self.assertEqual(siblings[broken_link.name]["kind"], "symlink; keep")
+        self.assertNotIn(unrelated.name, siblings)
+
+    def test_broken_registered_worktree_does_not_abort_inventory(self):
+        worktree = self.tree()
+        (worktree / ".git").unlink()
+        tree = self.scan_tree(worktree)
+        self.assertEqual(tree["decision"], "KEEP")
+        self.assertIsNone(tree["status_including_ignored"])
+        self.assertIsNone(tree["removal_command"])
+        self.assertTrue(worktree.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

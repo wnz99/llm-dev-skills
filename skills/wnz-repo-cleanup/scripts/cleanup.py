@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -53,23 +54,184 @@ def status(repo):
                "--ignored=matching").stdout
 
 
+def protected_branch(name, base_ref):
+    return (name in {"main", "master", "develop", "dev", "trunk", "stable"}
+            or name.startswith("release/") or f"refs/heads/{name}" == base_ref)
+
+
+def integration(repo, tip, base):
+    ancestor = merged(repo, tip, base)
+    commits = git(repo, "log", "-20", "--format=%H %s", f"{base}..{tip}").stdout.splitlines()
+    patches = [] if ancestor else git(repo, "cherry", base, tip).stdout.splitlines()
+    difference = git(repo, "diff", "--no-ext-diff", "--no-textconv", "--quiet", base, tip, check=False)
+    if difference.returncode not in (0, 1):
+        raise ValueError("Cannot compare branch trees")
+    return {"ancestor_of_base": ancestor, "commits_outside_base": commits,
+            "commits_outside_base_count": int(git(repo, "rev-list", "--count", f"{base}..{tip}").stdout),
+            "patch_equivalent_commits": [row[2:] for row in patches if row.startswith("- ")],
+            "unique_patch_commits": [row[2:] for row in patches if row.startswith("+ ")],
+            "same_tree_as_base": difference.returncode == 0}
+
+
+def status_entries(repo):
+    fields = git(repo, "status", "--porcelain=v1", "-z", "--untracked-files=all",
+                 "--ignored=matching").stdout.split("\0")
+    entries = []
+    index = 0
+    while index < len(fields):
+        field = fields[index]
+        index += 1
+        if not field:
+            continue
+        entry = {"status": field[:2], "path": field[3:]}
+        if "R" in field[:2] or "C" in field[:2]:
+            entry["original_path"] = fields[index]
+            index += 1
+        entries.append(entry)
+    return entries
+
+
+def generated_reason(repo, relative, anchor):
+    """Recognize reproducible outputs, never arbitrary directories by age/name."""
+    path = repo / relative
+    if path.is_symlink() or not path.is_dir():
+        return None
+    if path.name == "node_modules":
+        if (path.parent / "package.json").is_file() and any(
+                (path.parent / name).is_file()
+                for name in ("bun.lock", "bun.lockb", "package-lock.json", "pnpm-lock.yaml", "yarn.lock")):
+            return "dependency output; adjacent package manifest and lockfile"
+    if path.name == "__pycache__":
+        if all(p.is_file() and not p.is_symlink() and p.suffix == ".pyc"
+               for p in path.iterdir()):
+            return "Python bytecode cache"
+    if relative.rstrip("/") == ".serena" and anchor != repo:
+        counterpart = anchor / ".serena"
+        if counterpart.is_dir() and not counterpart.is_symlink():
+            for directory, dirs, files in os.walk(path, followlinks=False):
+                if any((Path(directory) / name).is_symlink() for name in dirs):
+                    return None
+                for name in files:
+                    item = Path(directory) / name
+                    other = counterpart / item.relative_to(path)
+                    if any(parent.is_symlink() for parent in other.parents if parent != anchor):
+                        return None
+                    if (item.is_symlink() or not item.is_file() or other.is_symlink()
+                            or not other.is_file()):
+                        return None
+                    content, original = item.read_bytes(), other.read_bytes()
+                    if item.relative_to(path).as_posix() in {"project.yml", "project.local.yml"}:
+                        # Serena writes the checkout's name into its project configuration.
+                        content = re.sub(rb"(?m)^project_name:.*$", b"project_name: <checkout>", content)
+                        original = re.sub(rb"(?m)^project_name:.*$", b"project_name: <checkout>", original)
+                    if content != original:
+                        return None
+            return "Serena files duplicated in primary worktree"
+    return None
+
+
+def file_evidence(repo, base, entry):
+    result = dict(entry)
+    path = repo / entry["path"]
+    result["mtime_ns"] = path.lstat().st_mtime_ns if path.exists() or path.is_symlink() else None
+    # Do not emit source, secrets or fuzzy semantic equivalence claims.
+    if path.is_file() and not path.is_symlink():
+        blob = git(repo, "hash-object", "--no-filters", "--", str(path)).stdout.strip()
+        base_blob = git(repo, "rev-parse", "--verify", f"{base}:{entry['path']}", check=False)
+        result["matches_base_content"] = base_blob.returncode == 0 and blob == base_blob.stdout.strip()
+        result["seen_in_base_history"] = bool(git(
+            repo, "log", "-1", "--format=%H", f"--find-object={blob}", base, "--",
+            entry["path"]).stdout.strip())
+    result["disposition"] = "KEEP: uncommitted state, even if content exists in base history"
+    return result
+
+
+def worktree_evidence(repo, tree, base, anchor):
+    path = Path(tree["worktree"])
+    evidence = integration(repo, tree["HEAD"], base)
+    blockers = []
+    if path.resolve() in {repo, anchor} or "locked" in tree or "prunable" in tree or not path.exists():
+        blockers.append("current, primary, locked or missing worktree")
+    if not evidence["ancestor_of_base"]:
+        blockers.append("tip is not an ancestor of base; patch equivalence does not authorize deletion")
+    outputs, dirty = [], []
+    if path.exists() and "prunable" not in tree:
+        for entry in status_entries(path):
+            reason = generated_reason(path, entry["path"], anchor) if entry["status"] == "!!" else None
+            if reason:
+                outputs.append({"path": entry["path"], "reason": reason})
+            else:
+                dirty.append(file_evidence(path, base, entry))
+        if dirty:
+            blockers.append("uncommitted or unknown local data")
+    return {**evidence, "blockers": blockers, "dirty_files": dirty,
+            "generated_outputs": outputs,
+            "decision": "KEEP" if blockers else "DELETE_CANDIDATE",
+            "ownership": "verify session roster before proposing deletion"}
+
+
+def sibling_inventory(anchor, trees):
+    registered = {Path(tree["worktree"]).resolve() for tree in trees}
+    result = []
+    for path in sorted(anchor.parent.iterdir()):
+        if not path.name.startswith(anchor.name + "-") or not (path.is_dir() or path.is_symlink()):
+            continue
+        if path.is_symlink():
+            kind = "symlink; keep"
+        elif path.resolve() in registered:
+            kind = "registered_worktree"
+        else:
+            top = git(path, "rev-parse", "--show-toplevel", check=False)
+            kind = "separate_repository" if top.returncode == 0 and Path(top.stdout.strip()).resolve() == path.resolve() else "unregistered_or_unknown"
+        result.append({"path": str(path), "kind": kind,
+                       "decision": "SEE_WORKTREE" if kind == "registered_worktree" else "KEEP",
+                       "reason": "name alone is not disposal evidence"})
+    return result
+
+
 def inspect(repo, base):
     base_tip = oid(repo, base)
     trees = worktrees(repo)
     branches = []
-    integrated = set(git(repo, "for-each-ref", f"--merged={base_tip}",
-                         "--format=%(refname)", "refs/heads").stdout.splitlines())
+    base_ref = git(repo, "rev-parse", "--symbolic-full-name", base).stdout.strip()
+    anchor = Path(trees[0]["worktree"]).resolve()
+    removal = ["bash", str(Path(__file__).with_name("remove.sh").resolve())]
+    for tree in trees:
+        path = Path(tree["worktree"])
+        tree["status_including_ignored"] = None
+        try:
+            if path.exists() and "prunable" not in tree:
+                tree["status_including_ignored"] = status(path)
+            tree.update(worktree_evidence(repo, tree, base_tip, anchor))
+        except (ValueError, OSError) as error:
+            tree.update({"decision": "KEEP", "blockers": [f"inspection failed: {error}"],
+                         "generated_outputs": [], "dirty_files": []})
+        tree["preview_commands"] = [removal + ["preview-artifact", str(path), item["path"]]
+                                    for item in tree["generated_outputs"]]
+        tree["removal_command"] = (removal + ["remove-worktree", str(repo), base, str(path),
+                                   "--expect-base", base_tip, "--expect-tip", tree["HEAD"]]
+                                   if tree["decision"] == "DELETE_CANDIDATE" else None)
     for row in git(repo, "for-each-ref", "--format=%(refname:short)%09%(objectname)",
                    "refs/heads").stdout.splitlines():
         name, tip = row.split("\t")
-        branches.append({"branch": name, "tip": tip,
-                         "ancestor_of_base": f"refs/heads/{name}" in integrated})
-    for tree in trees:
-        path = Path(tree["worktree"])
-        tree["status_including_ignored"] = status(path) if path.exists() else None
+        attached = [tree for tree in trees if tree.get("branch") == f"refs/heads/{name}"]
+        evidence = integration(repo, tip, base_tip)
+        blockers = [reason for tree in attached for reason in tree["blockers"]]
+        if protected_branch(name, base_ref):
+            blockers.append("protected/integration branch")
+        if not evidence["ancestor_of_base"]:
+            blockers.append("commits outside base ancestry")
+        branches.append({"branch": name, "tip": tip, **evidence,
+                         "decision": "KEEP" if blockers else "DELETE_CANDIDATE",
+                         "blockers": list(dict.fromkeys(blockers)),
+                         "removal_command": (removal + ["remove-branch", str(repo), base, name,
+                                             "--expect-base", base_tip, "--expect-tip", tip]
+                                             if not blockers else None),
+                         "worktrees": [tree["worktree"] for tree in attached]})
     return {"repo": str(repo), "base": base, "base_tip": base_tip,
-            "snapshot": "local refs; ownership and staleness require separate evidence",
+            "snapshot": "local refs; candidates require ownership check, output previews and approval",
             "branches": branches, "worktrees": trees,
+            "sibling_directories": sibling_inventory(anchor, trees),
             "stash_ids": git(repo, "stash", "list", "--format=%gd").stdout.splitlines(),
             "current_status_including_ignored": status(repo)}
 
@@ -85,8 +247,7 @@ def remove_branch(repo, args):
     base_tip = check_base(repo, args.base, args.expect_base)
     name = args.target
     base_ref = git(repo, "rev-parse", "--symbolic-full-name", args.base).stdout.strip()
-    if (name in {"main", "master", "develop", "dev", "trunk", "stable"}
-            or name.startswith("release/") or f"refs/heads/{name}" == base_ref):
+    if protected_branch(name, base_ref):
         raise ValueError("Protected/integration branch")
     tip = oid(repo, f"refs/heads/{name}")
     if tip != args.expect_tip or not merged(repo, tip, base_tip):
@@ -138,6 +299,7 @@ def artifact(repo, name):
     if not path.exists():
         raise ValueError("Artifact is missing")
     relative = path.relative_to(repo).as_posix()
+    allow_links = generated_reason(repo, relative, Path(worktrees(repo)[0]["worktree"]).resolve())
     if git(repo, "ls-files", "-z", "--", f":(literal){relative}").stdout:
         raise ValueError("Tracked content requires a separate reviewed source change")
     digest = hashlib.sha256()
@@ -151,17 +313,22 @@ def artifact(repo, name):
         if any(p in {".git", ".ssh", ".aws", ".claude", ".agents"}
                or p == ".env" or p.startswith(".env.") for p in parts):
             raise ValueError("Protected metadata/credential path inside artifact")
-        if entry.is_symlink() or not (entry.is_dir() or entry.is_file()):
-            raise ValueError("Symlinks and special files inside artifacts are protected")
+        link = entry.is_symlink()
+        if link and not allow_links:
+            raise ValueError("Symlinks are allowed only inside recognized generated outputs")
+        if not link and not (entry.is_dir() or entry.is_file()):
+            raise ValueError("Special files inside artifacts are protected")
         contents = hashlib.sha256()
-        if entry.is_file():
+        if link:
+            contents.update(os.fsencode(os.readlink(entry)))
+        elif entry.is_file():
             count += 1
             with entry.open("rb") as source:
                 for chunk in iter(lambda: source.read(1024 * 1024), b""):
                     contents.update(chunk)
         metadata = [entry.relative_to(path.parent).as_posix(),
-                    "file" if entry.is_file() else "directory",
-                    entry.stat().st_mode, contents.hexdigest()]
+                    "symlink" if link else "file" if entry.is_file() else "directory",
+                    entry.lstat().st_mode, contents.hexdigest()]
         digest.update(json.dumps(metadata, ensure_ascii=True).encode() + b"\n")
     return path, relative, digest.hexdigest(), count
 
