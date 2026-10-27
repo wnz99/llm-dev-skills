@@ -35,6 +35,7 @@ assume an installer resolves skill dependencies.
 | `wnz-llm-assist` | Installed and authenticated CLI for the selected external provider; normally Claude from Codex, or Codex from Claude |
 | `wnz-cross-review-pr` | CLIs for selected external reviewers, plus authenticated GitHub CLI (`gh`) for PR work |
 | `wnz-pr-release-notes` | Authenticated GitHub CLI (`gh`) |
+| `wnz-agent-coordinator` | No required sibling skill; optional `llm-bus` or native messaging. Optional executor/reviewer handoffs require discovery of that skill and its declared dependencies before invocation. |
 
 The other catalog skills have no required sibling skill. For structured
 inline review with `wnz-cross-review-pr`, also install `wnz-code-reviewer` and
