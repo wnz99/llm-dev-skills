@@ -220,7 +220,7 @@ class CleanupTests(unittest.TestCase):
             (directory / ".serena/project.yml").write_text(f"project_name: '{directory.name}'\nother: keep\n")
         tree = self.scan_tree(worktree)
         self.assertEqual(tree["decision"], "DELETE_CANDIDATE")
-        self.assertEqual(len(tree["preview_commands"]), 1)
+        self.assertEqual(tree["preview_commands"], [])
         (worktree / ".serena/memories/unfinished.md").write_text("unique work")
         tree = self.scan_tree(worktree)
         self.assertEqual(tree["decision"], "KEEP")
@@ -260,7 +260,7 @@ class CleanupTests(unittest.TestCase):
         (target / "nested/.git").write_text("preserve repository")
         self.command("preview-artifact", target, okay=False)
 
-    def test_ignored_dependencies_are_candidates_but_not_removed_without_preview(self):
+    def test_approved_worktree_removes_dependencies_without_content_preview(self):
         self.dependency_output().rmdir()
         worktree = self.tree()
         (worktree / "node_modules").mkdir()
@@ -268,7 +268,111 @@ class CleanupTests(unittest.TestCase):
         tree = self.scan_tree(worktree)
         self.assertEqual(tree["decision"], "DELETE_CANDIDATE")
         self.assertEqual(tree["generated_outputs"][0]["path"], "node_modules/")
+        self.remove_tree(worktree)
+        self.assertFalse(worktree.exists())
+
+    def test_generated_caches_builds_and_dependency_root_links_do_not_block(self):
+        self.dependency_output().rmdir()
+        (self.repo / "package.json").write_text('{"scripts":{"build":"tool build"}}\n')
+        (self.repo / ".gitignore").write_text("node_modules/\n.fallow/\ndist/\n")
+        self.git("commit", "-am", "output ignores")
+        self.base = self.git("rev-parse", "HEAD").stdout.strip()
+        worktree = self.tree()
+        external = self.home / "shared packages"
+        external.mkdir()
+        (external / "keep.txt").write_text("shared dependency")
+        (worktree / "node_modules").symlink_to(external, target_is_directory=True)
+        for name in (".fallow", "dist"):
+            (worktree / name).mkdir()
+            (worktree / name / "generated.bin").write_bytes(b"generated")
+        scan = json.loads(self.command("inspect", "main", "--generated-output", "dist").stdout)
+        tree = next(t for t in scan["worktrees"] if t["worktree"] == str(worktree.resolve()))
+        self.assertEqual(tree["decision"], "DELETE_CANDIDATE")
+        self.command("remove-worktree", "main", worktree,
+                     "--expect-base", self.base, "--expect-tip", self.base,
+                     "--generated-output", "dist")
+        self.assertFalse(worktree.exists())
+        self.assertEqual((external / "keep.txt").read_text(), "shared dependency")
+
+    def test_source_and_nested_repositories_block_before_outputs_are_removed(self):
+        self.dependency_output().rmdir()
+        worktree = self.tree()
+        packages = worktree / "node_modules"
+        packages.mkdir()
+        (packages / "output").write_text("package")
+        (worktree / "tracked.txt").write_text("unfinished source")
         self.remove_tree(worktree, okay=False)
+        self.assertTrue((packages / "output").exists())
+        self.git("restore", "tracked.txt", repo=worktree)
+        (packages / ".git").mkdir()
+        self.remove_tree(worktree, okay=False)
+        self.assertTrue((packages / "output").exists())
+        (packages / ".git").rmdir()
+        (packages / ".env").write_text("credential fixture")
+        self.remove_tree(worktree, okay=False)
+        self.assertTrue((packages / ".env").exists())
+
+    def test_explicit_generated_output_is_contained_ignored_and_not_tracked(self):
+        worktree = self.tree()
+        output = worktree / ".cache"
+        output.mkdir()
+        (output / "generated").write_text("build output")
+        self.remove_tree(worktree, okay=False)
+        self.command("remove-worktree", "main", worktree,
+                     "--expect-base", self.base, "--expect-tip", self.base,
+                     "--generated-output", ".cache")
+        self.assertFalse(worktree.exists())
+
+    def test_declaring_authored_or_external_output_does_not_bypass_guards(self):
+        worktree = self.tree()
+        (worktree / "authored.txt").write_text("unfinished")
+        for name in ("authored.txt", "tracked.txt", "../outside", "/tmp/outside"):
+            self.command("remove-worktree", "main", worktree,
+                         "--expect-base", self.base, "--expect-tip", self.base,
+                         "--generated-output", name, okay=False)
+        self.assertEqual((worktree / "authored.txt").read_text(), "unfinished")
+
+    def test_declared_serena_cannot_bypass_unique_memory_protection(self):
+        (self.repo / ".gitignore").write_text(".serena/\ndist/\n")
+        self.git("commit", "-am", "ignore local directories")
+        self.base = self.git("rev-parse", "HEAD").stdout.strip()
+        worktree = self.tree()
+        memory = worktree / ".serena/memories"
+        memory.mkdir(parents=True)
+        (memory / "design.md").write_text("unique design")
+        for name in (".serena", ".serena/memories"):
+            self.command("remove-worktree", "main", worktree,
+                         "--expect-base", self.base, "--expect-tip", self.base,
+                         "--generated-output", name, okay=False)
+        self.assertTrue((memory / "design.md").exists())
+
+    def test_build_name_without_producer_is_unknown_data(self):
+        (self.repo / ".gitignore").write_text("dist/\n")
+        self.git("commit", "-am", "ignore custom directory")
+        self.base = self.git("rev-parse", "HEAD").stdout.strip()
+        worktree = self.tree()
+        (worktree / "dist").mkdir()
+        source = worktree / "dist/manual.txt"
+        source.write_text("unique authored content")
+        self.remove_tree(worktree, okay=False)
+        self.assertEqual(source.read_text(), "unique authored content")
+        (worktree / "package.json").write_text('{"scripts":{"build":"tsc --outDir lib"}}')
+        self.git("add", "package.json", repo=worktree)
+        self.git("commit", "-m", "unrelated producer", repo=worktree)
+        self.git("merge", "--ff-only", "done")
+        self.base = self.git("rev-parse", "HEAD").stdout.strip()
+        self.remove_tree(worktree, okay=False)
+        self.assertEqual(source.read_text(), "unique authored content")
+
+    def test_declared_parent_cannot_delete_nested_serena(self):
+        worktree = self.tree()
+        memory = worktree / ".cache/.serena/memories"
+        memory.mkdir(parents=True)
+        (memory / "unique.md").write_text("unique memory")
+        self.command("remove-worktree", "main", worktree,
+                     "--expect-base", self.base, "--expect-tip", self.base,
+                     "--generated-output", ".cache", okay=False)
+        self.assertTrue((memory / "unique.md").exists())
 
     def test_sibling_folders_include_registered_orphan_and_separate_repo(self):
         registered = self.home / (self.repo.name + "-feature")

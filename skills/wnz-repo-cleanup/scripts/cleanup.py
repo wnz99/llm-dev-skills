@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import re
+import stat
 import subprocess
 import sys
 
@@ -91,16 +92,24 @@ def status_entries(repo):
     return entries
 
 
-def generated_reason(repo, relative, anchor):
+def generated_reason(repo, relative, anchor, declared=()):
     """Recognize reproducible outputs, never arbitrary directories by age/name."""
     path = repo / relative
+    if path.name == "node_modules":
+        if (path.parent / "package.json").is_file():
+            return "installed dependencies; unlink symlinks without following targets"
+    if relative.rstrip("/") in declared and ".serena" not in Path(relative).parts:
+        return "generated output explicitly identified by the caller"
     if path.is_symlink() or not path.is_dir():
         return None
-    if path.name == "node_modules":
-        if (path.parent / "package.json").is_file() and any(
-                (path.parent / name).is_file()
-                for name in ("bun.lock", "bun.lockb", "package-lock.json", "pnpm-lock.yaml", "yarn.lock")):
-            return "dependency output; adjacent package manifest and lockfile"
+    if path.name in {"dist", "build", "coverage"}:
+        return None
+    if path.name in {".fallow", ".next", ".nuxt",
+                     ".expo", ".turbo", ".parcel-cache", ".pytest_cache",
+                     ".mypy_cache", ".ruff_cache", "test-results", "playwright-report"}:
+        return "reproducible build, test or analysis output"
+    if path.name == ".venv" and (path / "pyvenv.cfg").is_file():
+        return "installed Python virtual environment"
     if path.name == "__pycache__":
         if all(p.is_file() and not p.is_symlink() and p.suffix == ".pyc"
                for p in path.iterdir()):
@@ -130,6 +139,45 @@ def generated_reason(repo, relative, anchor):
     return None
 
 
+def generated_entries(repo, relative):
+    """Check metadata only; never follow links or hash dependency contents."""
+    path = Path(os.path.abspath(repo / relative))
+    if not path.is_relative_to(repo) or path == repo:
+        raise ValueError("Generated output must be inside the worktree")
+    for parent in path.parents:
+        if parent == repo:
+            break
+        if parent.is_symlink():
+            raise ValueError("Generated output has a symlink ancestor")
+    literal = f":(literal){path.relative_to(repo).as_posix()}"
+    if git(repo, "ls-files", "-z", "--", literal).stdout:
+        raise ValueError("Generated output contains tracked files")
+    dependency_link = (path.name == "node_modules" and path.is_symlink()
+                       and (path.parent / "package.json").is_file())
+    if (not dependency_link
+            and git(repo, "check-ignore", "--quiet", "--", str(path), check=False).returncode != 0):
+        raise ValueError("Generated output must be ignored by Git")
+    replicated_serena = (path.relative_to(repo).parts == (".serena",)
+                         and generated_reason(repo, ".serena", Path(worktrees(repo)[0]["worktree"]).resolve())
+                         == "Serena files duplicated in primary worktree")
+    pending = [path]
+    while pending:
+        entry = pending.pop()
+        parts = entry.relative_to(repo).parts
+        if any(p in {".git", ".ssh", ".aws", ".claude", ".codex", ".agents"}
+               or p == ".env" or p.startswith(".env.")
+               or (p == ".serena" and not replicated_serena) for p in parts):
+            raise ValueError("Generated output contains protected metadata or credentials")
+        mode = entry.lstat().st_mode
+        if stat.S_ISLNK(mode):
+            continue
+        if stat.S_ISDIR(mode):
+            pending.extend(entry.iterdir())
+        elif not stat.S_ISREG(mode):
+            raise ValueError("Generated output contains special files")
+    return literal
+
+
 def file_evidence(repo, base, entry):
     result = dict(entry)
     path = repo / entry["path"]
@@ -146,7 +194,7 @@ def file_evidence(repo, base, entry):
     return result
 
 
-def worktree_evidence(repo, tree, base, anchor):
+def worktree_evidence(repo, tree, base, anchor, declared=()):
     path = Path(tree["worktree"])
     evidence = integration(repo, tree["HEAD"], base)
     blockers = []
@@ -157,8 +205,17 @@ def worktree_evidence(repo, tree, base, anchor):
     outputs, dirty = [], []
     if path.exists() and "prunable" not in tree:
         for entry in status_entries(path):
-            reason = generated_reason(path, entry["path"], anchor) if entry["status"] == "!!" else None
+            dependency_link = (entry["status"] == "??"
+                               and (path / entry["path"]).name == "node_modules"
+                               and (path / entry["path"]).is_symlink())
+            reason = (generated_reason(path, entry["path"], anchor, declared)
+                      if entry["status"] == "!!" or dependency_link else None)
             if reason:
+                try:
+                    generated_entries(path, entry["path"])
+                except ValueError as error:
+                    dirty.append({**entry, "disposition": f"KEEP: {error}"})
+                    continue
                 outputs.append({"path": entry["path"], "reason": reason})
             else:
                 dirty.append(file_evidence(path, base, entry))
@@ -189,7 +246,7 @@ def sibling_inventory(anchor, trees):
     return result
 
 
-def inspect(repo, base):
+def inspect(repo, base, declared=()):
     base_tip = oid(repo, base)
     trees = worktrees(repo)
     branches = []
@@ -202,15 +259,17 @@ def inspect(repo, base):
         try:
             if path.exists() and "prunable" not in tree:
                 tree["status_including_ignored"] = status(path)
-            tree.update(worktree_evidence(repo, tree, base_tip, anchor))
+            tree.update(worktree_evidence(repo, tree, base_tip, anchor, declared))
         except (ValueError, OSError) as error:
             tree.update({"decision": "KEEP", "blockers": [f"inspection failed: {error}"],
                          "generated_outputs": [], "dirty_files": []})
-        tree["preview_commands"] = [removal + ["preview-artifact", str(path), item["path"]]
-                                    for item in tree["generated_outputs"]]
+        tree["preview_commands"] = []
         tree["removal_command"] = (removal + ["remove-worktree", str(repo), base, str(path),
                                    "--expect-base", base_tip, "--expect-tip", tree["HEAD"]]
                                    if tree["decision"] == "DELETE_CANDIDATE" else None)
+        if tree["removal_command"]:
+            for output in declared:
+                tree["removal_command"].extend(["--generated-output", output])
     for row in git(repo, "for-each-ref", "--format=%(refname:short)%09%(objectname)",
                    "refs/heads").stdout.splitlines():
         name, tip = row.split("\t")
@@ -229,7 +288,7 @@ def inspect(repo, base):
                                              if not blockers else None),
                          "worktrees": [tree["worktree"] for tree in attached]})
     return {"repo": str(repo), "base": base, "base_tip": base_tip,
-            "snapshot": "local refs; candidates require ownership check, output previews and approval",
+            "snapshot": "local refs; approved worktree removal includes generated outputs; verify ownership",
             "branches": branches, "worktrees": trees,
             "sibling_directories": sibling_inventory(anchor, trees),
             "stash_ids": git(repo, "stash", "list", "--format=%gd").stdout.splitlines(),
@@ -276,8 +335,15 @@ def remove_worktree(repo, args):
     tip = oid(target, "HEAD")
     if tip != args.expect_tip or not merged(repo, tip, base_tip):
         raise ValueError("Worktree changed or contains unintegrated commits")
+    evidence = worktree_evidence(repo, tree, base_tip, Path(trees[0]["worktree"]).resolve(),
+                                 args.generated_output)
+    if evidence["blockers"]:
+        raise ValueError("; ".join(evidence["blockers"]))
+    for output in evidence["generated_outputs"]:
+        literal = generated_entries(target, output["path"])
+        git(target, "clean", "-fdx", "--", literal)
     if status(target):
-        raise ValueError("Worktree contains changes, untracked or ignored data")
+        raise ValueError("Worktree changed or Git retained local data")
     git(repo, "worktree", "remove", "--", str(target))
     return f"Removed worktree {target}"
 
@@ -339,6 +405,7 @@ def main():
     scan = commands.add_parser("inspect")
     scan.add_argument("repo")
     scan.add_argument("base")
+    scan.add_argument("--generated-output", action="append", default=[])
     for name in ("branch", "worktree"):
         delete = commands.add_parser(f"remove-{name}")
         delete.add_argument("repo")
@@ -346,6 +413,8 @@ def main():
         delete.add_argument("target")
         delete.add_argument("--expect-base", required=True)
         delete.add_argument("--expect-tip", required=True)
+        if name == "worktree":
+            delete.add_argument("--generated-output", action="append", default=[])
     for name in ("preview-artifact", "remove-artifact"):
         item = commands.add_parser(name)
         item.add_argument("repo")
@@ -355,7 +424,7 @@ def main():
     args = parser.parse_args()
     repo = root(args.repo)
     if args.command == "inspect":
-        output = inspect(repo, args.base)
+        output = inspect(repo, args.base, args.generated_output)
     elif args.command == "remove-branch":
         output = remove_branch(repo, args)
     elif args.command == "remove-worktree":

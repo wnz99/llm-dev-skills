@@ -1,5 +1,51 @@
 # Validation record
 
+## Generated outputs included in worktree approval — 2026-10-30
+
+Approved integrated inactive worktree removal now includes classified installed
+dependencies, build/test output and caches. The remover checks paths and file
+metadata without hashing their contents or requesting separate output approval.
+Root dependency links and links within output directories are unlinked without
+following targets. Ambiguous build directory names require classification of
+their actual producer and an explicit `--generated-output` declaration. Unknown data, authored changes,
+credentials, nested repositories, special files and unique Serena memories
+remain protected; all blockers are checked before any output is removed.
+Standalone artifact deletion retains content fingerprints.
+
+Fresh evidence:
+
+- `python3 skills/wnz-repo-cleanup/evals/test_cleanup.py`: the initial 24 real-Git tests
+  passed in disposable repositories, including automatic dependency/cache/build
+  removal, shared root links, protected source/data and explicit-output guards.
+- `python3 -m unittest discover -s tests -q`: 30 repository checks passed.
+- YAML frontmatter parsed with PyYAML through `uv`; both Python files parsed
+  with `ast`, both Bash entrypoints passed `bash -n`, and `git diff --check`
+  passed.
+- An independent read-only prompt simulation compared old and new instructions
+  for three capability/adversarial cases plus three activation decisions. The
+  updated instructions passed all six. This is a simulation, not proof of host
+  loader behavior. Static evidence viewer:
+  `/tmp/cleanup-artifact-behavior-evals/review.html`. No measured token or model
+  performance comparison is claimed.
+- Initial independent code review exposed declaration precedence bypassing
+  Serena protection and build-name-only classification. Both were corrected;
+  new real-Git regression cases passed in the 24-test run above.
+- A second review identified nested Serena under a declared parent output and
+  unrelated build-script names as additional classification gaps. Metadata
+  traversal now protects nested Serena, and ambiguous outputs require explicit
+  classification instead of inferring provenance from script names. The final
+  expanded suite includes regression checks for both cases.
+- Final `python3 skills/wnz-repo-cleanup/evals/test_cleanup.py`: all 25 tests
+  passed after those corrections. The 30 repository checks passed again.
+- A fresh independent full-scope `wnz-code-reviewer` pass returned Clean /
+  Approved and independently confirmed all 25 safety and 30 repository checks,
+  package syntax, declared outputs, preflight ordering and preserved data.
+
+The historical records below describe previous behavior. Their worktree-output
+fingerprint requirement is superseded by this section. Approval, ownership,
+ancestry and concurrent-writer limits still apply. No worker shutdown control is
+exposed by the host; resource closure cannot be confirmed.
+
 ## Immediate inventory and replicated outputs — 2026-10-27
 
 The first inventory now reports per-branch and per-worktree deletion candidates
