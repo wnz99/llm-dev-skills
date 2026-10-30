@@ -1,5 +1,112 @@
 # Validation record
 
+## Generated outputs included in worktree approval — 2026-10-30
+
+Approved integrated inactive worktree removal now includes classified installed
+dependencies, build/test output and caches. The remover checks paths and file
+metadata without hashing their contents or requesting separate output approval.
+Root dependency links and links within output directories are unlinked without
+following targets. Ambiguous build directory names require classification of
+their actual producer and an explicit `--generated-output` declaration. Unknown data, authored changes,
+credentials, nested repositories, special files and unique Serena memories
+remain protected; all blockers are checked before any output is removed.
+Standalone artifact deletion retains content fingerprints.
+
+Fresh evidence:
+
+- `python3 skills/wnz-repo-cleanup/evals/test_cleanup.py`: the initial 24 real-Git tests
+  passed in disposable repositories, including automatic dependency/cache/build
+  removal, shared root links, protected source/data and explicit-output guards.
+- `python3 -m unittest discover -s tests -q`: 30 repository checks passed.
+- YAML frontmatter parsed with PyYAML through `uv`; both Python files parsed
+  with `ast`, both Bash entrypoints passed `bash -n`, and `git diff --check`
+  passed.
+- An independent read-only prompt simulation compared old and new instructions
+  for three capability/adversarial cases plus three activation decisions. The
+  updated instructions passed all six. This is a simulation, not proof of host
+  loader behavior. Static evidence viewer:
+  `/tmp/cleanup-artifact-behavior-evals/review.html`. No measured token or model
+  performance comparison is claimed.
+- Initial independent code review exposed declaration precedence bypassing
+  Serena protection and build-name-only classification. Both were corrected;
+  new real-Git regression cases passed in the 24-test run above.
+- A second review identified nested Serena under a declared parent output and
+  unrelated build-script names as additional classification gaps. Metadata
+  traversal now protects nested Serena, and ambiguous outputs require explicit
+  classification instead of inferring provenance from script names. The final
+  expanded suite includes regression checks for both cases.
+- Final `python3 skills/wnz-repo-cleanup/evals/test_cleanup.py`: all 25 tests
+  passed after those corrections. The 30 repository checks passed again.
+- A fresh independent full-scope `wnz-code-reviewer` pass returned Clean /
+  Approved and independently confirmed all 25 safety and 30 repository checks,
+  package syntax, declared outputs, preflight ordering and preserved data.
+
+The historical records below describe previous behavior. Their worktree-output
+fingerprint requirement is superseded by this section. Approval, ownership,
+ancestry and concurrent-writer limits still apply. No worker shutdown control is
+exposed by the host; resource closure cannot be confirmed.
+
+## Immediate inventory and replicated outputs — 2026-10-27
+
+The first inventory now reports per-branch and per-worktree deletion candidates
+or retention reasons with ancestry, patch equivalence, tree equality, outstanding
+commit counts (up to 20 commit descriptions), dirty-file mtimes and exact content
+evidence. Detached tips are included. It also inventories immediate sibling
+`<primary-repo-name>-*` directories, distinguishing registered worktrees from
+separate repositories, symlinks and unknown/broken leftovers. Ownership and
+item-level approval remain external requirements; a candidate is not permission.
+
+Recognized ignored dependency outputs and Python bytecode, plus Serena files
+replicated in the primary worktree, become previewable cleanup steps. Only the
+generated Serena `project_name` value may differ. Unique memories/configuration
+and unknown data remain blockers. Dependency symlinks are fingerprinted as links
+and unlinked without following targets; artifact-root symlinks, nested Git,
+secrets and special files stay refused. No force-removal path was introduced.
+
+Fresh authoring evidence:
+
+- `python3 skills/wnz-repo-cleanup/evals/test_cleanup.py`: 18 real-Git tests
+  passed in disposable repositories. New cases cover immediate merged/detached
+  classification, cherry-picked patch equivalence without deletion, dirty bytes
+  matching base/history, replicated versus unique Serena data, dependency links
+  and changed-link fingerprints, nested Git refusal, sibling repositories,
+  broken sibling links and broken registered worktrees. The last case came from
+  independent review: a prunable registration initially aborted the report;
+  inventory now retains it and continues. No real artifacts were removed.
+- `python3 -m unittest discover -s tests -q`: 30 repository tests passed,
+  including contained links/fences, package evaluation JSON and dependency
+  declarations. Both Bash entrypoints passed `bash -n`; `git diff --check`
+  passed. Skill-creator `quick_validate.py` through `uv`/PyYAML reported
+  `Skill is valid!`. No dependency, external runtime file, installation step
+  or changed removal CLI contract was added.
+- A read-only smoke run through `inspect.sh` reported the live repository's
+  branches and matching sibling worktree without changing repository state.
+- Two fresh native evaluation workers each answered all 11 prompts: six
+  capability/adversarial scenarios and five metadata-only activation decisions.
+  Expected answers were withheld. Author grading found updated 11/11 and old
+  10/11; the old response retained replicated Serena/dependency outputs as
+  blockers in case 8. Both retained unsafe dirty state and matched all five
+  activation expectations. Outputs, grading, benchmark notes and the static
+  skill-creator viewer were saved outside the package under
+  `/tmp/wnz-cleanup-eval-01a17c31/`. These grouped single-run simulations do not
+  prove native loader behavior or general performance superiority. Duration
+  and token metrics were unavailable; aggregation's zero defaults are not
+  measured speed or cost. Model controls were not overridden for these runs.
+- A fresh independent `wnz-code-reviewer` leaf reviewed the complete package
+  diff and callers, applied `wnz-dead-code` and `wnz-clean-code-py`, verified
+  the broken-registration correction, and reran all 18 safety and 30 repository
+  tests: Clean / Approved. The requested review model was `gpt-6.1-sol`, medium;
+  resolved runtime identity was not exposed. No agent-close control is exposed,
+  so resource closure could not be confirmed. This receipt was added afterward;
+  executable behavior did not change after that review.
+
+Deliberate limits: patch-equivalent non-ancestor branches remain retained;
+historical or base-identical dirty content is not assumed obsolete. Generic
+`android`, build or non-code directory names are insufficient disposal evidence.
+Generated outputs still need exact content previews and approval before removal.
+Sibling folders outside registered worktrees remain report-only. Inventory is a
+local snapshot, not a concurrency transaction or remote-merge verification.
+
 Validated 2026-10-22. Ordinary cleanup does not run these authoring evaluations
 or an application test suite. No real repository cleanup was performed.
 
