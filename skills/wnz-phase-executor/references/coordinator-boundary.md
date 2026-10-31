@@ -16,6 +16,7 @@ resolve conflicts or implement fixes.
 
 | Work | Fresh worker and contract |
 | --- | --- |
+| Clarification interview and confirmed user decisions | Coordinator using discovered `wnz-grill-me` after consent; substantive source research stays in fresh workers |
 | Source exploration, plan authoring/revisions and self-review, final plan conformance | `wnz-implementation-planner`; bounded read-only explorer when additional evidence is needed |
 | Implementation, documentation, fixes and integration/conflict edits | `wnz-task-implementer`; include approved integration order and covering checks in integration brief |
 | Independent plan verdict | `wnz-plan-reviewer` |
@@ -132,7 +133,7 @@ the exact blocker rather than choosing a lower-priority dependent dispatch.
 | 2 | Required authority artifacts conflict/are missing, or resumed/source state is uncertain | Fresh bounded recovery investigator when preconditions hold; otherwise exact blocker. Keep review cycle/round. |
 | 3 | Selected role lacks authority, required dependency, explicit control, isolation/identity, independence or capacity | Block affected role under fresh-context preflight and [model policy](model-policy.md); no inline substitute. |
 | 4 | Current assignment has unresolved receipt/report packaging gap for otherwise existing evidence | Fresh receipt-recovery investigator under bounded-receipt policy; missing analysis instead returns to its substantive owner. No approval from repackaging; superseded assignments remain history. |
-| 5 | Plan gate pending, including normalized new user feedback or semantic revision | Follow planner/self-review/independent review sequence in [plan gate](independent-plan-review.md). Preserve Round 2 terminal stop and ask operator once; no Round 3. Resolve plan-bound evidence gaps within this gate before further design review. |
+| 5 | Plan gate pending, including initial planning, material requirement gaps or normalized new user feedback/semantic revision | First handle a planner's `CLARIFICATION_REQUIRED` through [pre-plan clarification](../SKILL.md#pre-plan-clarification); wait for required user decisions before dependent drafting. Otherwise follow planner/self-review/independent review sequence in [plan gate](independent-plan-review.md). Preserve Round 2 terminal stop and ask operator once; no Round 3. Resolve plan-bound evidence gaps within this gate before further design review. |
 | 6 | Approved plan's task or integration order is missing/contradictory | Fresh planner corrects ordering through existing semantic gate; coordinator invents no tie-breaker. |
 | 7 | Active implementation reports NEEDS_CONTEXT or BLOCKED | [Status contract](../SKILL.md#implementer-status-contract): new bounded role with changed input, or operator for unresolved product/access choice. |
 | 8 | Active task/integration lacks current required verification | Fresh verifier for missing/stale/suspicious evidence under [task dispatch](task-dispatch.md#fixes-investigations-and-evidence-gaps); no duplicate verifier for complete fresh implementer checks. |

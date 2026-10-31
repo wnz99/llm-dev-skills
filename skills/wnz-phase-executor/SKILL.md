@@ -46,6 +46,7 @@ Before dispatching implementation:
 - `wnz-task-implementer`: owns bounded implementation/fixes and their status/report contract.
 - `wnz-code-reviewer`: owns implemented task and aggregate review, including clean-code assessment.
 - `wnz-dead-code`: owns mandatory audit/cleanup evidence for plan steps and independent code-review audits.
+- `wnz-grill-me`: required only for an accepted or explicitly requested clarification interview before dependent planning.
 
 Resolve these by name through the host's installed-skill discovery before the
 affected work. Obtain missing skills from their matching directory in
@@ -54,6 +55,34 @@ using the host's skill installer or manual package installation. Do not use
 sibling filesystem paths or assume a local installation root. If a required
 skill is missing, report it and stop the affected work; do not substitute a
 local copy of its algorithm.
+
+## Pre-plan clarification
+
+The initial planner investigates requirements and source before drafting, using
+its clarity check. Clear requirements proceed within that same assignment;
+do not create a routine discovery-only dispatch or extra approval stage.
+On planner `assigned_result: CLARIFICATION_REQUIRED`, keep dependent plan
+drafting and implementation blocked. Explain the returned material gaps and
+ask whether to run `wnz-grill-me`. If accepted, discover and apply it in the
+coordinator's user conversation, using planner-supplied questions and evidence.
+An explicit user request to grill already authorizes this; do not ask again.
+The interview skill owns question rounds and recommendation principles.
+Source investigation and source-based recommendations remain worker-owned;
+route new factual gaps through existing fresh planner/investigator dispatches.
+
+Direct user answers may resolve the gaps without an interview. If declined,
+accept direct clarification or explicit authorization for specific stated
+assumptions; consequential unresolved choices remain blocking. Silence and
+elapsed time cannot accept recommendations. Missing interview dependency blocks
+an accepted interview; report it rather than inventing a substitute workflow.
+Record confirmed answers, assumptions and non-goals in existing requirements/
+decision pointers and blockers metadata. Then dispatch a fresh planner with
+those answers and original requirements; never resume the old worker or pass
+the full conversation. Reuse existing reports, receipts and ledger, without a
+new interview worker, ledger, approval gate or orchestration system.
+
+For ambiguity discovered during plan revisions, use this same conversation
+path while preserving the existing plan gate's feedback invalidation and caps.
 
 ## Plan artifact and worker boundaries
 

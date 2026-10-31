@@ -51,7 +51,7 @@ class SkillPackageTests(unittest.TestCase):
         # Missing moved resources break installed behavior even if repo siblings exist.
         for name in WORKERS + CONSUMERS + ("wnz-ascii-diagrams", "wnz-repo-health",
                                           "wnz-test-quality", "wnz-repo-cleanup",
-                                          "wnz-agent-coordinator"):
+                                          "wnz-agent-coordinator", "wnz-grill-me"):
             package = SKILLS / name
             for document in package.rglob("*.md"):
                 with self.subTest(document=str(document.relative_to(SKILLS))):
@@ -76,7 +76,7 @@ class SkillPackageTests(unittest.TestCase):
 
     def test_package_evaluations_have_independent_expected_outcomes(self):
         for name in WORKERS + ("wnz-repo-health", "wnz-test-quality", "wnz-repo-cleanup",
-                               "wnz-agent-coordinator"):
+                               "wnz-agent-coordinator", "wnz-grill-me"):
             with self.subTest(skill=name):
                 data = json.loads((SKILLS / name / "evals/evals.json").read_text(encoding="utf-8"))
                 self.assertEqual(data["skill_name"], name)
@@ -139,6 +139,8 @@ class SkillPackageTests(unittest.TestCase):
             **{name: ("wnz-dead-code",) for name in WORKERS + CONSUMERS
                if name not in {"wnz-dead-code", "wnz-phase-executor"}},
         }
+        for consumer in ("wnz-implementation-planner", "wnz-phase-executor"):
+            required[consumer] += ("wnz-grill-me",)
         for consumer, dependencies in required.items():
             text = (SKILLS / consumer / "SKILL.md").read_text(encoding="utf-8")
             declaration = text.split("## Required skills", 1)[1].split("\n## ", 1)[0]
