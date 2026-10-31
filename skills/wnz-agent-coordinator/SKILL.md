@@ -131,7 +131,17 @@ compete for its resources, or take over merely because the work looks slow.
 A message claiming success is a report, not proof. Bind acceptance evidence to
 requirements, scope, source revision and dirty state, and relevant environment.
 Use the strongest proportionate verification required by the task's workflow.
-Integration edits invalidate affected evidence. Missing or contested source
+Integration edits invalidate affected evidence. For a later delta containing
+only GSD tracking or flow documentation, retain a completed independent code
+review and valid test evidence when reviewed executable code, configuration and
+tests are demonstrably unchanged. Validate documentation, references and status;
+record prior reviewed commit, current head and scoped dirty/untracked state,
+inspected delta, code-equivalence evidence and reused receipts in existing reports.
+Do not claim the new head was reviewed or add a code-review cycle solely for that
+delta. Functional code/configuration/test changes require affected fresh checks
+and review. Markdown carrying material behavior, security or authorization changes
+is not exempt; preserve initial reviews, unresolved findings, material semantic
+plan-review gates and required CI/status/merge checks. Missing or contested source
 facts go to the responsible worker or a bounded investigator; never invent an
 approval or downgrade a substantive finding to move the queue.
 

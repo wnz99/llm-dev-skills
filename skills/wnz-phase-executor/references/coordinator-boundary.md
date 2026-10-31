@@ -95,8 +95,10 @@ incomplete index into substantive approval or downgrade findings locally.
 
 Bind evidence to worktree, baseline, commit and scoped dirty/untracked snapshot
 evidence in the existing reports; HEAD alone cannot identify a dirty tree.
-Integration/conflict edits invalidate affected checks and reviews. Require fresh
-verification and independent review of the resulting state. A recorded no-op
+Integration/conflict edits invalidate affected checks and reviews, subject to
+[GSD and flow documentation follow-ups](#gsd-and-flow-documentation-follow-ups).
+Otherwise require fresh verification and independent review of the resulting
+state. A recorded no-op
 integration may reuse unchanged evidence with demonstrated identity; cross-task
 checks still run. The coordinator schedules integration and records its outcome;
 the integration worker performs merges, conflict resolution and checks.
@@ -108,6 +110,23 @@ replay `DONE` work, accept a summary-only approval or promote implementation
 assumptions into requirements. If authoritative artifacts are missing, keep
 dependent gates unresolved. Growing requirements and decisions preclude a
 constant-context-size guarantee.
+
+## GSD and flow documentation follow-ups
+
+A completed independent code review and its valid test evidence remain usable
+when the subsequent delta contains only GSD tracking or flow documentation and
+the reviewed executable code, configuration and tests remain unchanged. Validate
+the changed documentation, references and status consistency; record the prior
+reviewed commit, current head and scoped dirty/untracked state, inspected delta,
+code-equivalence evidence and reused review/test receipts in existing reports.
+Do not dispatch another independent code review solely for this delta or claim
+that the new head itself was reviewed.
+
+Functional code, configuration or test changes require affected fresh checks
+and review. Markdown carrying material behavior, security or authorization
+changes is not exempt. This exception does not waive missing initial task or
+aggregate reviews, unresolved findings, material semantic plan-review gates,
+required cross-task checks, or provider CI/status and merge requirements.
 
 ## Ordered transitions
 
@@ -144,8 +163,9 @@ the exact blocker rather than choosing a lower-priority dependent dispatch.
 | 13 | No task/integration remains; final evidence stages unmet | Fresh planner conformance, aggregate verifier, aggregate reviewer in [final completion](../SKILL.md#final-completion) order. Final findings use full-set fixer and fresh aggregate re-review; fixes invalidate affected final checks/conformance. |
 | 14 | All required stages are accepted for final integrated state | Summarize current evidence and residual risks under final completion. |
 
-Source/integration edits mark affected checks and reviews unmet during
-normalization; rows 8–9 or the relevant final stage repair them once. A proven
+Source/integration edits outside the documentation follow-up exception mark
+affected checks and reviews unmet during normalization; rows 8–9 or the relevant
+final stage repair them once. A proven
 no-op may retain evidence only under the state-equivalence policy above, with
 cross-task checks still required. An old approved receipt cannot close a newly
 opened feedback cycle. Unavailable evidence never consumes, resets or extends
