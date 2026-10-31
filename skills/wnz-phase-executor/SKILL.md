@@ -296,6 +296,10 @@ existing authorization requirements. Missing evidence blocks completion.
 
 ### 4. Dispatch Independent Requirements And Quality Review
 
+Apply the [documentation follow-up exception](references/coordinator-boundary.md#gsd-and-flow-documentation-follow-ups)
+when carrying forward an already completed review of unchanged code; it does
+not replace a missing initial review.
+
 Supply artifact pointers and the task-dispatch reviewer instructions to a fresh
 reviewer. The reviewer assembles/reads the complete package and independently
 checks requirements, code paths, cumulative complexity, meaningful tests,
@@ -356,6 +360,9 @@ Write this to the durable progress ledger before moving to the next planned
 task. Never rely only on conversation todos for completion state.
 
 ## Final Completion
+
+The [documentation follow-up exception](references/coordinator-boundary.md#gsd-and-flow-documentation-follow-ups)
+also applies after aggregate review; it does not waive the initial final stages.
 
 After the last task:
 
