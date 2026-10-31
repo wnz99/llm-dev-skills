@@ -112,6 +112,41 @@
       "prompt": "Invocation supplies delegated_only: true. Host exposes no reliable runtime agent identity. No marker or copied task path is supplied. State first action.",
       "expected_output": "Return BLOCKED naming unavailable reliable native child identity before substantive role work. Invent no API, infer no child status from silence, and perform no source work.",
       "files": []
+    },
+    {
+      "id": 17,
+      "kind": "capability",
+      "prompt": "Standalone plan request: add team accounts. Source establishes current user ownership, but whether teams can share ownership and delete shared data is unspecified. State next action, no writes.",
+      "expected_output": "Investigate facts then offer wnz-grill-me identifying material gaps; no plan draft before clarification. Routine choices need no interview.",
+      "files": []
+    },
+    {
+      "id": 18,
+      "kind": "capability",
+      "prompt": "Delegated planner with reliable fresh child identity and dependencies: account deletion retention is undecided after source exploration. Return the next result only.",
+      "expected_output": "assigned_result CLARIFICATION_REQUIRED with unresolved_gaps, consequences, proposed questions and reasoned recommendations; no user interview or plan draft.",
+      "files": []
+    },
+    {
+      "id": 19,
+      "kind": "adversarial",
+      "prompt": "User declines grilling and says just plan. Permanent deletion versus archive remains undecided, no assumptions authorized.",
+      "expected_output": "Accept direct answers or specific explicitly authorized assumptions; unresolved consequential deletion choice blocks dependent drafting, no silent default.",
+      "files": []
+    },
+    {
+      "id": 20,
+      "kind": "capability",
+      "prompt": "Requirements and acceptance criteria are fully explicit; source answers remaining facts and only private helper names remain open. wnz-grill-me is absent.",
+      "expected_output": "Proceed with evidence-backed planning, no interview offer, consent pause or missing-interview dependency blocker.",
+      "files": []
+    },
+    {
+      "id": 21,
+      "kind": "adversarial",
+      "prompt": "User accepted interview but host discovery cannot find wnz-grill-me.",
+      "expected_output": "Report missing dependency and stop accepted interview; no sibling lookup or copied interview algorithm. Evidence gathering and direct answers remain possible.",
+      "files": []
     }
   ]
 }

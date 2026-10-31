@@ -65,7 +65,7 @@ does not redefine the role's native report or vocabulary.
 | plan_reviewer | `plan_verdict`: `APPROVED`, `REVISE` or `CLARIFICATION_REQUIRED`; `wnz-plan-reviewer` owns assessment |
 | code_reviewer | `requirements_verdict`, `quality_verdict`, `outcome`, `recommendation`: role-native values from `wnz-code-reviewer`; its quality assessment remains in the indexed report |
 | verifier | `verification_result`: `PASS`, `FAIL` or `BLOCKED`; assigned checks and exact state define the result |
-| planner | `assigned_result`, `unresolved_gaps`: authoring/self-review/conformance result under `wnz-implementation-planner`; do not invent implementer status |
+| planner | `assigned_result`, `unresolved_gaps`: authoring/self-review/conformance result under `wnz-implementation-planner`, including `CLARIFICATION_REQUIRED` before dependent drafting; gaps include proposed questions, consequences and recommendations in the assigned report, with a bounded summary in the receipt; do not invent implementer status |
 | explorer/investigator (including receipt recovery) | `assigned_result`, `unresolved_gaps`: answer to the bounded question and evidence limitations; no invented approval |
 
 ```text

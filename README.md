@@ -20,6 +20,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [wnz-phase-executor](skills/wnz-phase-executor/) | Keep the main session to coordination; fresh workers own substantive work and return bounded receipts with durable evidence and independent gates |
 | [wnz-agent-coordinator](skills/wnz-agent-coordinator/) | Supervise ongoing independent workers with explicit goals, simple solutions, durable activity records, recovery, and optional efficient llm-bus messaging |
 | [wnz-implementation-planner](skills/wnz-implementation-planner/) | Author evidence-backed plans with task interfaces, cleanup ownership, dependency waves and self-review |
+| [wnz-grill-me](skills/wnz-grill-me/) | Resolve material requirements before planning through focused questions and evidence-backed recommendations |
 | [wnz-plan-reviewer](skills/wnz-plan-reviewer/) | Assess existing plans read-only and return a full independent design verdict |
 | [wnz-task-implementer](skills/wnz-task-implementer/) | Execute one bounded task and return status, fresh verification and cleanup evidence |
 | [wnz-dead-code](skills/wnz-dead-code/) | Audit reachability read-only or remove confirmed leftovers within authorized cleanup scope |
@@ -40,6 +41,8 @@ Choose the smallest workflow that fits the task:
 - **Debug or get another model's help:** `wnz-llm-assist`.
 - **Plan and execute substantial work:** `wnz-phase-executor`, which uses the
   planner, plan reviewer, task implementer, code reviewer, and dead-code skills.
+  Unclear material requirements prompt an offer to use `wnz-grill-me` before drafting.
+- **Clarify an idea before planning:** `wnz-grill-me`.
 - **Keep independent workers aligned and moving:** `wnz-agent-coordinator`;
   preserve their existing execution workflows and coordinate shared boundaries.
 - **Improve a focused area:** a language clean-code skill, `wnz-test-quality`,
@@ -71,6 +74,10 @@ This repository is the canonical source for its skills. Preserve intentional
 local adaptations when updating an installed copy.
 
 ## Attribution
+
+The **wnz-grill-me** skill adapts Matt Pocock's
+[grill-me/grilling](https://github.com/mattpocock/skills) approach, with its
+[MIT notice](skills/wnz-grill-me/LICENSE) bundled in the package.
 
 The **wnz-code-reviewer** skill is based on the code-reviewer from
 [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli), adapted

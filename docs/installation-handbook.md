@@ -37,8 +37,13 @@ assume an installer resolves skill dependencies.
 | `wnz-pr-release-notes` | Authenticated GitHub CLI (`gh`) |
 | `wnz-agent-coordinator` | No required sibling skill; optional `llm-bus` or native messaging. Optional executor/reviewer handoffs require discovery of that skill and its declared dependencies before invocation. |
 
-The other catalog skills have no required sibling skill. For structured
-inline review with `wnz-cross-review-pr`, also install `wnz-code-reviewer` and
+The other catalog skills have no required sibling skill. For clarification
+interviews, `wnz-implementation-planner` and `wnz-phase-executor`
+also require `wnz-grill-me` when the user accepts or explicitly requests the
+interview. Install it alongside those skills to enable that path. Clear
+requirements and direct clarification answers do not require it.
+
+For structured inline review with `wnz-cross-review-pr`, also install `wnz-code-reviewer` and
 `wnz-dead-code`; its inline leg can otherwise use direct analysis. Each `SKILL.md`
 remains authoritative about when a dependency is needed and what optional
 fallbacks exist. Missing required dependencies block the affected work.
