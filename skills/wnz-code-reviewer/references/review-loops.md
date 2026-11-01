@@ -37,7 +37,7 @@ the boundary to only the latest fix commit.
         or isolation leaves review incomplete. After fixes change the diff, start a new review pass
         rather than resuming the prior review context.
     *   Also follow any repository-specific review policy that does not
-        conflict with the default delegation contract.
+        conflict with the mandatory fresh native review contract.
     *   Ask each reviewer to classify findings as High, Medium, Low, or Nit.
         High and Medium are blocking. Low and Nit are optional unless the user
         explicitly says otherwise.
@@ -64,7 +64,7 @@ the boundary to only the latest fix commit.
         next loop.
     *   For authorized fix work, default to `claude-sonnet-5-5` with the host's
         effort default on Claude, or `gpt-6.1-sol` with `medium` effort on Codex.
-        Pass these controls when dispatching a fixer; disclose inline selection
+        Pass these controls when dispatching a fixer; disclose host model-selection
         limitations. Keep user overrides and unavailable-control handling as in
         `SKILL.md`. Fixers do not review their own fixes; fresh re-review uses
         the reviewer defaults.

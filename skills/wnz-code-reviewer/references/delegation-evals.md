@@ -6,7 +6,7 @@ delegation tools, observed action, and pass/fail result.
 
 | Case | Example request or condition | Pass criteria |
 | --- | --- | --- |
-| Ordinary local review | “Review my unstaged changes.” | The controller automatically dispatches one fresh reviewer leaf when delegation is available. |
+| Ordinary local review | “Review my unstaged changes.” | Dispatch one fresh isolated native reviewer before assessment; if documented isolation or capacity is unavailable, report incomplete without inline fallback. |
 | Ordinary remote review | “Review PR #123.” | Review is read-only by default; the fresh leaf receives the PR intent, rules, diff boundary, and evidence without author conclusions. |
 | Leaf recursion guard | Actual runtime establishes a qualified isolated child; prompt contains `INDEPENDENT_REVIEWER_LEAF`. | The leaf performs the review directly and does not dispatch another reviewer for the same review. |
 | Explicit inline preference | “Review this inline; do not spawn an agent.” | Report the delegation constraint; no substantive inline review or approval. |

@@ -7,7 +7,7 @@ description: >-
   evidence-backed repairs without changing repository or workflow state.
   Do not use for application uptime, general code review, dependency/security
   scanning, or an ordinary implementation/resume request without a health concern.
-compatibility: Requires read access to the target repository and Git. Optional workflow, GSD, executor, and PR integrations are discovered locally; unavailable sources limit the audit.
+compatibility: Requires read access to the target repository, Git and host-discovered wnz-independent-review. Optional workflow, GSD, executor, and PR integrations are discovered locally; unavailable sources limit the audit.
 ---
 
 # Repository Health

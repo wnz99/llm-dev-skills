@@ -26,7 +26,8 @@ legacy `llm-assist` copy after upgrading to avoid ambiguous routing.
 
 For review, fix verification, design assessment, disputed-finding validation,
 and any other mode actually assessing work, require `wnz-independent-review`
-and `wnz-code-reviewer` for code assessment, plus their declared dependencies.
+and `wnz-code-reviewer` for code assessment or `wnz-plan-reviewer` for design
+assessment, plus their declared dependencies.
 Resolve by name through host skill discovery before assessment. Obtain missing
 packages from their matching directories in
 [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills)
@@ -97,6 +98,10 @@ host, run both externally in parallel. Then synthesize findings from both. Label
 (`CLAUDE`, `CODEX`, `BOTH`) in the final report. Do not add OpenCode to
 `all` unless the user explicitly asks for it.
 
+For non-review debugging, RCA, questions and plan authoring with `--provider all`,
+the current host performs its leg in the caller context and the complementary
+provider runs externally. This does not supply independent review approval.
+
 ## Prerequisites
 
 The selected CLI must be installed and authenticated. If a command fails
@@ -132,7 +137,7 @@ wait, or the user explicitly tells you to continue.
 |------|---------|-----------------|-------------|
 | review | `/wnz-llm-assist review` | read-only | Code review with false-positive filtering |
 | debug | `/wnz-llm-assist debug` | read-only | Independent bug investigation |
-| plan | `/wnz-llm-assist plan` | read-only | Second opinion on architecture/approach |
+| plan | `/wnz-llm-assist plan` | read-only | Develop an approach or assess an existing plan; select the matching template below |
 | verify | `/wnz-llm-assist verify` | read-only | Confirm a fix resolves the issue |
 | rca | `/wnz-llm-assist rca` | read-only | Root cause analysis with competing theories |
 | rescue | `/wnz-llm-assist rescue` | workspace-write | Delegate when stuck after 3+ failures |
@@ -141,6 +146,14 @@ wait, or the user explicitly tells you to continue.
 > **Note:** Codex is the only provider in this skill with the sandbox flags
 > documented in `references/provider-invocation.md`. Claude and OpenCode use their own permission systems and
 > should be invoked explicitly when needed.
+
+For Plan mode, distinguish authoring from assessment before selecting a template.
+Use **Plan authoring** to develop a new approach without a review verdict; it
+does not require review qualification or review dependencies. Use **Plan
+assessment** for an existing plan's correctness or design verdict, inside a
+qualified fresh native review assignment with discovered `wnz-plan-reviewer`
+and its dependencies. A request to review work cannot use the authoring path
+merely by changing its label.
 
 ## Invocation Flow
 
@@ -162,8 +175,9 @@ For each mode, gather the minimum context needed:
   output schema.
 - **debug**: Collect error message, reproduction steps, relevant file paths.
   Include your own theories so the external LLM can independently validate or reject them.
-- **plan**: Summarize the plan or decision. Include constraints, trade-offs
-  you've identified, and what you're uncertain about.
+- **plan**: Select authoring or assessment from the actual task. For authoring,
+  collect the goal, requirements and evidence. For assessment, supply the
+  current plan, constraints and uncertainties to the qualified review child.
 - **verify**: Generate the diff of your fix. Include the original issue
   description so the external LLM can check the fix addresses it.
 - **rca**: Describe the bug and list your theories with evidence for/against

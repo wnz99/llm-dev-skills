@@ -25,7 +25,7 @@ PROVIDERS = ("wnz-llm-assist", "wnz-cross-review-pr")
 
 class SkillPackageTests(unittest.TestCase):
     def test_review_consumers_declare_conditional_routing_dependency(self):
-        for name in REVIEW_CONSUMERS:
+        for name in REVIEW_CONSUMERS + PROVIDERS:
             text = (SKILLS / name / "SKILL.md").read_text()
             with self.subTest(skill=name):
                 self.assertIn("`wnz-independent-review`", text)
@@ -93,7 +93,7 @@ class SkillPackageTests(unittest.TestCase):
 
     def test_package_evaluations_have_independent_expected_outcomes(self):
         for name in dict.fromkeys(WORKERS + REVIEW_CONSUMERS + PROVIDERS + (
-                "wnz-independent-review", "wnz-grill-me")):
+                "wnz-independent-review", "wnz-grill-me", "wnz-plan-simplicity-review")):
             with self.subTest(skill=name):
                 data = json.loads((SKILLS / name / "evals/evals.json").read_text(encoding="utf-8"))
                 self.assertEqual(data["skill_name"], name)
@@ -102,13 +102,30 @@ class SkillPackageTests(unittest.TestCase):
                     kinds.add("implementation")
                 # Original cross-review activation cases predate the kind field.
                 actual_kinds = {case.get("kind", "activation") for case in data["evals"]}
-                self.assertEqual(actual_kinds, kinds)
+                if name == "wnz-plan-simplicity-review":
+                    # This established package separates activation/model cases
+                    # from its original untyped review fixtures.
+                    activations = data["activation_evals"]
+                    self.assertEqual({case["should_trigger"] for case in activations}, {True, False})
+                    for case in activations:
+                        self.assertIsInstance(case["query"], str)
+                        self.assertTrue(case["query"])
+                        self.assertIsInstance(case["should_trigger"], bool)
+                    for case in data["model_policy_evals"]:
+                        self.assertTrue(case["id"])
+                        self.assertTrue(case["prompt"])
+                        self.assertTrue(case["expected_output"])
+                else:
+                    self.assertEqual(actual_kinds, kinds)
                 self.assertEqual(len({case["id"] for case in data["evals"]}), len(data["evals"]))
                 for case in data["evals"]:
                     self.assertIsInstance(case["id"], int)
                     if "kind" not in case:
-                        self.assertEqual(name, "wnz-cross-review-pr")
-                        self.assertIn(case["id"], (1, 2, 3, 4))
+                        if name == "wnz-plan-simplicity-review":
+                            self.assertIn(case["id"], range(1, 10))
+                        else:
+                            self.assertEqual(name, "wnz-cross-review-pr")
+                            self.assertIn(case["id"], (1, 2, 3, 4))
                     self.assertIsInstance(case["prompt"], str)
                     self.assertIsInstance(case["expected_output"], str)
                     self.assertTrue(case["prompt"])
@@ -160,7 +177,9 @@ class SkillPackageTests(unittest.TestCase):
 
     def test_required_dependency_packages_are_declared_and_discoverable(self):
         required = {
-            "wnz-phase-executor": WORKERS + ("wnz-code-reviewer",),
+            "wnz-phase-executor": WORKERS + ("wnz-code-reviewer", "wnz-independent-review"),
+            "wnz-llm-assist": ("wnz-independent-review", "wnz-code-reviewer", "wnz-plan-reviewer"),
+            "wnz-cross-review-pr": ("wnz-independent-review", "wnz-code-reviewer"),
             **{name: ("wnz-dead-code",) for name in WORKERS + CONSUMERS
                if name not in {"wnz-dead-code", "wnz-phase-executor"}},
         }

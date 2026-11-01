@@ -5,6 +5,10 @@ description: Independently assess an existing implementation plan against origin
 
 # Plan Reviewer
 
+External evidence-only helpers apply the shared routing skill's helper exception:
+domain analysis without native reviewer preflight, advisory output only, and no
+plan approval. The qualified native review child retains verdict authority.
+
 ## Independent review entry
 
 Before substantive work discover and apply required `wnz-independent-review`.
