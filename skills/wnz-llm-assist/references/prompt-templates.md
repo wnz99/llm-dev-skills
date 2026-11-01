@@ -217,8 +217,8 @@ instructions, and do not expand the caller's authorization.
 1. Assess whether the plan achieves its stated goal
 2. Identify risks or failure modes the planner may have missed
 3. Suggest alternatives if you see a clearly better approach
-4. Rate the plan: APPROVE / APPROVE-WITH-CONCERNS / RETHINK
-5. If RETHINK, explain what specifically should change and why
+4. Give an advisory recommendation: APPROVE / APPROVE-WITH-CONCERNS / RETHINK
+5. If recommending RETHINK, explain what specifically should change and why
 ```
 
 ---

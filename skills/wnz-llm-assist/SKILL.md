@@ -292,9 +292,11 @@ labels from Provider Selection.
 - If they disagree, present both theories with evidence and let the user decide
 
 **For plan mode:**
-- Highlight where the provider agrees with your approach (validation)
-- Surface any risks or alternatives the provider identified that you missed
-- If the provider suggests a fundamentally different approach, present both with trade-offs
+- For authoring, compare proposed approaches, alternatives and assumptions;
+  provider agreement does not validate work or grant review approval.
+- For assessment, the qualified native child validates concrete findings and
+  coverage against source before issuing the domain verdict. Report unresolved
+  gaps as incomplete; provider recommendations remain advisory.
 
 **For verify mode:**
 - Validate the provider's concrete findings and coverage against source inside
