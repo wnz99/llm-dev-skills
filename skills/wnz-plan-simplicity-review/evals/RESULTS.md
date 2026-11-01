@@ -106,6 +106,7 @@ fence and evaluation JSON checks. Repository tests passed (29 tests), and
 These grouped scenario checks do not prove an improvement over baseline or
 native activation; the earlier nine simplicity cases were not rerun. Provider
 model/effort defaults were used without an overridden-control claim.
+
 ## Native routing decision evidence — 2026-11-01
 
 A fresh native Codex evaluation assignment executed 14 bounded source decision
@@ -119,3 +120,27 @@ whole-PR approval, capacity-exhaustion probe or cross-context robustness benchma
 The parent retains actual spawn arguments/result evidence; the child could not
 independently observe those arguments or resolved model identity. No supported
 close/shutdown API was exposed. Historical Claude results above remain historical.
+
+## Merged sequencing scenarios — 2026-11-01
+
+Cases 10–12 now include the qualified fresh native reviewer scenario used by
+the existing substantive cases. A fresh native Codex worker received the revised
+skill and those prompts without expected outputs, alongside eight related
+planner, executor, implementer and plan-reviewer cases. It proposed focused
+regression work before unnecessary harness setup, retained authorization and
+consistent-snapshot checks before export, and retained necessary bounded native
+diagnosis and consumed-interface discovery. All three responses stated missing
+source evidence and avoided full approval or actual edits.
+
+A separate fresh metadata-only worker activated both supplied simplicity-review
+queries; the coordinated ten-query set also included four negative near misses
+for the other roles. The parent recorded actual non-inheriting spawn arguments
+and returned native identities. Requested controls were `gpt-6.1-sol`, medium;
+resolved identities were unavailable. Prompt text alone did not qualify workers.
+
+These are grouped decision simulations, not isolated per-case runs, live client
+discovery, a Claude-host check or a baseline improvement benchmark. Complete
+responses were retained by the controller outside the skill package. After the
+prompt corrections, all 34 repository unit tests and `git diff --check` passed.
+No source or package links were removed; the existing maintenance links still
+reach the evaluation cases. No supported worker close control was exposed.

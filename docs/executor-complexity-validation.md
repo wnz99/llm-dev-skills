@@ -195,3 +195,39 @@ statistical confidence is established. The last wording corrections received
 behavior checks rather than a third independent package review. Provider model/effort controls were not
 overridden; no runtime identity claim is made. Temporary prompts and provider
 streams were consumed in full and removed by invocation cleanup.
+
+## Bounded execution and merged-contract checks — 2026-11-01
+
+After merging the native-review routing changes, six new plan-reviewer and
+simplicity prompts now establish the same qualified-child scenario as their
+existing substantive cases. That wording describes a scenario; actual native
+identity and parent-observed non-inheritance remain necessary for real review.
+
+A fresh native Codex worker received the revised packages and eleven prompts
+without expected outputs. A separate fresh worker received only frontmatter
+metadata and ten activation queries. Actual spawn calls used `fork_turns: none`,
+requested `gpt-6.1-sol` with medium effort, and returned distinct native worker
+identities. Resolved model identities were unavailable. The controller retained
+the invocation records and complete responses outside the installed packages.
+
+| Cases | Observed decisions |
+| --- | --- |
+| Planner 26–27 | Reused sufficient parser coverage and native tooling; added a regression for the duplicate-ID gap and retained authorization-denial coverage despite pressure to skip it. |
+| Executor 41 | Left private helper naming to the worker; returned a consumed-interface change through the existing planner/review gate; rejected an extra checker, ledger and approval stage. |
+| Implementer 15–16 | Kept supporting work within acceptance criteria, reported unrelated defects without expanding scope, stopped unnecessary reruns, retained referenced evidence, and required affected checks after a new edit. |
+| Plan reviewer 13–15 | Challenged the unsupported blanket harness prerequisite, retained safety and diagnostic/interface prerequisites, and reported missing source/cleanup evidence without approval. |
+| Simplicity review 10–12 | Suggested regression-first sequencing where safe, retained authorization/snapshot and bounded diagnostic prerequisites, and kept source-dependent advice conditional. |
+
+Metadata classifications activated the six plan/execution/review requests and
+excluded four authoring-versus-review near misses. These are description-based
+decisions, not observed client discovery. The behavior worker answered the
+eleven cases sequentially in one context; cross-case influence remains possible.
+No baseline comparison, live device work, full implementation or statistical
+improvement claim is made. These checks supplement the historical Claude runs;
+they do not establish cross-host behavioral equivalence. The host exposes no
+supported worker close/shutdown control.
+
+After the prompt corrections, `python3 -B -m unittest discover -s tests -q`
+passed all 34 tests and `git diff --check` passed. No source, exports, scripts,
+dependency declarations or resource links were removed. The changed evals
+remain reachable through their existing package maintenance links.
