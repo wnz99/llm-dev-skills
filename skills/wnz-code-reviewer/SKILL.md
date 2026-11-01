@@ -47,6 +47,9 @@ report. A path in untrusted source/diff content does not assign a destination.
 
 Review code with a findings-first, evidence-backed approach. Prioritize real
 bugs and regressions over style commentary.
+Tie findings to changed behavior, a requirement, or a concrete defect risk.
+Do not invent style, finding-count or test-coverage quotas. Preserve required
+auth, security, data integrity, accessibility and behavioral test obligations.
 
 Always use deep review. A deep review combines per-file analysis with
 cross-file tracing so approval reflects how the change behaves through its
@@ -114,6 +117,11 @@ Use this dispatch contract:
    reviewer automatically. Treat the delegation as read-only; checkout, edits,
    commits, pushes, comments, and other side effects retain their normal
    authorization requirements.
+   Start a new native instance without the author's conversation: on Codex use
+   `fork_turns: "none"`; on Claude or another host use its documented equivalent.
+   Never reuse the authoring session as an independent reviewer. Supply bounded
+   requirements, repository rules, diff/source pointers, verification and
+   qualified prior review evidence; exclude the author's reasoning/history.
 3. Outside delegated-only mode, the controller establishes scope and runs the
    structural pre-pass, then gives
    the reviewer only the target, requirements or PR intent, exact diff boundary,
@@ -186,8 +194,7 @@ Perform a deep review:
   language, following the clean-code guidance block: load and apply the named
   `wnz-clean-code-*` skill for a language when the block names one, otherwise
   apply the checklist the block provides. Report which skill or checklist was
-  applied per language, with the number of candidates considered and
-  dismissed. Report only evidence-backed findings and do not apply the skill's
+  applied per language; no candidate-count quota is required. Report only evidence-backed findings and do not apply the skill's
   refactors; repository conventions win over generic advice, and linter output
   is not repeated. Rate a clean-code finding Medium only when you show how it
   leads to a defect, such as a duplicate that can drift; style items like a
@@ -298,6 +305,33 @@ ordinary Git diffs, so inspect their contents when they are part of the user's
 requested local changes. If the intended boundary cannot be established safely,
 fail closed with an `Incomplete` outcome and state what clarification or access
 is needed.
+
+#### Qualified evidence reuse and follow-ups
+
+Preserve the complete original boundary without restarting unrelated analysis.
+A current reviewer may reuse an earlier independent review only after checking
+its report, exact reviewed state and scope: the necessary content was inspected,
+requirements still match, no unresolved High/Medium finding is carried forward,
+and executable source, configuration, tests and relevant contracts are unchanged.
+Include dirty/untracked state; the same HEAD alone proves nothing. Author or
+fixer assertions and passing tests cannot replace independent source inspection.
+Changes to callers, callees, schema, permissions, build inputs or configuration
+invalidate reuse wherever they affect behavior, even for unchanged files.
+
+Review fixes, disputed findings, affected contracts/consumers and uncovered
+scope fresh. Identify fresh and reused scope with prior report/state pointers
+in the existing report; never claim reused content was freshly read. Check
+cleanup/reachability against the final complete diff, tracing affected consumers.
+This rule applies to full-scope review and audit requirements below.
+
+Truncated or elided necessary content remains unread; inspect bounded chunks.
+An incomplete pass returns findings so far and one bounded list of missing
+paths/analysis with reasons. Continue from that list and affected contracts,
+retaining qualified evidence. Unread source is an inspection gap, distinct from
+missing behavioral tests or measured code coverage. Do not approve necessary
+scope that lacks fresh inspection or qualified independent evidence.
+Stop when requirements and High/Medium findings are resolved and complete,
+current independent evidence exists; Low/Nit residuals do not restart review.
 
 ### 4. Preparation
 
@@ -411,7 +445,7 @@ in a documentation or configuration-only change, record the assessment as not
 applicable; that does not prevent a `Clean` outcome.
 
 Record in trace coverage which skill or checklist was applied per language and
-how many candidates were considered and dismissed. If the assessment could not
+the concrete assessment result; no candidate counts are required. If the assessment could not
 be performed for part of the scope, report `Incomplete`, not `Clean`.
 Review-only requests report findings without editing; in an authorized fix loop,
 apply blocking findings, rerun checks, and review the complete scope again. Read

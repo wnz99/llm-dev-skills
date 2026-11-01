@@ -64,6 +64,9 @@ manifest metadata, not full reports, diffs or source. The package contains:
 
 - The task brief and binding global constraints.
 - The implementer report and verification evidence.
+- Prior independent review report/state pointers when evidence qualifies under
+  `wnz-code-reviewer`; the fresh reviewer checks qualification, including
+  affected contracts. Do not pass the author's conversation or reasoning.
 - The complete diff from the recorded task baseline to the current state,
   including every task commit.
 - Relevant unchanged contracts that the diff depends on.

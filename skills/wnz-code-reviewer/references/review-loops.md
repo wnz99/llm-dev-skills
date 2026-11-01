@@ -25,10 +25,11 @@ Each loop has four phases: spawn independent review, post comments, fix, verify.
 Every review loop uses the fresh-context dispatch contract in `SKILL.md`,
 including loops run after pushed fixes.
 
-Capture the first loop's base commit and reviewed file set. Each later loop
-reviews the full original scope, every file changed by review fixes, and relevant
-callers or consumers reached by deep analysis. A later loop must not narrow its
-scope to only the latest fix commit.
+Capture the first loop's base commit and reviewed file set. Preserve the full
+original boundary using SKILL.md's qualified evidence reuse rule. Review fixes,
+affected contracts/consumers and uncovered scope fresh; carry forward only
+qualifying independent evidence. Do not restart unrelated analysis or narrow
+the boundary to only the latest fix commit.
 
 1.  **Spawn independent sub-agent reviewers**
     *   Apply the Default Fresh-Context Delegation contract in `SKILL.md`. Use a

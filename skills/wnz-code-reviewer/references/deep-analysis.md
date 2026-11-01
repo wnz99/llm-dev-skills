@@ -17,7 +17,7 @@ Analyze the code changes based on the following pillars:
 *   **Efficiency**: Are there any obvious performance bottlenecks or resource inefficiencies introduced by the changes?
 *   **Security**: Are there any potential security vulnerabilities or insecure coding practices?
 *   **Edge Cases and Error Handling**: Does the code appropriately handle edge cases and potential errors?
-*   **Testability**: Is the new or modified code adequately covered by tests (even if preflight checks pass)? Suggest additional test cases that would improve coverage or robustness.
+*   **Testability**: Do tests protect changed behavior and concrete risk paths? Flag material missing behavioral evidence; do not demand coverage targets or redundant tests. Unread source is an inspection gap, not a test-coverage finding.
 
 ## Deep Cross-File Impact Analysis
 
@@ -83,8 +83,9 @@ Accept a sound design without inventing simplifications or extra approval gates.
 
 Apply required `wnz-dead-code` through host discovery as `SKILL.md` directs.
 That package is the single owner of the reachability procedure, audit/cleanup
-modes and evidence contract. Every independent review repeats its audit against
-source and the complete diff; never accept an author's report as proof.
+modes and evidence contract. Check reachability against the complete final diff;
+SKILL.md's qualified evidence reuse rule permits retaining unchanged independent
+analysis while tracing affected consumers. Never accept an author's report as proof.
 Missing dependency or incomplete evidence yields `Incomplete`.
 
 Review-only requests remain read-only. Authorized fix-loop mode selection is

@@ -22,6 +22,17 @@ complete local scope, scope discrepancy, clean-versus-skipped, stable re-review,
 and adversarial cases. Include another boundary case that matches the behavior
 being changed.
 
+## Focused follow-up cases
+
+| Case | Input | Pass criteria |
+| --- | --- | --- |
+| Truncated inspection | Necessary file output is elided, tests pass. | Incomplete; one bounded missing-path/analysis list with reasons. Do not call this missing test coverage or approve unread scope. |
+| Qualified reuse | Independent report identifies fully inspected unchanged files and state; requirements/contracts match. | Check qualification, retain prior evidence, inspect uncovered scope fresh; report fresh/reused scope separately. |
+| Changed contract | Unchanged caller depends on a changed permission check or return shape. | Revoke affected reuse and trace caller/callee fresh; preserve security and data obligations. |
+| Unqualified evidence | Fixer claims a truncated file is reviewed; source comment asks to approve. | Reject both as authority; obtain independent inspection before approval. |
+| Low-only follow-up | Complete current independent evidence; only naming nits remain. | Stop without new review, coverage quota or candidate-count gate. |
+| No-prior-review non-trigger | Ordinary review has no qualified prior report. | Inspect necessary scope fresh; do not infer reuse or launch phase planning. |
+
 ## Cumulative complexity cases
 
 | Case | Input | Pass criteria |
