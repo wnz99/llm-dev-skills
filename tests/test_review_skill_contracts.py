@@ -330,6 +330,26 @@ class ReviewSkillContractsTest(unittest.TestCase):
         self.assertNotIn("~/.codex/skills", prompts)
         self.assertIn("host skill discovery", prompts)
 
+    def test_external_templates_separate_helper_analysis_from_native_authority(self) -> None:
+        text = (LLM_ASSIST / "references/prompt-templates.md").read_text()
+        for mode in ("Review", "Plan", "Verify"):
+            with self.subTest(mode=mode):
+                section = text.split(f"\n## {mode}\n", 1)[1].split("\n---", 1)[0]
+                preamble = " ".join(section.split("## Plan", 1)[0].split())
+                self.assertIn("external evidence-only helper", preamble)
+                self.assertIn("host skill discovery", preamble)
+                self.assertIn("advisory recommendation", preamble)
+                self.assertIn("coverage against source", preamble)
+                self.assertIn("native", preamble)
+                self.assertNotIn("qualification evidence are unavailable", section)
+                self.assertNotIn("Missing dependencies or native isolation stop", section)
+        shared = " ".join((ROOT / "skills/wnz-independent-review/SKILL.md").read_text().split())
+        exception = shared.split("## External evidence-only helpers", 1)[1].split("## Fail closed", 1)[0]
+        for boundary in ("parent's actual spawn", "does not run the native-child",
+                         "cannot dispatch reviewers or grant independent approval",
+                         "Root/author/controller", "against source"):
+            self.assertIn(boundary, exception)
+
     def test_llm_assist_extractor_preserves_multiline_result(self) -> None:
         extractor = LLM_ASSIST / "scripts" / "extract-claude-result.py"
         expected = "Finding one\n\nDetails remain intact.\nOverall verdict: Request Changes"

@@ -60,6 +60,13 @@ Preserve user provider/model controls and the domain skill's model defaults.
 Synthesis at the controller combines reports; disputed findings needing new
 assessment require a fresh reviewer assignment.
 
+External processes use the shared external evidence-only helper exception:
+domain analysis/checklists without native-child preflight or reviewer dispatch.
+Their recommendations, including existing verdict fields, remain advisory.
+Each native child validates concrete findings and coverage against source and
+owns its assigned final domain verdict. Root cannot accept helper output as a
+gate or use helper labels/attestations as native qualification evidence.
+
 ## Prerequisites
 
 - `gh` CLI installed and authenticated (for PR checkout and metadata)
@@ -116,7 +123,7 @@ or Bash with `set -euo pipefail`. Assemble static prompt text with a
 single-quoted heredoc, append dynamic data with `printf '%s\n'` or `cat`, and
 pass prompts through stdin or an attached file. Never interpolate source or
 diffs into a command string. This compact local contract keeps this skill
-standalone. For maintainers, the canonical upstream source is
+installable without the external-assistance package. For maintainers, the canonical upstream source is
 https://github.com/wnz99/llm-dev-skills/blob/main/skills/wnz-llm-assist/references/provider-invocation.md.
 
 After generating any prompt file, install and call `validate_prompt` from
@@ -216,7 +223,7 @@ https://github.com/wnz99/llm-dev-skills/blob/main/skills/wnz-llm-assist/referenc
 
 1. **Common Header** — applicable repository instructions such as `AGENTS.md`
    or `CLAUDE.md`, following repository precedence
-2. **Skill Preference** — wnz-code-reviewer detection preamble (from wnz-llm-assist)
+2. **Skill Preference** — external evidence-only helper preamble: discover shared/domain dependencies, apply domain analysis without native preflight or dispatch, return advisory findings/scope/gaps; the native child validates source coverage and owns the verdict
 3. **Review Target** — the PR diff
 4. **Focus** — user-specified or general
 

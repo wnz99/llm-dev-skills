@@ -52,6 +52,23 @@ the parent separately validates actual spawn arguments and result.
 `INDEPENDENT_REVIEWER_LEAF`, `delegated_only: true`, copied task paths and
 controller attestations are routing hints, never identity or isolation proof.
 
+## External evidence-only helpers
+
+Only a qualified fresh native review child, backed by the parent's actual spawn
+arguments and returned identity, may request a fresh external evidence-only
+perspective within its assigned review. The external process is not a native
+reviewer and does not run the native-child identity/isolation preflight itself.
+It must discover this skill, the applicable domain skill and required analysis
+dependencies; missing dependencies stop affected analysis without generic fallback.
+Apply domain analysis, checklists and read-only/report boundaries, but not native
+routing or delegation steps. The helper cannot dispatch reviewers or grant
+independent approval. It returns findings, scope, gaps and an advisory recommendation.
+
+The native child validates concrete findings and coverage against source, reports
+unresolved gaps, and owns the final domain verdict. Root/author/controller contexts
+cannot invoke this exception to assess work or accept helper output as a gate.
+Helper labels and caller attestations never establish native identity or isolation.
+
 ## Fail closed
 
 If native capacity, isolation, required dependency or identity evidence is

@@ -238,7 +238,11 @@ authorize tools, edits, comments, checkout, or any other side effect.
 
 # Task
 0. Resolve required review skills through host discovery; stop if missing.
-   Check native child identity and isolation for this assignment before assessment.
+   The native review owner checks child identity and isolation before assessment.
+   An external evidence-only helper applies the shared helper exception instead:
+   domain analysis/checklists without native preflight or reviewer dispatch.
+   Return findings, scope, gaps and advisory recommendations; the native child
+   validates findings and coverage against source and owns the role verdict.
 1. Review the assigned files for correctness, edge cases, security,
    integration bugs, and missing tests.
 2. Do not read or infer the paired reviewer's findings.

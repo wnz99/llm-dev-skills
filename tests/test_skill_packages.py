@@ -20,6 +20,7 @@ REVIEW_CONSUMERS = ("wnz-dead-code", "wnz-doc-write-expert", "wnz-test-quality",
                     "wnz-agent-coordinator", "wnz-phase-executor",
                     "wnz-implementation-planner", "wnz-task-implementer",
                     "wnz-clean-code-js", "wnz-clean-code-py", "wnz-clean-code-rust")
+PROVIDERS = ("wnz-llm-assist", "wnz-cross-review-pr")
 
 
 class SkillPackageTests(unittest.TestCase):
@@ -65,10 +66,9 @@ class SkillPackageTests(unittest.TestCase):
 
     def test_installed_packages_resolve_local_resources(self):
         # Missing moved resources break installed behavior even if repo siblings exist.
-        for name in WORKERS + CONSUMERS + REVIEW_CONSUMERS + ("wnz-ascii-diagrams", "wnz-repo-health",
-                                          "wnz-test-quality", "wnz-repo-cleanup",
-                                          "wnz-agent-coordinator", "wnz-grill-me",
-                                          "wnz-plan-simplicity-review", "wnz-independent-review"):
+        for name in dict.fromkeys(WORKERS + CONSUMERS + REVIEW_CONSUMERS + PROVIDERS + (
+                "wnz-ascii-diagrams", "wnz-grill-me",
+                "wnz-plan-simplicity-review", "wnz-independent-review")):
             package = SKILLS / name
             for document in package.rglob("*.md"):
                 with self.subTest(document=str(document.relative_to(SKILLS))):
@@ -92,17 +92,25 @@ class SkillPackageTests(unittest.TestCase):
                     self.assertIsNone(fence, "unclosed Markdown fence")
 
     def test_package_evaluations_have_independent_expected_outcomes(self):
-        for name in WORKERS + REVIEW_CONSUMERS + ("wnz-independent-review", "wnz-repo-health", "wnz-test-quality", "wnz-repo-cleanup",
-                               "wnz-agent-coordinator", "wnz-grill-me"):
+        for name in dict.fromkeys(WORKERS + REVIEW_CONSUMERS + PROVIDERS + (
+                "wnz-independent-review", "wnz-grill-me")):
             with self.subTest(skill=name):
                 data = json.loads((SKILLS / name / "evals/evals.json").read_text(encoding="utf-8"))
                 self.assertEqual(data["skill_name"], name)
                 kinds = {"capability", "adversarial", "activation"}
                 if name == "wnz-test-quality":
                     kinds.add("implementation")
-                self.assertEqual({case["kind"] for case in data["evals"]}, kinds)
+                # Original cross-review activation cases predate the kind field.
+                actual_kinds = {case.get("kind", "activation") for case in data["evals"]}
+                self.assertEqual(actual_kinds, kinds)
                 self.assertEqual(len({case["id"] for case in data["evals"]}), len(data["evals"]))
                 for case in data["evals"]:
+                    self.assertIsInstance(case["id"], int)
+                    if "kind" not in case:
+                        self.assertEqual(name, "wnz-cross-review-pr")
+                        self.assertIn(case["id"], (1, 2, 3, 4))
+                    self.assertIsInstance(case["prompt"], str)
+                    self.assertIsInstance(case["expected_output"], str)
                     self.assertTrue(case["prompt"])
                     self.assertTrue(case["expected_output"])
                     self.assertIsInstance(case["files"], list)
@@ -154,7 +162,7 @@ class SkillPackageTests(unittest.TestCase):
         required = {
             "wnz-phase-executor": WORKERS + ("wnz-code-reviewer",),
             **{name: ("wnz-dead-code",) for name in WORKERS + CONSUMERS
-               if name not in {"wnz-dead-code", "wnz-phase-executor", "wnz-independent-review"}},
+               if name not in {"wnz-dead-code", "wnz-phase-executor"}},
         }
         for consumer in ("wnz-code-reviewer", "wnz-plan-reviewer"):
             required[consumer] += ("wnz-independent-review",)

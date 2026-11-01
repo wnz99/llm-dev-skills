@@ -25,6 +25,11 @@ required dependencies yield `Incomplete` / `Request Changes`, never approval.
 Known unsafe invocations may be rejected before fetching a missing dependency.
 Prompt markers alone cannot qualify a child. Author self-checks are not approval.
 
+The shared skill's external evidence-only helper exception permits auxiliary
+domain analysis without native preflight or redispatch in that external process.
+Only the qualified native review child validates its findings and coverage against
+source and owns the verdict; helper recommendations cannot supply approval gates.
+
 The reviewer leaf owns scope discovery, preparation and structural pre-pass;
 the outer coordinator supplies bounded artifact pointers and does no source
 prechecks. Missing output requires a fresh replacement worker. The marker

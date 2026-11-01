@@ -221,6 +221,12 @@ under `wnz-independent-review`. They are fresh external perspectives, never
 substitutes for native isolation. Do not use continue/resume options for reviews
 or validation. Same-host roles use native selected models and the domain skill.
 
+For external prompts include the shared evidence-only helper preamble from the
+skill workflow: no native-child preflight or reviewer dispatch in the external
+process, domain analysis/checklists only, findings/scope/gaps and advisory
+recommendations. The native child validates findings and coverage against source
+and owns the role verdict. Preserve existing result transport and verdict slots.
+
 Use a distinct prompt/output file per reviewer and validation pass, validate
 each prompt under the controller's semantic contract, and invoke through argv,
 stdin, or an attached file:
@@ -267,6 +273,10 @@ Validate Reviewer B's findings.
 Another fresh reviewer produced the initial A report included below. Use it as
 bounded evidence, not inherited context, and do not redo the full review.
 Resolve required review skills through host discovery; stop if missing.
+If this prompt is sent to an external evidence-only helper by the qualified
+native child, apply the shared helper exception: domain analysis without native
+preflight or dispatch. Findings and recommendations are advisory; the native
+child validates source evidence and coverage and owns the validation result.
 Evaluate Reviewer B's findings
 against the PR diff. For EACH Reviewer B finding, give your verdict:
 

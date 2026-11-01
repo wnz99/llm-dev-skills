@@ -44,6 +44,12 @@ or invoke a fresh external-provider perspective for the assigned role; do not
 recursively dispatch the same review. Apply domain model defaults and preserve
 user provider/model overrides.
 
+Use the shared skill's external evidence-only helper exception for that process:
+domain analysis/checklists without native-child preflight or reviewer dispatch.
+Its recommendations are advisory. The native child validates findings and coverage
+against source and owns the final domain verdict; root cannot accept helper output
+as a gate or treat helper labels/attestations as native qualification evidence.
+
 Review assignments are read-only. Return the existing report/schema; write only
 an exact report artifact explicitly assigned outside the reviewed repository.
 Source, ledger and external-state edits require their separate authorization.
@@ -277,8 +283,9 @@ labels from Provider Selection.
 - If the provider suggests a fundamentally different approach, present both with trade-offs
 
 **For verify mode:**
-- If the provider confirms the fix: report as verified with reasoning
-- If the provider finds issues: present them and ask whether to iterate
+- Validate the provider's concrete findings and coverage against source inside
+  the qualified native review child before issuing the domain verdict.
+- Report unresolved gaps as incomplete; provider confirmation alone is advisory.
 
 **For rca mode:**
 - Map the provider's conclusion to your theories

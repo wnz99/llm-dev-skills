@@ -50,6 +50,9 @@ Do not invoke another provider solely to force a default.
 
 ## Independent read-only role
 
+Do not author, edit or implement the reviewed work in this reviewer context.
+A future author/implementation assignment requires a new worker identity.
+
 A qualified fresh native review child performs the assessment directly under
 `wnz-independent-review`. Every later validation uses a fresh identity and
 bounded prior evidence pointers, preserving qualified unchanged-area reuse.
