@@ -30,16 +30,24 @@ assume an installer resolves skill dependencies.
 
 | Selected skill | Required skills or tools |
 | --- | --- |
+| Review/audit modes of `wnz-code-reviewer`, `wnz-plan-reviewer`, `wnz-plan-simplicity-review`, `wnz-dead-code`, language clean-code skills, `wnz-doc-write-expert`, `wnz-test-quality`, `wnz-repo-health`, `wnz-pr-release-notes`, `wnz-llm-assist`, `wnz-cross-review-pr` | `wnz-independent-review`; fresh native child without inherited author/controller history, with reliable identity and isolation evidence |
+| Review dispatches from `wnz-phase-executor`, `wnz-agent-coordinator`, `wnz-implementation-planner`, `wnz-task-implementer`, or a separately requested `wnz-repo-cleanup` review | `wnz-independent-review` before affected review; author checks and operational inventory remain local |
 | `wnz-code-reviewer`, `wnz-implementation-planner`, `wnz-plan-reviewer`, `wnz-task-implementer`, `wnz-clean-code-js`, `wnz-clean-code-py`, `wnz-clean-code-rust` | `wnz-dead-code` |
 | `wnz-phase-executor` | `wnz-implementation-planner`, `wnz-plan-reviewer`, `wnz-task-implementer`, `wnz-code-reviewer`, `wnz-dead-code`; native fresh workers without inherited history and reliable worker identity evidence |
-| `wnz-llm-assist` | Installed and authenticated CLI for the selected external provider; normally Claude from Codex, or Codex from Claude |
+| `wnz-llm-assist` | Installed and authenticated CLI for the selected external provider; normally Claude from Codex, or Codex from Claude. Review/verification requires `wnz-independent-review`, the applicable domain skill (`wnz-code-reviewer` for code or `wnz-plan-reviewer` for plans), and its transitive dependencies. Ordinary authoring does not require review qualification. |
 | `wnz-cross-review-pr` | CLIs for selected external reviewers, plus authenticated GitHub CLI (`gh`) for PR work |
 | `wnz-pr-release-notes` | Authenticated GitHub CLI (`gh`) |
-| `wnz-agent-coordinator` | No required sibling skill; optional `llm-bus` or native messaging. Optional executor/reviewer handoffs require discovery of that skill and its declared dependencies before invocation. |
+| `wnz-agent-coordinator` | Operational coordination has no required sibling skill; optional `llm-bus` or native messaging. Review dispatch requires `wnz-independent-review`; executor/reviewer handoffs require discovery of the selected skill and its declared dependencies before invocation. |
 
-The other catalog skills have no required sibling skill. For structured
-inline review with `wnz-cross-review-pr`, also install `wnz-code-reviewer` and
-`wnz-dead-code`; its inline leg can otherwise use direct analysis. Each `SKILL.md`
+Other requirements remain defined by each package. For clarification
+interviews, `wnz-implementation-planner` and `wnz-phase-executor`
+also require `wnz-grill-me` when the user accepts or explicitly requests the
+interview. Install it alongside those skills to enable that path. Clear
+requirements and direct clarification answers do not require it.
+
+For structured code review with `wnz-cross-review-pr`, also install `wnz-code-reviewer` and
+`wnz-dead-code`. Every review follows shared native isolation; external CLI
+execution alone cannot replace it. Each `SKILL.md`
 remains authoritative about when a dependency is needed and what optional
 fallbacks exist. Missing required dependencies block the affected work.
 
@@ -53,11 +61,11 @@ and [Claude Code skill locations](https://code.claude.com/docs/en/skills#where-s
 
 ### Manual installation
 
-From this repository's root, install a review skill and its required dependency:
+From this repository's root, install a review skill and its required dependencies:
 
 ```sh
 mkdir -p "$HOME/.agents/skills" "$HOME/.claude/skills"
-for skill in wnz-code-reviewer wnz-dead-code; do
+for skill in wnz-code-reviewer wnz-dead-code wnz-independent-review; do
   if [ -e "$HOME/.agents/skills/$skill" ] || [ -L "$HOME/.agents/skills/$skill" ] ||
      [ -e "$HOME/.claude/skills/$skill" ] || [ -L "$HOME/.claude/skills/$skill" ]; then
     printf 'Already installed; compare before updating: %s\n' "$skill"
@@ -68,7 +76,7 @@ for skill in wnz-code-reviewer wnz-dead-code; do
 done
 ```
 
-Replace the two names with your chosen skills and all their dependencies.
+Replace the names with your chosen skills and all their dependencies.
 For Codex only, omit the Claude directory, Claude-specific collision checks
 and `ln` command. Keep the canonical directory's collision checks.
 For an existing canonical copy, inspect it first and add only a missing Claude
@@ -84,7 +92,7 @@ and create agent discovery links. Inspect its current help before installing:
 npx skills --help
 npx skills add wnz99/llm-dev-skills --list
 npx skills add wnz99/llm-dev-skills -g --agent universal claude-code \
-  --skill wnz-code-reviewer wnz-dead-code
+  --skill wnz-code-reviewer wnz-dead-code wnz-independent-review
 ```
 
 The `universal` target keeps the canonical copy in
@@ -102,11 +110,12 @@ link resolves to it. For the review example:
 ```sh
 test -f "$HOME/.agents/skills/wnz-code-reviewer/SKILL.md"
 test -f "$HOME/.agents/skills/wnz-dead-code/SKILL.md"
-ls -ld "$HOME/.claude/skills/wnz-code-reviewer" "$HOME/.claude/skills/wnz-dead-code"
+test -f "$HOME/.agents/skills/wnz-independent-review/SKILL.md"
+ls -ld "$HOME/.claude/skills/wnz-code-reviewer" "$HOME/.claude/skills/wnz-dead-code" "$HOME/.claude/skills/wnz-independent-review"
 ```
 
 Start a new session in each client you use. Ask it to list the installed
-`wnz-code-reviewer` and `wnz-dead-code` skills and report their resolved paths.
+`wnz-code-reviewer`, `wnz-dead-code`, and `wnz-independent-review` skills and report their resolved paths.
 Then request a bounded task, such as “Use wnz-code-reviewer to review my local
 changes.” File existence alone does not prove client discovery. If a skill is
 missing, check the client location, symlink target, permissions and duplicate

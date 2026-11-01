@@ -2,6 +2,15 @@
 
 Read this file in review mode before collecting the diff.
 
+Apply required `wnz-independent-review` routing first. Only a qualified fresh
+native review child owns the assessment. Require host-discovered `wnz-code-reviewer`
+and its declared dependencies; missing prerequisites leave review incomplete.
+An external CLI supplies a fresh perspective within that assignment, not native
+identity evidence. Apply the shared external evidence-only helper exception:
+domain analysis without native preflight or dispatch; helper verdict fields are
+advisory until the native child validates findings and coverage against source.
+Preserve the schema below unchanged.
+
 ## Scope options
 
 Ask the user (or infer from context):

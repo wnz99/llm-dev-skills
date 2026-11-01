@@ -16,6 +16,7 @@ resolve conflicts or implement fixes.
 
 | Work | Fresh worker and contract |
 | --- | --- |
+| Clarification interview and confirmed user decisions | Coordinator using discovered `wnz-grill-me` after consent; substantive source research stays in fresh workers |
 | Source exploration, plan authoring/revisions and self-review, final plan conformance | `wnz-implementation-planner`; bounded read-only explorer when additional evidence is needed |
 | Implementation, documentation, fixes and integration/conflict edits | `wnz-task-implementer`; include approved integration order and covering checks in integration brief |
 | Independent plan verdict | `wnz-plan-reviewer` |
@@ -31,6 +32,11 @@ may write only their exact assigned evidence report outside the reviewed
 repository; source, plan, ledger and other external state remain read-only.
 
 ## Fresh-context preflight
+
+For every substantive review/audit or final validation, apply required
+`wnz-independent-review` through host discovery; it owns review isolation.
+This boundary retains the stronger freshness requirement for all workers.
+Use existing report/metadata pointers; change no envelope or ledger fields.
 
 Every substantive dispatch creates a new worker identity without inherited
 conversation, including revisions, fixes, investigations, integration, evidence
@@ -94,8 +100,10 @@ incomplete index into substantive approval or downgrade findings locally.
 
 Bind evidence to worktree, baseline, commit and scoped dirty/untracked snapshot
 evidence in the existing reports; HEAD alone cannot identify a dirty tree.
-Integration/conflict edits invalidate affected checks and reviews. Require fresh
-verification and independent review of the resulting state. A recorded no-op
+Integration/conflict edits invalidate affected checks and reviews, subject to
+[GSD and flow documentation follow-ups](#gsd-and-flow-documentation-follow-ups).
+Otherwise require fresh verification and independent review of the resulting
+state. A recorded no-op
 integration may reuse unchanged evidence with demonstrated identity; cross-task
 checks still run. The coordinator schedules integration and records its outcome;
 the integration worker performs merges, conflict resolution and checks.
@@ -107,6 +115,23 @@ replay `DONE` work, accept a summary-only approval or promote implementation
 assumptions into requirements. If authoritative artifacts are missing, keep
 dependent gates unresolved. Growing requirements and decisions preclude a
 constant-context-size guarantee.
+
+## GSD and flow documentation follow-ups
+
+A completed independent code review and its valid test evidence remain usable
+when the subsequent delta contains only GSD tracking or flow documentation and
+the reviewed executable code, configuration and tests remain unchanged. Validate
+the changed documentation, references and status consistency; record the prior
+reviewed commit, current head and scoped dirty/untracked state, inspected delta,
+code-equivalence evidence and reused review/test receipts in existing reports.
+Do not dispatch another independent code review solely for this delta or claim
+that the new head itself was reviewed.
+
+Functional code, configuration or test changes require affected fresh checks
+and review. Markdown carrying material behavior, security or authorization
+changes is not exempt. This exception does not waive missing initial task or
+aggregate reviews, unresolved findings, material semantic plan-review gates,
+required cross-task checks, or provider CI/status and merge requirements.
 
 ## Ordered transitions
 
@@ -132,7 +157,7 @@ the exact blocker rather than choosing a lower-priority dependent dispatch.
 | 2 | Required authority artifacts conflict/are missing, or resumed/source state is uncertain | Fresh bounded recovery investigator when preconditions hold; otherwise exact blocker. Keep review cycle/round. |
 | 3 | Selected role lacks authority, required dependency, explicit control, isolation/identity, independence or capacity | Block affected role under fresh-context preflight and [model policy](model-policy.md); no inline substitute. |
 | 4 | Current assignment has unresolved receipt/report packaging gap for otherwise existing evidence | Fresh receipt-recovery investigator under bounded-receipt policy; missing analysis instead returns to its substantive owner. No approval from repackaging; superseded assignments remain history. |
-| 5 | Plan gate pending, including normalized new user feedback or semantic revision | Follow planner/self-review/independent review sequence in [plan gate](independent-plan-review.md). Preserve Round 2 terminal stop and ask operator once; no Round 3. Resolve plan-bound evidence gaps within this gate before further design review. |
+| 5 | Plan gate pending, including initial planning, material requirement gaps or normalized new user feedback/semantic revision | First handle a planner's `CLARIFICATION_REQUIRED` through [pre-plan clarification](../SKILL.md#pre-plan-clarification); wait for required user decisions before dependent drafting. Otherwise follow planner/self-review/independent review sequence in [plan gate](independent-plan-review.md). Preserve Round 2 terminal stop and ask operator once; no Round 3. Resolve plan-bound evidence gaps within this gate before further design review. |
 | 6 | Approved plan's task or integration order is missing/contradictory | Fresh planner corrects ordering through existing semantic gate; coordinator invents no tie-breaker. |
 | 7 | Active implementation reports NEEDS_CONTEXT or BLOCKED | [Status contract](../SKILL.md#implementer-status-contract): new bounded role with changed input, or operator for unresolved product/access choice. |
 | 8 | Active task/integration lacks current required verification | Fresh verifier for missing/stale/suspicious evidence under [task dispatch](task-dispatch.md#fixes-investigations-and-evidence-gaps); no duplicate verifier for complete fresh implementer checks. |
@@ -143,8 +168,9 @@ the exact blocker rather than choosing a lower-priority dependent dispatch.
 | 13 | No task/integration remains; final evidence stages unmet | Fresh planner conformance, aggregate verifier, aggregate reviewer in [final completion](../SKILL.md#final-completion) order. Final findings use full-set fixer and fresh aggregate re-review; fixes invalidate affected final checks/conformance. |
 | 14 | All required stages are accepted for final integrated state | Summarize current evidence and residual risks under final completion. |
 
-Source/integration edits mark affected checks and reviews unmet during
-normalization; rows 8–9 or the relevant final stage repair them once. A proven
+Source/integration edits outside the documentation follow-up exception mark
+affected checks and reviews unmet during normalization; rows 8–9 or the relevant
+final stage repair them once. A proven
 no-op may retain evidence only under the state-equivalence policy above, with
 cross-task checks still required. An old approved receipt cannot close a newly
 opened feedback cycle. Unavailable evidence never consumes, resets or extends

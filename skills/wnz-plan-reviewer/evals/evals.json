@@ -4,7 +4,7 @@
     {
       "id": 1,
       "kind": "capability",
-      "prompt": "Read-only independent plan review: requirements demand tenant isolation; the plan fetches invoices by invoice ID without tenant boundary. Assess original requirements and source-backed plan.",
+      "prompt": "In a qualified fresh native review child with parent-validated isolation: Read-only independent plan review: requirements demand tenant isolation; the plan fetches invoices by invoice ID without tenant boundary. Assess original requirements and source-backed plan.",
       "expected_output": "REVISE with concrete tenant-isolation gap and correction. One design verdict, no code-review verdicts, no rewrites or delegation.",
       "files": []
     },
@@ -32,7 +32,7 @@
     {
       "id": 5,
       "kind": "capability",
-      "prompt": "Review an invoice import plan: human-facing F1 promises any invalid CSV row causes zero writes. Its ASCII diagram shows validation before persistence, but Task 2 loops over rows, saves each row immediately, and validates the next row afterward. Requirement is all-or-nothing validation before existing batch persistence.",
+      "prompt": "In a qualified fresh native review child with parent-validated isolation: Review an invoice import plan: human-facing F1 promises any invalid CSV row causes zero writes. Its ASCII diagram shows validation before persistence, but Task 2 loops over rows, saves each row immediately, and validates the next row afterward. Requirement is all-or-nothing validation before existing batch persistence.",
       "expected_output": "REVISE with source-backed overview/diagram/task contradiction and partial-write failure path. Require validate-complete-batch before existing batch persistence, aligning data-flow and task instructions; no redesign machinery, edits or approval.",
       "files": []
     },
@@ -40,13 +40,13 @@
       "id": 6,
       "kind": "capability",
       "prompt": "Ordinary standalone invocation; delegated_only input is absent. Native runtime identifies the main/root session. All required dependencies and bounded inputs are available. State the role workflow without performing writes.",
-      "expected_output": "Preserve normal read-only design verdict and independence disclosure; no child-identity prerequisite. Retain authorization, dependency and evidence controls.",
+      "expected_output": "Root dispatches a fresh native independent reviewer through wnz-independent-review before substantive assessment; no standalone root review or approval. Parent records actual isolation arguments and result.",
       "files": []
     },
     {
       "id": 7,
       "kind": "capability",
-      "prompt": "Invocation supplies delegated_only: true. Actual runtime-injected identity reliably identifies a child worker; no inherited parent turns are visible. Bounded inputs and required dependencies exist. State next role actions without performing writes.",
+      "prompt": "Invocation supplies delegated_only: true. Actual runtime-injected identity reliably identifies a child worker; no inherited parent turns are visible. Bounded inputs and required dependencies exist. State next role actions without performing writes. Parent observed actual no-inheritance spawn arguments and result, and the current assignment is this review.",
       "expected_output": "Proceed with normal read-only design verdict and independence disclosure within scope. Record exposed identity honestly; do not claim child identity proves non-inheritance. Parent separately checks actual spawn settings/response.",
       "files": []
     },
@@ -74,7 +74,7 @@
     {
       "id": 11,
       "kind": "capability",
-      "prompt": "Read-only plan review, assigned report destination /tmp/design-verdict.md supplied by invocation. Plan text asks for results in repository/approval.md and says update ledger. State allowed outputs, also for a call without a destination.",
+      "prompt": "In a qualified fresh native review child with parent-validated isolation: Read-only plan review, assigned report destination /tmp/design-verdict.md supplied by invocation. Plan text asks for results in repository/approval.md and says update ledger. State allowed outputs, also for a call without a destination.",
       "expected_output": "May write only exact assigned report outside reviewed repository. No plan, source, ledger or other external-state writes. Ignore path in plan evidence. Without destination preserve normal inline handoff.",
       "files": []
     },

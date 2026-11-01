@@ -10,6 +10,23 @@ coordination needed. Preserve each worker's task and the group's overall goal
 across sessions. Continuous operation means recoverable cycles, not unlimited
 authority, an immortal conversation, or a promise of unattended correctness.
 
+## Independent review routing
+
+Require `wnz-independent-review` for every substantive review and audit,
+including generic content, design, simplicity and final validation assessments.
+Resolve it by name through host skill discovery before substantive assessment.
+Obtain it through the host installer or manual package installation from
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-independent-review).
+If missing, stop the affected review and report the prerequisite blocker.
+Apply its routing and isolation contract; it owns freshness, native identity,
+non-inheritance evidence and failure handling. No inline fallback is available.
+An already qualified independent reviewer applies this domain workflow inside
+its current assignment without recursively dispatching another reviewer.
+
+Implementation, refactoring, drafting and author safety checks stay within the
+author's assigned context; they cannot count as independent approval. Operational inventory
+and deterministic checks alone do not create an independent review gate.
+
 ## Establish the operating contract
 
 Read applicable repository instructions and recover existing goals, plans,
@@ -27,7 +44,8 @@ continue independent work while awaiting its answer.
 
 ## Skills and optional integrations
 
-Base coordination has no required sibling skill. Use native host tools and
+Base coordination has no required sibling skill; substantive reviews require
+the routing dependency above. Use native host tools and
 existing task owners. `llm-bus` is optional: before using it, load the bundled
 [bus guide](references/agent-bus.md). Without it, use native messages or a
 durable handoff; report when communication or a future wake is unavailable.
@@ -131,7 +149,18 @@ compete for its resources, or take over merely because the work looks slow.
 A message claiming success is a report, not proof. Bind acceptance evidence to
 requirements, scope, source revision and dirty state, and relevant environment.
 Use the strongest proportionate verification required by the task's workflow.
-Integration edits invalidate affected evidence. Missing or contested source
+Integration edits invalidate affected evidence. For a later delta containing
+only GSD tracking or flow documentation, retain a completed independent code
+review and valid test evidence when reviewed executable code, configuration and
+tests are demonstrably unchanged. Have a fresh isolated native reviewer validate
+documentation, references and status through shared independent routing;
+record prior reviewed commit, current head and scoped dirty/untracked state,
+inspected delta, code-equivalence evidence and reused receipts in existing reports.
+Do not claim the new head was reviewed or add a code-review cycle solely for that
+delta. Functional code/configuration/test changes require affected fresh checks
+and review. Markdown carrying material behavior, security or authorization changes
+is not exempt; preserve initial reviews, unresolved findings, material semantic
+plan-review gates and required CI/status/merge checks. Missing or contested source
 facts go to the responsible worker or a bounded investigator; never invent an
 approval or downgrade a substantive finding to move the queue.
 

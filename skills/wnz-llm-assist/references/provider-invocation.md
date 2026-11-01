@@ -251,7 +251,12 @@ fails, synthesize the successful result and state which provider failed.
 
 ## Multi-Round Sessions
 
-Codex sessions are ephemeral by default. If you need multi-round
+Review, verification and design-assessment perspectives are always fresh:
+never use `--continue`, `--resume` or session reuse. These CLIs assist an already
+qualified native review child; they cannot replace native isolation. A later
+assessment requires a new native assignment and fresh external invocation.
+
+For authorized non-review debugging or rescue only, if you need multi-round
 interaction, drop `--ephemeral` and use
 `codex exec resume --last "follow-up instructions"`.
 Claude `-p` and OpenCode `run` are single-shot commands.

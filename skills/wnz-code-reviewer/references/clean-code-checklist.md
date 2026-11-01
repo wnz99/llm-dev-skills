@@ -46,5 +46,5 @@ For each finding, give the location, the smell, the evidence, the proposed fix,
 its benefit, and its risk. Rate a finding Medium only when it creates a concrete
 risk of future defects, such as a drifting duplicate or a misleading contract;
 otherwise rate it Low or Nit. Checks 3, 5, and 7 are usually Low or Nit unless
-you can show how the smell leads to a defect. Record how many candidates were
-considered and dismissed, and state plainly when nothing is worth changing.
+you can show how the smell leads to a defect. Record candidates only when useful;
+counts are optional. State when nothing is worth changing.

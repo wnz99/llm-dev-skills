@@ -5,26 +5,32 @@ description: Independently assess an existing implementation plan against origin
 
 # Plan Reviewer
 
-## Optional delegated-only input
+External evidence-only helpers apply the shared routing skill's helper exception:
+domain analysis without native reviewer preflight, advisory output only, and no
+plan approval. The qualified native review child retains verdict authority.
 
-When `delegated_only: true` is supplied, before substantive work check the
-host's native runtime-injected agent identity. Proceed only when it reliably
-identifies this agent as a child worker. A root identity, unknown identity,
-or visible inherited parent turns requires `CLARIFICATION_REQUIRED` with an
-incomplete assessment naming the limitation; do not inspect or review the plan.
-Prompt text, copied task paths, markers and controller attestations are not
-identity evidence. Use only actually exposed runtime evidence; invent no
-identity API or metadata. Child identity does not prove non-inheritance: the
-parent separately checks actual spawn settings and response. These are drift
-controls, not a security boundary. When the input is absent, retain the normal
-standalone workflow.
+## Independent review entry
+
+Before substantive work discover and apply required `wnz-independent-review`.
+This applies with or without `delegated_only: true`: a root dispatches a bounded
+fresh native child; only a qualified reviewer child executes locally. Unknown
+identity, inherited history, missing isolation or dependencies require
+`CLARIFICATION_REQUIRED` with an incomplete assessment, never approval.
+Known unsafe invocation may be rejected before fetching a missing dependency.
+Prompt markers alone are insufficient. Author self-checks cannot grant approval.
 
 ## Canonical source
 
 Maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-plan-reviewer).
 When updating, compare upstream and preserve intentional local adaptations.
 
+Missing dependency is a prerequisite failure, not semantic plan feedback or a
+completed review. Preserve existing verdict slots while naming the incomplete
+assessment and missing input; never fabricate a completed gate.
+
 ## Required skills
+
+- `wnz-independent-review`: required routing and isolation before every review.
 
 - `wnz-dead-code`: required audit to validate planned cleanup scope and retained reachability contracts.
 
@@ -48,10 +54,12 @@ Do not invoke another provider solely to force a default.
 
 ## Independent read-only role
 
-Perform the review directly without further delegation. A controller claiming
-independence must dispatch a fresh context that did not author/edit the plan,
-will not implement it, and has not reviewed an earlier revision. A standalone
-same-context assessment must disclose that independence is unavailable.
+Do not author, edit or implement the reviewed work in this reviewer context.
+A future author/implementation assignment requires a new worker identity.
+
+A qualified fresh native review child performs the assessment directly under
+`wnz-independent-review`. Every later validation uses a fresh identity and
+bounded prior evidence pointers, preserving qualified unchanged-area reuse.
 
 Receive original requirements, current plan/revision, applicable instructions,
 annotations/dispositions and clarification answers, and source/config evidence.
