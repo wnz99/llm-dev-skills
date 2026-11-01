@@ -27,7 +27,15 @@ Before defining tasks:
 4. Capture global constraints verbatim from the requirements and repository
    instructions: supported versions, dependency limits, naming, security,
    migration order, documentation format, and release rules.
-5. Build a task dependency graph. For every task, name its prerequisites,
+5. Build a task dependency graph. For each prerequisite, name the consumed
+   interface or unresolved fact that prevents safe implementation without it.
+   Separate evidence needed before editing from evidence needed before task
+   completion or final acceptance. A required end-to-end check does not by
+   itself make its harness or successful baseline a prerequisite for every fix.
+   Use a source-backed regression at the smallest practical seam when it can
+   establish the behavior; retain required runtime proof at its justified gate.
+   Keep preservation, authorization and replay/migration safety before actions
+   that depend on them. For every task, name its prerequisites,
    produced interfaces, owned files, mutable external resources, and review
    gate. Group dependency-free tasks into explicit execution waves. Tasks may
    share a wave only when they can be implemented and verified concurrently
@@ -40,8 +48,8 @@ Before defining tasks:
    different concepts.
 
 Avoid opportunistic restructuring. If a touched file is too large to change
-safely, make the boundary-improving split an explicit task with its own test and
-review gate.
+safely, make the boundary-improving split an explicit task with focused
+verification and a review gate.
 
 ## Populating the plan
 
@@ -49,7 +57,7 @@ Retain every template section that applies; omit an optional section only when
 it genuinely has no content. Trace every requirement to tasks and observable
 verification; anchors, evidence, and TDD follow **Reference rules** below.
 
-A task is the smallest unit with its own test cycle and a meaningful fresh
+A task is the smallest unit with focused verification and a meaningful fresh
 reviewer gate. Fold setup, configuration, migration, and documentation into the
 task whose deliverable requires them. Split tasks only when a reviewer could
 reasonably accept one and reject its neighbor.
@@ -184,7 +192,8 @@ clarify a changed contract. Do not repeat unchanged or irrelevant stages.>
 
 **Execution:**
 
-- Prerequisites: <task IDs or `none`>
+- Prerequisites: <task IDs or `none`; for each, the consumed interface or fact required for safe implementation>
+- Verification timing: <when timing affects dependencies, name checks required before editing, at task completion, and at final acceptance; otherwise omit this field>
 - Wave: <wave number>
 - Mode: <parallel-safe or sequential-only, with reason>
 - Isolation: <worktree/branch and owned files, or shared-tree sequential>
@@ -209,7 +218,7 @@ clarify a changed contract. Do not repeat unchanged or irrelevant stages.>
 
 **Intended edits:**
 
-- `path/to/test.ext:test_new_case` — add <inputs, observable assertions, and intended initial failure>.
+- `path/to/test.ext:test_case` — reuse or extend <existing coverage>; add <missing regression inputs and observable assertions> only when needed.
 - `path/to/current.ext:ExistingSymbol` — change <control flow, validation, or mapping>; preserve <invariant>.
 - `path/to/contract.ext:NewOrChangedContract` — create/update <exact exported signature, schema, event, or artifact> consumed by <named symbol/task>.
 
@@ -228,11 +237,11 @@ removals and retained API/dynamic contracts; scanner/search evidence to collect>
 **Review target:** <behavior, dead-code cleanup, and risks the independent reviewer must inspect>
 
 - [ ] **Step 1: Establish the pre-change check**
-  - Add: <test name, inputs, and observable assertions>
+  - Check: <existing test/check, or a new regression test for a demonstrated coverage gap; inputs and observable assertions>
   - Cleanup: <inspect affected helpers/fixtures/exports; record supported consumers>
 - [ ] **Step 2: Prove the check exposes the intended gap**
   - Run: `<exact command>`
-  - Expect: <specific failure caused by missing behavior>
+  - Expect: <specific failure for a regression test, or characterization of existing behavior and the exact gap the edit addresses>
   - Cleanup: <check artifacts/references changed by this step, or state why prior evidence still applies>
 - [ ] **Step 3: Implement the minimum behavior**
   - Change: <exact symbols, control flow, validation, and error behavior>
@@ -267,10 +276,15 @@ removals and retained API/dynamic contracts; scanner/search evidence to collect>
 - Treat `parallel-safe` as a correctness claim. Require non-overlapping writes
   and mutable resources, explicit isolation, deterministic integration order,
   and a wave-level verification command. Otherwise use `sequential-only`.
-- For observable behavior with a practical test seam, Steps 1–2 mean a failing
-  test. When no practical seam exists (for example docs, generated output, or a
-  mechanical config change), replace them with an exact characterization or
-  pre-change verification and state why test-first is not practical.
+- Steps 1–2 establish the pre-change check. Reuse existing tests and checks when
+  they provide sufficient evidence. For new or changed observable behavior, or
+  a bug fix, with a practical seam and a coverage gap, add a failing test for
+  that gap.
+  For mechanical, documentation, or configuration changes, use an exact
+  characterization or existing gate when sufficient and state why no new test
+  is needed. Do not add tests for unchanged paths or duplicate coverage merely
+  to fill the template. Preserve necessary security, authorization, data
+  integrity and concurrency coverage, and repository-required gates.
 
 ## Plan self-review
 
@@ -294,8 +308,14 @@ Before implementation or handoff:
 6. Check type, schema, route, event, and property names across tasks for exact
    consistency.
 7. Check task ordering and ensure every dependency is produced before it is
-   consumed.
+   consumed. Challenge preparation on the critical path: could a focused
+   regression safely enable useful product work before the full harness is
+   ready? Keep final acceptance checks assigned without promoting them to
+   implementation prerequisites by default.
 8. Check documentation claims against code/config evidence and verify planned
    files follow corpus placement, metadata, index, and cross-link rules.
 9. Confirm every task leaves the repository in a working, independently
    testable state, with a dead-code check and cleanup result defined for every step.
+10. Remove supporting machinery and procedures without a task-specific need.
+    Confirm verification reuses sufficient existing coverage and adds tests only
+    for concrete gaps; stop at the evidence needed for acceptance and required gates.

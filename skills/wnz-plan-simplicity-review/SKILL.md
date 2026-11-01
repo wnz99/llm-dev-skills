@@ -68,7 +68,7 @@ material unresolved choices that change the recommendation.
 
 ### 2. Challenge the design
 
-Apply these three questions:
+Apply these questions:
 
 - **What can be reused, removed, or consolidated?** Check existing behavior,
   the layer owning the invariant, native facilities, and installed dependencies
@@ -88,6 +88,14 @@ Apply these three questions:
   layers only when their responsibilities and contracts remain covered. A
   single implementation can still need a boundary for security, testing, or
   volatile infrastructure; counting implementations alone is not a verdict.
+- **Does preparation need to block implementation?** Assess the cumulative
+  cost and ordering of harnesses, setup, verification and review, even when
+  each safeguard has value. For a prerequisite, identify the interface,
+  unresolved diagnostic fact or safety fact it supplies. Prefer focused
+  regressions before product fixes and required runtime proof at acceptance
+  when safe. Preserve checks that
+  must precede destructive actions, authorization changes or unsafe replay;
+  moving a check later must not waive it or contradict repository policy.
 
 Compare total system cost, including complexity, maintenance, runtime resources,
 and operations, plus what callers must know. Preserve relevant workload,

@@ -95,6 +95,16 @@ report only decisions that materially affect the design.
    data safety. If the brief mandates machinery without a demonstrated need,
    report the conflict and simpler alternative to the controller; do not silently
    redesign an approved interface or add another approval ceremony.
+   Keep supporting work tied to the assigned acceptance criteria or a concrete
+   risk in the changed path. Prefer existing tools and direct commands over
+   custom scripts, harnesses or procedures. Create a helper only when needed
+   for safe completion or when it clearly reduces total work; keep temporary
+   helpers outside the repository and remove them after use, preserving assigned
+   reports, receipts and referenced evidence. Record unrelated defects as report
+   concerns rather than investigating or fixing them; surface observed security
+   or data-loss risks before further dependent edits. Routine details within
+   owned scope and interfaces need no plan revision; changes to architecture,
+   interfaces, ownership, scope or planned verification return to the controller.
 3. Apply `wnz-dead-code` directly in audit mode as each step changes reachability,
    then cleanup mode within existing task edit authorization. Attach its
    per-step evidence contract. An unresolved out-of-scope removal or unavailable
@@ -103,9 +113,24 @@ report only decisions that materially affect the design.
    within scope. Verify claims against current code/config. Do not create an
    unplanned documentation split or broaden ownership.
 5. After the last edit and cleanup, run focused appropriate verification:
-   unit tests for changed pure behavior, operator CLI/help/dry-run checks,
+   reuse sufficient existing tests; add regression tests for concrete coverage
+   gaps. Use operator CLI/help/dry-run checks,
    types/lint/integration checks and repository-required gates as applicable.
    Run live provider checks only when authorized or required by the task.
+   Once focused checks and required gates pass on the final state, stop testing;
+   broaden or repeat only for a new edit, failure or specific unresolved risk.
+   Match reruns to the changed behavior: a harness-only correction does not
+   automatically require another full product suite. Run broad checks at their
+   planned integration/acceptance boundary or when affected contracts or
+   repository policy require them. Rerun checks whose evidence depends on the
+   changed harness or fixtures. Report repeated tooling failures with the
+   exact blocked assertion, preserved evidence and whether a smaller seam can
+   safely prove the product behavior. If a corrected attempt still fails at the
+   same pre-product assertion without new diagnostic evidence, or repeated
+   in-scope setup repairs keep preventing product assertions, return `BLOCKED`
+   before further repair or expansion. Request a sequencing correction through
+   the controller (standalone: the user); do not waive required proof or silently
+   bypass an approved prerequisite.
 6. Self-review the complete task diff against each requirement and interfaces.
    Self-review does not replace a separate independent reviewer. Commits and
    pushes require existing authorization. Do not switch other checkouts, expand

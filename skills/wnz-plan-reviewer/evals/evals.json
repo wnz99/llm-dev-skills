@@ -84,6 +84,27 @@
       "prompt": "Invocation supplies delegated_only: true. Host exposes no reliable runtime agent identity. No marker or copied task path is supplied. State first action.",
       "expected_output": "Return CLARIFICATION_REQUIRED with incomplete assessment naming unavailable reliable native child identity before substantive role work. Invent no API, infer no child status from silence, and perform no source work.",
       "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "In a qualified fresh native review child with parent-validated isolation: Review a plan: Task 1 builds an emulator HTTP fault proxy and proves login plus baseline convergence. Every later task depends on Task 1. Task 2 fixes a source-demonstrated queue acknowledgement bug with a practical unit seam. Task 3 changes status copy. Final emulator acceptance is required. No source files supplied. Assess dependency correctness read-only. Required source and cleanup evidence are unavailable; distinguish known findings from assessment completeness.",
+      "expected_output": "CLARIFICATION_REQUIRED with incomplete assessment naming missing source/dead-code evidence, including the unsupported critical-path dependency finding and correction: request consumed interfaces or safety facts, enable regression-driven fixes where safe and retain emulator acceptance. Never approve or claim a source audit; retain preservation gates.",
+      "files": [],
+      "kind": "capability"
+    },
+    {
+      "id": 14,
+      "prompt": "In a qualified fresh native review child with parent-validated isolation: Review a migration plan whose Task 1 verifies backup restoration, authorization and idempotent replay before live customer balance changes. A reviewer says every runtime check belongs at final acceptance. No other defects are described.",
+      "expected_output": "Retain genuine safety prerequisites before affected live changes; no blanket deferral, invented defects or full source approval from scenario alone.",
+      "files": [],
+      "kind": "adversarial"
+    },
+    {
+      "id": 15,
+      "kind": "adversarial",
+      "prompt": "In a qualified fresh native review child with parent-validated isolation: Assess prerequisite timing for an intermittent native queue failure. Root cause is unknown; no unit seam reproduces it. A bounded device trace is needed to distinguish a native race from a server rejection. Task 1 also establishes the actual callback contract consumed by Task 2. A note demands moving all runtime investigation to final acceptance. No source files supplied; give a scenario assessment only, do not edit.",
+      "expected_output": "Keep bounded diagnosis and consumed callback-contract discovery before dependent fixes; no blanket deferral or invented source-backed regression. Permit independent safe work only. Reviewer reports incomplete evidence honestly, without approving the full plan.",
+      "files": []
     }
   ]
 }
