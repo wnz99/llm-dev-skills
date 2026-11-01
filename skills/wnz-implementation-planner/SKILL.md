@@ -18,6 +18,22 @@ Child identity does not prove non-inheritance: the parent separately checks
 actual spawn settings and response. These are drift controls, not a security
 boundary. When the input is absent, retain the normal standalone workflow.
 
+## Independent review routing
+
+Require `wnz-independent-review` for any elected separate independent review or complexity challenge.
+Resolve it by name through host skill discovery before substantive assessment.
+Obtain it through the host installer or manual package installation from
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-independent-review).
+If missing, stop the affected review and report the prerequisite blocker.
+Apply its routing and isolation contract; it owns freshness, native identity,
+non-inheritance evidence and failure handling. No inline fallback is available.
+An already qualified independent reviewer applies this domain workflow inside
+its current assignment without recursively dispatching another reviewer.
+
+Implementation, refactoring, drafting and author safety checks remain local
+self-checks; they cannot count as independent approval. Operational inventory
+and deterministic checks alone do not create an independent review gate.
+
 ## Canonical source
 
 Maintained in [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-implementation-planner).
@@ -25,6 +41,7 @@ When updating, compare upstream and preserve intentional local adaptations.
 
 ## Required skills
 
+- `wnz-independent-review`: required for substantive independent reviews; routing, discovery, installation and missing-dependency behavior below apply before the affected review.
 - `wnz-dead-code`: required audit for replacement and cleanup scope before writing or revising task steps.
 - `wnz-grill-me`: required when a user accepts or explicitly requests the pre-plan clarification interview; not needed for clear requirements or direct answers.
 
@@ -122,7 +139,9 @@ width, alignment and meaning manually. Do not block planning, install the
 optional skill automatically, or add irrelevant diagrams merely to use it.
 
 Discover `wnz-plan-simplicity-review` by name when a separate complexity challenge
-would help. If absent, use the engineering-quality self-review above. This
+would help. If absent, use the engineering-quality self-review above, explicitly
+as an author check rather than a separate review. An elected separate challenge
+uses required independent review routing. This
 adjunct cannot replace the independent full design verdict.
 
 ## Authoring evaluations

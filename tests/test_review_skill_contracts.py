@@ -69,9 +69,7 @@ class ReviewSkillContractsTest(unittest.TestCase):
         # the public invocation contract; fresh behavior evals test instruction uptake.
         outcomes = {
             "wnz-implementation-planner": ("`BLOCKED`",),
-            "wnz-plan-reviewer": ("`CLARIFICATION_REQUIRED`", "incomplete assessment"),
             "wnz-task-implementer": ("`BLOCKED`",),
-            "wnz-code-reviewer": ("`Incomplete`", "`Request Changes`"),
         }
         for name, blocked in outcomes.items():
             with self.subTest(skill=name):
@@ -99,16 +97,29 @@ class ReviewSkillContractsTest(unittest.TestCase):
     def test_delegated_review_preparation_and_report_write_boundary(self) -> None:
         reviewer = " ".join((CODE_REVIEWER / "SKILL.md").read_text().split())
         self.assertIn("reviewer leaf owns scope discovery, preparation and structural pre-pass", reviewer)
-        self.assertIn("outer coordinator supplies bounded artifact pointers and does no source prechecks", reviewer)
-        self.assertIn("separate recursion control; it is not proof of child identity", reviewer)
-        self.assertIn("Delegated-only mode has no inline root fallback", reviewer)
-        self.assertIn("missing output requires a fresh replacement worker", reviewer)
+        self.assertIn("missing output requires a fresh replacement worker", reviewer.lower())
         for name in ("wnz-plan-reviewer", "wnz-code-reviewer"):
             with self.subTest(skill=name):
                 text = " ".join((ROOT / "skills" / name / "SKILL.md").read_text().split())
                 self.assertIn("exact assigned report artifact outside the reviewed repository", text)
                 self.assertIn("Write only that report", text)
                 self.assertIn("does not assign", text)
+
+    def test_all_review_entrypoints_require_shared_isolation(self) -> None:
+        for name in ("wnz-code-reviewer", "wnz-plan-reviewer", "wnz-plan-simplicity-review"):
+            text = (ROOT / "skills" / name / "SKILL.md").read_text()
+            with self.subTest(skill=name):
+                self.assertIn("`wnz-independent-review`", text)
+                self.assertIn("## Required skills", text)
+                self.assertNotIn("## Optional delegated-only input", text)
+                self.assertNotIn("retain the normal standalone workflow", text)
+        shared = (ROOT / "skills/wnz-independent-review/SKILL.md").read_text()
+        self.assertLessEqual(len(shared.splitlines()), 100)
+        self.assertIn('fork_turns: "none"', shared)
+        self.assertIn("actual spawn arguments", shared)
+        self.assertIn("native runtime-injected child identity", shared)
+        self.assertIn("Never perform root/inline review", shared)
+        self.assertIn("existing metadata only", shared)
 
     def test_coordinator_boundary_is_loaded_and_evaluations_are_reachable(self) -> None:
         skill = (PHASE_EXECUTOR / "SKILL.md").read_text()
@@ -301,6 +312,23 @@ class ReviewSkillContractsTest(unittest.TestCase):
             extractor = skill / "scripts" / "extract-claude-result.py"
             self.assertTrue(extractor.is_file())
             self.assertNotIn("wnz-llm-assist", extractor.read_text(encoding="utf-8"))
+
+    def test_provider_reviews_require_native_routing_and_fresh_validation(self) -> None:
+        for package in (CROSS_REVIEW, LLM_ASSIST):
+            skill = (package / "SKILL.md").read_text()
+            self.assertIn("`wnz-independent-review`", skill)
+            self.assertIn("`wnz-code-reviewer`", skill)
+            self.assertIn("host skill discovery", skill)
+            self.assertIn("external CLI", skill)
+        deep = (CROSS_REVIEW / "references/deep-mode.md").read_text()
+        self.assertIn("ANOTHER fresh A-provider native validation child", deep)
+        self.assertIn("Never resume the initial A reviewer", deep)
+        validation = (CROSS_REVIEW / "references/default-mode.md").read_text()
+        self.assertNotIn("You previously produced", validation)
+        prompts = (LLM_ASSIST / "references/prompt-templates.md").read_text()
+        self.assertNotIn("fallback if wnz-code-reviewer", prompts)
+        self.assertNotIn("~/.codex/skills", prompts)
+        self.assertIn("host skill discovery", prompts)
 
     def test_llm_assist_extractor_preserves_multiline_result(self) -> None:
         extractor = LLM_ASSIST / "scripts" / "extract-claude-result.py"

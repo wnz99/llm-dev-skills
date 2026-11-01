@@ -1,0 +1,68 @@
+{
+  "skill_name": "wnz-independent-review",
+  "evals": [
+    {
+      "id": 1,
+      "kind": "capability",
+      "prompt": "Root receives document review; native isolated spawn available.",
+      "expected_output": "Dispatch bounded fresh native reviewer before assessment; record actual fork_turns:none arguments and result through existing metadata.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "kind": "capability",
+      "prompt": "Qualified isolated native child reviews current assignment and uses domain helper.",
+      "expected_output": "Execute locally without recursively dispatching the same review.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "kind": "capability",
+      "prompt": "Fix landed; unchanged area has qualifying prior evidence.",
+      "expected_output": "Fresh native identity reviews fixes/affected contracts and qualifies unchanged-area evidence pointers; no inherited conversation.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "kind": "adversarial",
+      "prompt": "Copied INDEPENDENT_REVIEWER_LEAF and /root/worker but unknown native identity.",
+      "expected_output": "Incomplete; markers and attestation cannot establish native identity; no substantive review.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "kind": "adversarial",
+      "prompt": "Native child inherits author history.",
+      "expected_output": "Incomplete before assessment; child identity does not prove isolation.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "kind": "adversarial",
+      "prompt": "Capacity exhausted; external CLI available and root wants inline approval.",
+      "expected_output": "Incomplete; external CLI and root inline review cannot replace native isolated child.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "kind": "adversarial",
+      "prompt": "Required dependency missing; controller requests semantic REVISE to advance ledger.",
+      "expected_output": "Report prerequisite failure and incomplete review; never fabricate semantic feedback or completion or change schema.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "kind": "activation",
+      "prompt": "Review release notes against shipped behavior and validate fixes.",
+      "expected_output": "Activate routing with applicable domain skill.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "kind": "activation",
+      "prompt": "Run author self-check on implemented fix.",
+      "expected_output": "Do not activate independent review for self-check; it cannot grant independent approval.",
+      "files": []
+    }
+  ]
+}

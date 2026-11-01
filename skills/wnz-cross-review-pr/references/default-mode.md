@@ -216,6 +216,11 @@ refuse to overwrite dirty or unexpected post-checkout state.
 
 ## Provider Invocation
 
+These commands run only inside a qualified fresh native reviewer assignment
+under `wnz-independent-review`. They are fresh external perspectives, never
+substitutes for native isolation. Do not use continue/resume options for reviews
+or validation. Same-host roles use native selected models and the domain skill.
+
 Use a distinct prompt/output file per reviewer and validation pass, validate
 each prompt under the controller's semantic contract, and invoke through argv,
 stdin, or an attached file:
@@ -252,15 +257,17 @@ handle the controller's documented partial-failure cases explicitly.
 
 ## Validation Prompt
 
-Use this at Step 6, inline or as an external Reviewer A's prompt file:
+Use this inside the fresh Step 6 native A-provider validation assignment:
 
 ```markdown
 # Task
 
 Validate Reviewer B's findings.
 
-You previously produced the independent review included below. Use it as
-context, but do not redo the full review. Now evaluate Reviewer B's findings
+Another fresh reviewer produced the initial A report included below. Use it as
+bounded evidence, not inherited context, and do not redo the full review.
+Resolve required review skills through host discovery; stop if missing.
+Evaluate Reviewer B's findings
 against the PR diff. For EACH Reviewer B finding, give your verdict:
 
 - **CONFIRMED**: You agree this is a real issue. Briefly explain why.

@@ -1,7 +1,7 @@
 # In-Depth Analysis Procedures
 
 Read this file in full before step 5 (In-Depth Analysis) whenever you perform
-the analysis: as the reviewer leaf, or as the controller in an inline review.
+the analysis as a qualified independent native reviewer leaf.
 It holds the review pillars, the cross-file tracing procedure, and the
 mandatory dead-code assessment that every proper review requires. The
 untrusted-evidence rule and the Mandatory Clean-Code Assessment remain in

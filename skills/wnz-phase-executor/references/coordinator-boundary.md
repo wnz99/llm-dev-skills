@@ -33,6 +33,11 @@ repository; source, plan, ledger and other external state remain read-only.
 
 ## Fresh-context preflight
 
+For every substantive review/audit or final validation, apply required
+`wnz-independent-review` through host discovery; it owns review isolation.
+This boundary retains the stronger freshness requirement for all workers.
+Use existing report/metadata pointers; change no envelope or ledger fields.
+
 Every substantive dispatch creates a new worker identity without inherited
 conversation, including revisions, fixes, investigations, integration, evidence
 corrections and final checks. One assignment covers a meaningful task and all

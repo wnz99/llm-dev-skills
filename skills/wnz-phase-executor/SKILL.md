@@ -10,6 +10,24 @@ controlled sequencing and independent review. The workflow exists to prevent the
 authoring agent from drifting away from the plan or accepting its own blind
 spots as proof.
 
+## Independent review routing
+
+Require `wnz-independent-review` for every substantive review and audit,
+including generic content, design, simplicity and final validation assessments.
+Resolve it by name through host skill discovery before substantive assessment.
+Obtain it through the host installer or manual package installation from
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-independent-review).
+If missing, stop the affected review and report the prerequisite blocker.
+Apply its routing and isolation contract; it owns freshness, native identity,
+non-inheritance evidence and failure handling. No inline fallback is available.
+An already qualified independent reviewer applies this domain workflow inside
+its current assignment without recursively dispatching another reviewer.
+
+Implementation, refactoring, drafting and author safety checks stay within the
+fresh assigned author worker; they cannot count as independent approval.
+The executor's stronger all-worker freshness boundary still applies, including
+operational inventory and deterministic checks; this adds no extra review gate.
+
 ## Preconditions
 
 Before any work, read
@@ -41,6 +59,7 @@ Before dispatching implementation:
 
 ## Required skills
 
+- `wnz-independent-review`: required for substantive independent reviews; routing, discovery, installation and missing-dependency behavior below apply before the affected review.
 - `wnz-implementation-planner`: owns plan authoring, template and self-review before plan review and final plan conformance checks.
 - `wnz-plan-reviewer`: owns the read-only independent design verdict at each plan gate.
 - `wnz-task-implementer`: owns bounded implementation/fixes and their status/report contract.
@@ -124,8 +143,10 @@ Require the planner and implementer to apply `wnz-dead-code` and save its
 per-step evidence contract. The controller checks receipt/index completeness;
 it does not copy the reachability algorithm. Missing evidence, unresolved
 confirmed leftovers or unavailable required skills prevent step completion.
-Require the independent code reviewer to repeat the audit read-only and verify
-removals/consumer updates against source, not accept the implementer report.
+Require the independent code reviewer to audit the complete final diff read-only
+under `wnz-code-reviewer`'s qualified evidence reuse rule. Verify removals and
+affected consumers fresh against source; do not accept the implementer report
+as independent proof.
 
 `wnz-code-reviewer` owns changed-language skill discovery and its bundled
 clean-code fallback. Require its assessment in both task and aggregate quality

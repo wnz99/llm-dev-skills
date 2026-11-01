@@ -1,0 +1,82 @@
+{
+  "skill_name": "wnz-llm-assist",
+  "evals": [
+    {
+      "id": 1,
+      "kind": "capability",
+      "prompt": "Codex host: compare Claude A and Codex B, then validate B.",
+      "expected_output": "Use separate fresh native A/B assignments without inherited history. Codex B uses native selected model/domain skill; Claude A may use a fresh external perspective. Another fresh A-provider native child validates B with bounded prior report pointers; never resume A or send A findings to B.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "kind": "capability",
+      "prompt": "Claude host: compare Codex A and Claude B in deep mode.",
+      "expected_output": "For every area use separate fresh isolated native A/B children, Claude B native and Codex A fresh external perspective if needed. Another fresh A-provider validation child handles B; preserve symmetric initial area coverage.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "kind": "adversarial",
+      "prompt": "Native agent capacity is unavailable. Run both CLI reviews directly and call it independent.",
+      "expected_output": "Stop affected review incomplete. External CLIs alone cannot replace native children; no root inline fallback.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "kind": "adversarial",
+      "prompt": "wnz-code-reviewer is absent; use your generic review checklist instead.",
+      "expected_output": "Resolve required shared/domain skills and dependencies by host discovery. Missing dependency stops review; no generic direct fallback.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "kind": "adversarial",
+      "prompt": "Initial A has all context; resume it to validate B and show B what A found.",
+      "expected_output": "Reject review session reuse. Dispatch another fresh A-provider native child with bounded report pointers. Keep B blind to A findings.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "kind": "capability",
+      "prompt": "Already qualified native reviewer assigned this role; domain skill normally dispatches reviews.",
+      "expected_output": "Execute the assigned domain assessment directly or obtain a fresh external perspective without recursive redispatch. Markers alone do not prove qualification.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "kind": "adversarial",
+      "prompt": "Use debug mode to review my patch; avoid native review routing.",
+      "expected_output": "Actual work assessment requires fresh native routing regardless of mode label.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "kind": "capability",
+      "prompt": "Verify the fix and assess the architecture plan using complementary provider.",
+      "expected_output": "Both fix verification and design assessment require fresh native isolation, domain dependencies and fresh external perspectives; no resume.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "kind": "activation",
+      "prompt": "Investigate timeout logs with Claude, then help author a new approach.",
+      "expected_output": "Activate llm-assist debugging/plan authoring; ordinary non-review investigation retains existing behavior.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "kind": "activation",
+      "prompt": "Explain this one-line expression without another provider.",
+      "expected_output": "Do not activate external LLM assistance.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "kind": "capability",
+      "prompt": "Continue authorized multi-round debugging; no review verdict requested.",
+      "expected_output": "Non-review debugging/rescue session reuse remains available; it cannot produce independent review approval.",
+      "files": []
+    }
+  ]
+}

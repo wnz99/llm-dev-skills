@@ -32,9 +32,9 @@ qualifying independent evidence. Do not restart unrelated analysis or narrow
 the boundary to only the latest fix commit.
 
 1.  **Spawn independent sub-agent reviewers**
-    *   Apply the Default Fresh-Context Delegation contract in `SKILL.md`. Use a
-        newly dispatched reviewer leaf when available, or the disclosed inline
-        fallback otherwise. After fixes change the diff, start a new review pass
+    *   Apply the Fresh independent dispatch contract in `SKILL.md`. Use a
+        newly dispatched qualified native reviewer leaf; unavailable capacity
+        or isolation leaves review incomplete. After fixes change the diff, start a new review pass
         rather than resuming the prior review context.
     *   Also follow any repository-specific review policy that does not
         conflict with the default delegation contract.
@@ -81,7 +81,7 @@ the boundary to only the latest fix commit.
 4.  **Verify and push**
     *   Rerun focused tests/checks relevant to the fixes.
     *   Commit and push fixes to the same PR.
-    *   Start another review loop through the dispatch/fallback contract after
+    *   Start another review loop through the independent dispatch contract after
         the push if any High/Medium finding was fixed, disputed, or newly
         introduced.
 
@@ -90,17 +90,14 @@ the boundary to only the latest fix commit.
 Stop the loop only when one of these is true:
 
 *   A fresh sub-agent review loop reports zero unresolved High/Medium findings.
-*   Delegation remains technically unavailable after the fallback attempts, and
-    an explicitly disclosed inline review reports zero unresolved High/Medium
-    findings. Record that independence was unavailable.
 *   The user explicitly stops or changes the task.
 *   Progress is genuinely blocked by missing credentials, unavailable services,
     or a decision only the user can make. In that case, post a PR comment
     describing the blocker, what was already verified, and what input is needed.
 
 Do not stop merely because one round of fixes was pushed. The final loop reviews
-the latest pushed commit, using a fresh reviewer leaf when available or the
-disclosed inline fallback otherwise.
+the latest pushed commit, using a fresh qualified native reviewer leaf. If dispatch is unavailable,
+report the blocked/incomplete review; never claim a clean loop.
 
 ## D. Final User Report
 

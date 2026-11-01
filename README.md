@@ -8,7 +8,8 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 |-------|-------------|
 | [wnz-llm-assist](skills/wnz-llm-assist/) | Spawn an external LLM CLI (Claude, Codex, or OpenCode) as a cross-model thinking partner for review, debug, plan, verify, RCA, rescue, and ask modes |
 | [wnz-cross-review-pr](skills/wnz-cross-review-pr/) | Comparative PR review between any two LLMs (Claude, Codex, OpenCode): both review independently, then Reviewer A validates Reviewer B's findings before synthesis |
-| [wnz-code-reviewer](skills/wnz-code-reviewer/) | Fresh-context code review for local changes and remote PRs, with automatic independent reviewer delegation when supported (based on [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) code-reviewer) |
+| [wnz-code-reviewer](skills/wnz-code-reviewer/) | Fresh independent native-child review for local changes and remote PRs (based on [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) code-reviewer) |
+| [wnz-independent-review](skills/wnz-independent-review/) | Shared native routing and context isolation for substantive reviews; missing prerequisites block review |
 | [wnz-ascii-diagrams](skills/wnz-ascii-diagrams/) | Draw and repair terminal diagrams with width limits, ASCII patterns, and an optional portability checker |
 | [wnz-test-quality](skills/wnz-test-quality/) | Design risk-based tests and audit repository setup plus every test for useful protection and safe simplification |
 | [wnz-clean-code-js](skills/wnz-clean-code-js/) | Focused JavaScript/TypeScript readability and maintainability refactoring guidance |

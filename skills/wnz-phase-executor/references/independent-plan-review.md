@@ -8,6 +8,9 @@ before dispatch, and its ledger/current-view skeleton for gate records.
 
 ## Reviewer independence
 
+- Apply required `wnz-independent-review` through host discovery before review;
+  it owns native routing/isolation. Use existing reports and metadata pointers
+  for its evidence, preserving this gate's verdicts, cycles and cap.
 - Use a fresh subagent that did not draft or edit the plan and will not
   implement tasks from it. Require it to load `wnz-plan-reviewer` through host discovery as its design-review
   contract and instruct it to perform the review directly without further

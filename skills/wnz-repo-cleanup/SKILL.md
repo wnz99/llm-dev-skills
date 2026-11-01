@@ -7,7 +7,7 @@ description: >-
   execute only approved items with bundled scripts.
   Use for post-feature cleanup or stale worktree/artifact cleanup. Do not use for
   dead-code refactors, production data retention, or a read-only workflow-health audit.
-compatibility: Requires Bash, Python 3.9+ and Git with worktree list --porcelain -z support. No required sibling skills. Optional host model selection and session ownership tools have explicit fallbacks below.
+compatibility: Requires Bash, Python 3.9+ and Git with worktree list --porcelain -z support. Independent review requests additionally require wnz-independent-review. Optional host model selection and session ownership tools have explicit fallbacks below.
 ---
 
 # Repository Cleanup
@@ -15,6 +15,18 @@ compatibility: Requires Bash, Python 3.9+ and Git with worktree list --porcelain
 Fast housekeeping, preserving unfinished work. Do not run application tests,
 whole-repo code review, recursive content searches or network research for an
 ordinary cleanup. Use Git metadata first; read only ambiguous candidate evidence.
+
+## Independent review boundary
+
+Ordinary operational inventory, deletion proposals and deterministic post-removal
+checks remain local; they do not constitute independent approval. If a separate
+review or audit is requested, require `wnz-independent-review` before substantive
+assessment. Resolve it by name through host skill discovery; obtain it through
+the host installer or manual installation from
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-independent-review).
+If missing, stop that review and report the blocker. Apply its routing/isolation
+contract without an inline fallback. A qualified reviewer applies this domain
+workflow within its assignment without recursive delegation.
 
 ## Model and speed policy
 
