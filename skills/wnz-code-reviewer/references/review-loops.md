@@ -25,18 +25,19 @@ Each loop has four phases: spawn independent review, post comments, fix, verify.
 Every review loop uses the fresh-context dispatch contract in `SKILL.md`,
 including loops run after pushed fixes.
 
-Capture the first loop's base commit and reviewed file set. Each later loop
-reviews the full original scope, every file changed by review fixes, and relevant
-callers or consumers reached by deep analysis. A later loop must not narrow its
-scope to only the latest fix commit.
+Capture the first loop's base commit and reviewed file set. Preserve the full
+original boundary using SKILL.md's qualified evidence reuse rule. Review fixes,
+affected contracts/consumers and uncovered scope fresh; carry forward only
+qualifying independent evidence. Do not restart unrelated analysis or narrow
+the boundary to only the latest fix commit.
 
 1.  **Spawn independent sub-agent reviewers**
-    *   Apply the Default Fresh-Context Delegation contract in `SKILL.md`. Use a
-        newly dispatched reviewer leaf when available, or the disclosed inline
-        fallback otherwise. After fixes change the diff, start a new review pass
+    *   Apply the Fresh independent dispatch contract in `SKILL.md`. Use a
+        newly dispatched qualified native reviewer leaf; unavailable capacity
+        or isolation leaves review incomplete. After fixes change the diff, start a new review pass
         rather than resuming the prior review context.
     *   Also follow any repository-specific review policy that does not
-        conflict with the default delegation contract.
+        conflict with the mandatory fresh native review contract.
     *   Ask each reviewer to classify findings as High, Medium, Low, or Nit.
         High and Medium are blocking. Low and Nit are optional unless the user
         explicitly says otherwise.
@@ -63,7 +64,7 @@ scope to only the latest fix commit.
         next loop.
     *   For authorized fix work, default to `claude-sonnet-5-5` with the host's
         effort default on Claude, or `gpt-6.1-sol` with `medium` effort on Codex.
-        Pass these controls when dispatching a fixer; disclose inline selection
+        Pass these controls when dispatching a fixer; disclose host model-selection
         limitations. Keep user overrides and unavailable-control handling as in
         `SKILL.md`. Fixers do not review their own fixes; fresh re-review uses
         the reviewer defaults.
@@ -80,7 +81,7 @@ scope to only the latest fix commit.
 4.  **Verify and push**
     *   Rerun focused tests/checks relevant to the fixes.
     *   Commit and push fixes to the same PR.
-    *   Start another review loop through the dispatch/fallback contract after
+    *   Start another review loop through the independent dispatch contract after
         the push if any High/Medium finding was fixed, disputed, or newly
         introduced.
 
@@ -89,17 +90,14 @@ scope to only the latest fix commit.
 Stop the loop only when one of these is true:
 
 *   A fresh sub-agent review loop reports zero unresolved High/Medium findings.
-*   Delegation remains technically unavailable after the fallback attempts, and
-    an explicitly disclosed inline review reports zero unresolved High/Medium
-    findings. Record that independence was unavailable.
 *   The user explicitly stops or changes the task.
 *   Progress is genuinely blocked by missing credentials, unavailable services,
     or a decision only the user can make. In that case, post a PR comment
     describing the blocker, what was already verified, and what input is needed.
 
 Do not stop merely because one round of fixes was pushed. The final loop reviews
-the latest pushed commit, using a fresh reviewer leaf when available or the
-disclosed inline fallback otherwise.
+the latest pushed commit, using a fresh qualified native reviewer leaf. If dispatch is unavailable,
+report the blocked/incomplete review; never claim a clean loop.
 
 ## D. Final User Report
 

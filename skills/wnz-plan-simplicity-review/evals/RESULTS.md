@@ -1,5 +1,9 @@
 # Verification
 
+Historical results below predate required native isolation. They do not validate
+the current routing contract. Current source checks pass; fresh native behavioral
+evaluations remain required before claiming independent runtime verification.
+
 Date: 2026-10-07.
 
 ## Independent behavior checks
@@ -77,3 +81,17 @@ Independent package review reported zero High/Medium findings. These are
 simulated selection decisions on a Codex runtime, not actual Claude dispatch or
 a cost/quality benchmark. Existing nine-case substantive Claude results above
 remain historical evidence; they were not rerun in this update.
+
+## Native routing decision evidence — 2026-11-01
+
+A fresh native Codex evaluation assignment executed 14 bounded source decision
+simulations covering shared routing, code follow-ups, and plan/simplicity entry
+guards. All 14 decisions matched expected criteria. Cases included missing
+dependencies, inherited history, copied identity markers, unavailable capacity,
+qualified child non-recursion, fresh validation identity and per-area evidence
+reuse. The simplicity case dispatched when native capacity was available and
+left assessment incomplete otherwise. This was not a live Claude workflow,
+whole-PR approval, capacity-exhaustion probe or cross-context robustness benchmark.
+The parent retains actual spawn arguments/result evidence; the child could not
+independently observe those arguments or resolved model identity. No supported
+close/shutdown API was exposed. Historical Claude results above remain historical.

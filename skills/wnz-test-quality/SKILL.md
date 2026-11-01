@@ -20,6 +20,22 @@ This skill was previously published as `wnz-test-value`. Prefer
 `wnz-test-quality` and remove the old installed copy after upgrading to avoid
 ambiguous routing.
 
+## Independent review routing
+
+Require `wnz-independent-review` for standalone reviews and audits, including validation-only assessments.
+Resolve it by name through host skill discovery before substantive assessment.
+Obtain it through the host installer or manual package installation from
+[wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills/wnz-independent-review).
+If missing, stop the affected review and report the prerequisite blocker.
+Apply its routing and isolation contract; it owns freshness, native identity,
+non-inheritance evidence and failure handling. No inline fallback is available.
+An already qualified independent reviewer applies this domain workflow inside
+its current assignment without recursively dispatching another reviewer.
+
+Implementation, refactoring, drafting and author safety checks remain local
+self-checks; they cannot count as independent approval. Operational inventory
+and deterministic checks alone do not create an independent review gate.
+
 ## Operating rules
 
 Follow applicable higher-priority instructions, the user's scope, and repository
