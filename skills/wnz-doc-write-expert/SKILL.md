@@ -108,6 +108,42 @@ not decide the issue.
 8. **Build understanding progressively.** Introduce data, references, terminology, identifiers, and technical detail only after the reader has the context needed to understand why they matter. Technical depth is welcome; unexplained prerequisites and premature implementation detail are not.
 9. **Cold-read before completion.** Test whether a reader without session context can take the intended action safely.
 
+## Language and register
+
+Write idiomatically in the target language, whether authoring, adapting source
+material, or updating an existing document. Compose for its readers rather than
+drafting an English version and translating it sentence by sentence. English
+sources supply facts, not a sentence structure to imitate.
+
+- Establish the document language and any relevant locale from explicit user
+  instructions, then the target document and corpus conventions. Do not infer
+  the document language solely from the language used in chat. Ask only when
+  ambiguity would materially change the result.
+- Match register to purpose and audience using the target language's conventions:
+  precise technical prose for specifications and runbooks, a clear teaching
+  voice with progressive explanations for tutorials, and the appropriate
+  professional or persuasive tone for policies and proposals.
+- Use natural syntax, idioms, headings, transitions, and forms of address. Avoid
+  English calques and unnecessary English terms where established local domain
+  terminology exists; retain commonly accepted technical loanwords when natural.
+- Follow available target-language style guides, glossaries, and representative
+  documents from the same domain. Keep terminology and forms of address
+  consistent. Use plain, unambiguous phrasing for technical instructions rather
+  than adding idioms to make them sound native. Apply local typography, number,
+  and date conventions without changing values, units, or factual context.
+- Preserve source meaning, requirements, warnings, qualifications, quantities,
+  and evidence. Fluent adaptation does not authorize new claims or weaker rules.
+  Keep executable commands, code, API identifiers, paths, and exact UI labels
+  unchanged unless a verified localized equivalent applies; explain them in the
+  target language.
+- Follow an explicit request for a literal or aligned translation when given.
+  Otherwise preserve meaning and reader outcomes without forcing English wording
+  or paragraph structure onto the target language.
+- Check fluency by reading the target text on its own, then compare it with the
+  evidence for omissions, additions, and changed obligations. If fluency or a
+  consequential terminology choice remains uncertain, flag the specific issue
+  for a fluent domain reviewer instead of claiming native-speaker validation.
+
 ## Author mode workflow
 
 ### 1. Establish the writing brief
@@ -121,6 +157,7 @@ Determine from the request and repository context:
 - Authoritative sources and subject-matter owner
 - Required location, metadata, template, indexes, and links
 - Technical versus non-technical depth and vocabulary
+- Target language, relevant locale, and register appropriate to purpose and audience
 
 Ask one concise round of questions only when missing answers would materially change the document. Otherwise state reasonable assumptions and proceed.
 
@@ -207,6 +244,7 @@ frontmatter-bearing document changed in the corpus.
 Read the finished document from top to bottom as a fresh member of the intended audience:
 
 - Is the purpose clear immediately?
+- Does the prose read naturally in the target language, with consistent terminology and a register suited to this audience and document type?
 - At every first use of a term, identifier, data shape, reference, or component, has the document already supplied the context needed to understand it?
 - Does each transformation proceed from recognizable input through purpose and change to a concrete output, instead of presenting disconnected implementation artifacts?
 - Can the named action be completed without tribal knowledge?
@@ -229,7 +267,7 @@ Read the complete document and inventory checkable claims:
 - Procedures, ordering, prerequisites, warnings, diagrams, and structural tables
 - Policies, ownership, roles, dates, decisions, commitments, and stated outcomes
 
-Also record tone, formatting, frontmatter, containing indexes, inbound links, reserved filename status, and corpus rules.
+Also record language, locale, register, tone, formatting, frontmatter, containing indexes, inbound links, reserved filename status, and corpus rules. Apply the language and register guidance when assessing fluency; preserve appropriate existing voice during scoped corrections.
 
 ### 2. Read local guidance and map claims to evidence
 
