@@ -123,6 +123,30 @@ names before reinstalling. A missing dependency must not silently skip a gate.
 
 ## Update without losing local changes
 
+Install `wnz-update` like any other package. Say “Update wnz locally” to update
+all installed WNZ packages on the current machine, or “Check wnz version” for
+a read-only comparison. Remote updates require an explicit request such as
+“Update wnz on all systems” or “Update wnz on Home London”, configured Herdr
+machines, and working SSH access. No daemon or automatic synchronization runs.
+
+The repository's root `VERSION` is the single collection release version.
+`wnz-update` records it with the source commit and package fingerprints in
+`~/.agents/wnz-installation.json` only after a complete successful machine update.
+It preserves local modifications, checks dependency closure, and maintains
+backups under `~/.agents/wnz-backups/`. Unversioned installs are matched against
+upstream history; unknown or modified packages block that machine's update.
+Independent runtime copies must be reconciled before updating. The Skills CLI
+lock file is not authoritative for manually updated WNZ packages.
+
+For maintainers: bump `VERSION` whenever skill package contents or dependency
+metadata change. Use patch versions for fixes, minor versions for additions,
+and major versions for incompatible changes. There are no per-skill versions.
+Keep the updater's bundled dependency inventory aligned with skill declarations.
+An update covers currently installed packages and their prerequisites; it does
+not install every available skill or deploy the optional Flow Status plugin.
+
+For manual maintenance without `wnz-update`:
+
 Compare installed packages with the matching `skills/<name>/` directories
 before replacing them. Back up intentional local adaptations outside the
 installed skill folders, update the source checkout, and reconcile differences.
