@@ -67,7 +67,7 @@ class SkillPackageTests(unittest.TestCase):
     def test_installed_packages_resolve_local_resources(self):
         # Missing moved resources break installed behavior even if repo siblings exist.
         for name in dict.fromkeys(WORKERS + CONSUMERS + REVIEW_CONSUMERS + PROVIDERS + (
-                "wnz-ascii-diagrams", "wnz-grill-me",
+                "wnz-ascii-diagrams", "wnz-grill-me", "wnz-ship",
                 "wnz-plan-simplicity-review", "wnz-independent-review")):
             package = SKILLS / name
             for document in package.rglob("*.md"):
@@ -93,7 +93,7 @@ class SkillPackageTests(unittest.TestCase):
 
     def test_package_evaluations_have_independent_expected_outcomes(self):
         for name in dict.fromkeys(WORKERS + REVIEW_CONSUMERS + PROVIDERS + (
-                "wnz-independent-review", "wnz-grill-me", "wnz-plan-simplicity-review")):
+                "wnz-independent-review", "wnz-grill-me", "wnz-plan-simplicity-review", "wnz-ship")):
             with self.subTest(skill=name):
                 data = json.loads((SKILLS / name / "evals/evals.json").read_text(encoding="utf-8"))
                 self.assertEqual(data["skill_name"], name)

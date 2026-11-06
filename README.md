@@ -27,6 +27,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [wnz-dead-code](skills/wnz-dead-code/) | Audit reachability read-only or remove confirmed leftovers within authorized cleanup scope |
 | [wnz-plan-simplicity-review](skills/wnz-plan-simplicity-review/) | Review an existing plan for KISS, DRY, and unnecessary complexity while preserving production safeguards and workload performance |
 | [wnz-pr-release-notes](skills/wnz-pr-release-notes/) | Prepare and maintain bounded, evidence-based release notes in GitHub pull request descriptions while honoring repository-specific release conventions |
+| [wnz-ship](skills/wnz-ship/) | Open PRs/MRs with evidence-based multilingual descriptions, adaptable templates, and command examples for GitHub, GitLab, Azure DevOps and Bitbucket Cloud |
 
 ## Get started
 
@@ -39,6 +40,9 @@ Choose the smallest workflow that fits the task:
 - **Check unfinished work and GSD drift:** `wnz-repo-health`.
 - **Review changes:** `wnz-code-reviewer`; request `wnz-cross-review-pr` when
   you want two model perspectives.
+- **Open a PR/MR or prepare its description:** `wnz-ship`. WNZ workflows
+  delegate creation here; review comments and bounded release notes retain
+  their domain owners.
 - **Debug or get another model's help:** `wnz-llm-assist`.
 - **Plan and execute substantial work:** `wnz-phase-executor`, which uses the
   planner, plan reviewer, task implementer, code reviewer, and dead-code skills.

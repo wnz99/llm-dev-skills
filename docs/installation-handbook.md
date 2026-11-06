@@ -37,6 +37,8 @@ assume an installer resolves skill dependencies.
 | `wnz-llm-assist` | Installed and authenticated CLI for the selected external provider; normally Claude from Codex, or Codex from Claude. Review/verification requires `wnz-independent-review`, the applicable domain skill (`wnz-code-reviewer` for code or `wnz-plan-reviewer` for plans), and its transitive dependencies. Ordinary authoring does not require review qualification. |
 | `wnz-cross-review-pr` | CLIs for selected external reviewers, plus authenticated GitHub CLI (`gh`) for PR work |
 | `wnz-pr-release-notes` | Authenticated GitHub CLI (`gh`) |
+| PR/MR creation or whole-description preparation from `wnz-code-reviewer` | `wnz-ship`, discovered before shipping; missing dependency blocks publication, not read-only review or existing-PR comments |
+| `wnz-ship` | Git and an authenticated supported platform CLI/API; no required sibling skills |
 | `wnz-agent-coordinator` | Operational coordination has no required sibling skill; optional `llm-bus` or native messaging. Review dispatch requires `wnz-independent-review`; executor/reviewer handoffs require discovery of the selected skill and its declared dependencies before invocation. |
 
 Other requirements remain defined by each package. For clarification

@@ -12,6 +12,9 @@ Keep the human-facing labels and blocking behavior in `SKILL.md` unchanged. If a
 consumer needs P-level compatibility, map High to P1, Medium to P2, and Low/Nit
 to P3; reserve P0 for an immediate critical risk.
 
+Apply [comment-format.md](comment-format.md) to free-text language. Keep schema
+keys, severity/outcome/verdict enum values and identifiers unchanged.
+
 This compact contract is local so an independent installation has no
 sibling-skill dependency. For maintainers, the canonical upstream schema is
 https://github.com/wnz99/llm-dev-skills/blob/main/skills/wnz-llm-assist/references/review-schema.md.

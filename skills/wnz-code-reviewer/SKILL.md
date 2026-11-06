@@ -70,6 +70,11 @@ assessment and missing input; never fabricate a completed gate.
 
 - `wnz-dead-code`: required independent audit in every review, and cleanup only for authorized fix work.
 
+- `wnz-ship`: required only when the authorized workflow creates a PR/MR or
+  prepares or refreshes its title/description. It owns shipping commands,
+  templates, language policy, duplicate handling and publication verification.
+  Existing-PR inspection, review comments and fix pushes alone do not require it.
+
 Resolve these by name through the host's installed-skill discovery before the
 affected work. Obtain missing skills from their matching directory in
 [wnz99/llm-dev-skills](https://github.com/wnz99/llm-dev-skills/tree/main/skills)
@@ -230,6 +235,8 @@ Before choosing the review flow, classify the request:
     are solved", "until request-changes findings are gone", or similar semantic
     wording. Read [references/review-loops.md](references/review-loops.md)
     before step 4 and use its "PR Creation And Sub-Agent Loop Review" workflow.
+    The author/controller applies discovered `wnz-ship` for publication before
+    dispatching read-only reviewers; the reviewer leaf does not create the PR.
 *   **Existing PR loop review**: The user points at an existing PR and asks for
     loop/repeated/sub-agent reviews. Read the same reference before step 4, skip
     PR creation, and start the loop against that PR.
@@ -448,6 +455,14 @@ Use one of these outcomes:
 *   Be direct, professional, and specific.
 *   Explain *why* a change is requested.
 *   Do not pad the review with praise.
+
+#### Comment format and language
+
+Before composing findings or an authorized platform comment, read
+[references/comment-format.md](references/comment-format.md). Use its finding
+template, language precedence and preservation rules. The existing outcome,
+severity and verdict semantics above remain authoritative. Formatting a comment
+does not authorize publishing it; read-only reviews return comments locally.
 
 ### 7. Cleanup (Remote PRs only)
 *   If you checked out a remote PR, return to the previous branch unless the user asked to stay on the PR branch.
