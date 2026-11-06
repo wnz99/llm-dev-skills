@@ -7,17 +7,23 @@ on zero unresolved high- or medium-severity findings.
 
 ## A. Prepare And Open The PR
 
-1.  Inspect `git status --short` and confirm the changed files are the intended
-    scope. Do not include unrelated local changes in the PR.
-2.  Read the relevant project instructions before committing or judging changes.
-3.  Run focused verification that is appropriate for the changed subtree. If a
-    repo-specific pre-commit/pre-push gate is required, run it before committing.
-4.  Commit the intended changes with the repository's commit convention.
-5.  Push the branch and open a PR with `gh pr create`. Include the verification
-    evidence and known blocked checks in the PR body.
-6.  Capture the PR number/URL for all later review comments.
+The author/controller resolves required `wnz-ship` through host skill discovery
+before any shipping action, using the obtain/missing-dependency rules in
+`SKILL.md`. If missing, stop publication and report the prerequisite; do not
+substitute a local creation checklist or direct platform command.
 
-If a PR already exists, update it instead of creating a duplicate.
+Apply `wnz-ship` with the authorized change scope, intended source/target,
+draft status, language requirements and verification evidence. It owns the
+commit/push preparation within authorization, title/body template, platform
+commands, duplicate detection and published-artifact verification. Capture its
+verified request identifier/URL and pushed head for later review comments.
+Shipping does not establish independent approval; continue with the fresh
+review loop below.
+
+For an already identified existing PR, skip creation and start section B.
+Only a requested title/body refresh invokes `wnz-ship`; inspection, comments
+and fix pushes retain their existing review workflow. This handoff does not
+add support for review hosts that this review package cannot inspect or post to.
 
 ## B. Run Review Loops
 
@@ -45,6 +51,8 @@ the boundary to only the latest fix commit.
         concrete fix suggestion for every High/Medium finding.
 
 2.  **Post a PR comment for every loop**
+    *   Use [comment-format.md](comment-format.md) for the standard finding and
+        summary templates and multilingual rules, adding the loop metadata below.
     *   Post one top-level PR comment per loop, even when the loop finds no
         blocking issues.
     *   Include the loop number, reviewer identity, reviewer model, reasoning

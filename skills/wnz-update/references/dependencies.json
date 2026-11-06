@@ -3,7 +3,7 @@
   "wnz-clean-code-js": ["wnz-independent-review", "wnz-dead-code"],
   "wnz-clean-code-py": ["wnz-independent-review", "wnz-dead-code"],
   "wnz-clean-code-rust": ["wnz-independent-review", "wnz-dead-code"],
-  "wnz-code-reviewer": ["wnz-independent-review", "wnz-dead-code"],
+  "wnz-code-reviewer": ["wnz-independent-review", "wnz-dead-code", "wnz-ship"],
   "wnz-cross-review-pr": ["wnz-independent-review", "wnz-code-reviewer", "wnz-dead-code"],
   "wnz-dead-code": ["wnz-independent-review"],
   "wnz-doc-write-expert": ["wnz-independent-review"],

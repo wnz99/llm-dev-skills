@@ -34,6 +34,21 @@ selector-unavailable, explicit-selector-unavailable, and exact-identity-
 unavailable cases. Re-run on each supported host whose delegation behavior
 changed.
 
+## Shipping handoff cases
+
+Run these as routing simulations when changing PR creation ownership. Do not
+publish real requests. Existing independent-review requirements still apply.
+
+| Case | Request or condition | Pass criteria |
+| --- | --- | --- |
+| Creation plus loops | Open a PR with an Italian description, then loop review until High/Medium findings are resolved. | Author/controller discovers and applies `wnz-ship`, passing language, scope and verification evidence; captures verified URL/head, then dispatches fresh read-only review. No copied creation commands. |
+| Shipping unavailable | Same request, but `wnz-ship` is missing. | Stop publication before commit/push/create, report missing package and canonical installation source; no inline shipping fallback or clean-loop claim. |
+| Existing PR | Loop review PR 42; `wnz-ship` is missing; no description refresh requested. | Skip shipping dependency, run existing-PR fresh review loop; comments/fix pushes remain owned by review workflow. |
+| Creation only | Open a PR for this branch; no review requested. | Use `wnz-ship`; do not activate code-review loops from creation alone. |
+| Failed shipping verification | Shipping returns an uncertain creation result or mismatched remote head. | Retain the blocker; do not dispatch a review against an invented or unverified request identity. |
+| Combined comparative request | Create a PR, then explicitly cross-review with two models. | Creation goes through `wnz-ship`; independently requested comparison uses `wnz-cross-review-pr` and its dependencies. Shipping itself does not gain a reviewer dependency. |
+| Existing description refresh | User requests a new Spanish whole description for existing PR 42. | Discover `wnz-ship` for the body refresh; preserve domain-owned review comments and bounded release-note blocks. |
+
 ## Universal identity and isolation cases
 
 Run these in fresh contexts with and without delegated-only input.
