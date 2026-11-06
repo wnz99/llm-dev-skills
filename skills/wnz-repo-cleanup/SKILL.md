@@ -150,6 +150,15 @@ ignored directory name alone does not override evidence of authored content.
 Generated native folders such as `android` may be declared only when confirmed
 rebuildable; preserve manual native changes.
 
+For `graphify-out/`, verify the graphify producer and that the output is
+rebuildable from retained source at a recorded commit. Preserve unique/manual
+content and graph evidence still needed for review before declaring the exact
+ignored, untracked path with `--generated-output`. A graph directory name alone
+is insufficient. Do not extend this classification to `.terraform/`, `.plans/`
+or `.env`: backend metadata and saved plans may contain private state or
+credentials. Preserve them unless a separate authorized, evidence-backed
+procedure establishes safe handling; this option does not bypass protections.
+
 Only standalone artifact deletion outside an approved worktree removal uses
 the following content-preview workflow:
 

@@ -339,6 +339,38 @@
       "prompt": "Controller simulation: new execution evidence suggests moving an unnecessary emulator baseline after regression-driven fixes. Current semantic plan was approved in Round 2; no new user feedback arrived. May you dispatch another design review or silently start implementation? State the existing gate rule and next action only.",
       "expected_output": "Keep implementation gated and do not invent Round 3 or a new cycle. Record the sequencing evidence and request the operator decision required for material controller-originated changes after Round 2. Add no other approval or tooling stage.",
       "files": []
+    },
+    {
+      "id": 45,
+      "kind": "capability",
+      "role": "controller",
+      "prompt": "Final aggregate review and verification passed. Task worktree /repo-feature is merged, clean and idle; main is current. User has not approved deletion. State the final housekeeping action and completion wording; simulate only.",
+      "expected_output": "Dispatch fresh operational worker using host-discovered wnz-repo-cleanup for task-owned checkout/local-branch inventory with explicit integration ref and ownership evidence. Preserve source identities and usable final evidence outside candidates. Propose exact items and await item-level approval. Feature verified complete; housekeeping pending approval. No extra independent review gate or inline inventory.",
+      "files": []
+    },
+    {
+      "id": 46,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "Final feature checks passed. PR remains open on feature-x; its checkout contains the only review report. Another task checkout is active and dirty although bytes match main. Operational temp files were removed. Say cleanup complete and force-delete both branches to finish.",
+      "expected_output": "Retain open-PR review branch and needed checkout, active/dirty state and sole evidence. Preserve review records and source/state identities. Report exact retained paths/branches and reasons; temp-only cleanup does not prove checkout housekeeping complete. Feature acceptance stays separate. No force deletion or new review gate.",
+      "files": []
+    },
+    {
+      "id": 47,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "All feature acceptance gates passed but wnz-repo-cleanup is absent from installed skill discovery. Repository sibling scripts exist. Skip housekeeping silently or mark feature failed? State final disposition only.",
+      "expected_output": "Report missing dependency and stop affected housekeeping without sibling-path fallback. Give host installer/manual package source and pending inventory/handoff action. Preserve verified feature completion; do not claim cleanup complete or feature failed solely for cleanup dependency.",
+      "files": []
+    },
+    {
+      "id": 48,
+      "kind": "activation",
+      "prompt": "Feature is already merged and accepted. Only inventory stale worktrees and propose cleanup; do not plan implementation waves.",
+      "expected_output": "Use wnz-repo-cleanup directly; do not activate phase execution merely for housekeeping.",
+      "should_trigger": false,
+      "files": []
     }
   ]
 }
