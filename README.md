@@ -6,6 +6,7 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 
 | Skill | Description |
 |-------|-------------|
+| [wnz-update](skills/wnz-update/) | Check the collection version and update installed WNZ skills on this machine, named Herdr machines, or all configured systems |
 | [wnz-llm-assist](skills/wnz-llm-assist/) | Spawn an external LLM CLI (Claude, Codex, or OpenCode) as a cross-model thinking partner for review, debug, plan, verify, RCA, rescue, and ask modes |
 | [wnz-cross-review-pr](skills/wnz-cross-review-pr/) | Comparative PR review between any two LLMs (Claude, Codex, OpenCode): both review independently, then Reviewer A validates Reviewer B's findings before synthesis |
 | [wnz-code-reviewer](skills/wnz-code-reviewer/) | Fresh independent native-child review for local changes and remote PRs (based on [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) code-reviewer) |
@@ -37,6 +38,7 @@ client discovery, and update without losing local changes.
 
 Choose the smallest workflow that fits the task:
 
+- **Update installed WNZ skills:** `wnz-update`; current machine by default.
 - **Check unfinished work and GSD drift:** `wnz-repo-health`.
 - **Review changes:** `wnz-code-reviewer`; request `wnz-cross-review-pr` when
   you want two model perspectives.

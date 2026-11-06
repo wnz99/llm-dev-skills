@@ -1,0 +1,20 @@
+{
+  "wnz-agent-coordinator": ["wnz-independent-review"],
+  "wnz-clean-code-js": ["wnz-independent-review", "wnz-dead-code"],
+  "wnz-clean-code-py": ["wnz-independent-review", "wnz-dead-code"],
+  "wnz-clean-code-rust": ["wnz-independent-review", "wnz-dead-code"],
+  "wnz-code-reviewer": ["wnz-independent-review", "wnz-dead-code", "wnz-ship"],
+  "wnz-cross-review-pr": ["wnz-independent-review", "wnz-code-reviewer", "wnz-dead-code"],
+  "wnz-dead-code": ["wnz-independent-review"],
+  "wnz-doc-write-expert": ["wnz-independent-review"],
+  "wnz-implementation-planner": ["wnz-independent-review", "wnz-dead-code", "wnz-grill-me"],
+  "wnz-llm-assist": ["wnz-independent-review", "wnz-code-reviewer", "wnz-plan-reviewer"],
+  "wnz-phase-executor": ["wnz-independent-review", "wnz-implementation-planner", "wnz-plan-reviewer", "wnz-task-implementer", "wnz-code-reviewer", "wnz-dead-code", "wnz-grill-me"],
+  "wnz-plan-reviewer": ["wnz-independent-review", "wnz-dead-code"],
+  "wnz-plan-simplicity-review": ["wnz-independent-review"],
+  "wnz-pr-release-notes": ["wnz-independent-review"],
+  "wnz-repo-cleanup": ["wnz-independent-review"],
+  "wnz-repo-health": ["wnz-independent-review"],
+  "wnz-task-implementer": ["wnz-independent-review", "wnz-dead-code"],
+  "wnz-test-quality": ["wnz-independent-review"]
+}
