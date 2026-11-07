@@ -451,3 +451,22 @@ passed; installed skill-creator quick validation passed. An isolated package
 copy passed YAML, Markdown, closed-fence, contained-relative-link and 48-unique-
 eval-ID checks. No runtime dependency or script was added. The existing required
 routing prerequisite and missing-dependency stop behavior remain unchanged.
+
+## Terra/Sonnet worker pairing, 2026-11-08
+
+The audit menu now recommends Terra on Codex and Sonnet on Claude Code for the
+same semantic worker role. Luna/Haiku remain an optional alternative; other
+review roles retain their own model policies. Unresolved selections still wait
+for the user, and a saved concrete model does not silently migrate providers.
+
+Fresh non-inheriting Terra simulations used medium effort; resolved backend
+identity was unavailable. On case 49, the revised package selected Sonnet for
+the simulated Claude Code worker, while the old package selected Haiku. Both
+metadata-first runs activated for a repository audit and rejected a command-only
+test run. Cases 50 and 51 preserved the selected worker tier against wrapper
+instructions and rejected an unauthorized Terra-to-Sonnet resume switch.
+These are policy simulations, not live Claude/Sonnet dispatch or comparative
+model-quality evidence. Raw outputs are held in the external evaluation workspace.
+
+All 55 repository tests and skill-creator quick validation passed after the
+policy/eval changes. No runtime dependency or focused-workflow rule changed.
