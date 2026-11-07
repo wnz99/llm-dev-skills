@@ -9,7 +9,7 @@ Ask the user which mode to install unless the request already names one:
 - **Global**: one workflow for every Git repository on this machine. Setup renders the workflow under `~/.agents/feature-flow/` and adds a short trigger to each client's global instructions. The flow starts to apply when the user begins discussing a feature in any repository; repository-specific values are resolved when the flow runs.
 - **Local**: one repository. Setup renders the workflow into that repository's private files and loads it through repository-local client configuration. Repository-specific values are resolved during setup.
 
-A repository with a local install keeps it. The global trigger skips its read when a repository-local flow is already loaded. Sections below apply to both modes unless they name one.
+A repository with a local install keeps it. The global trigger skips its read when the repository's local Claude import or Codex loader points to a repository-local workflow. Sections below apply to both modes unless they name one.
 
 A flow tracks local work and needs no Linear issue or external ticket. Choose a stable local flow ID such as `cache-cleanup`. Schema 1 stores that required ID in its historical `ticket` key; normally use the same ID for `.planning/drafts/<flow-id>/`. `linear_id` is optional: omit it or use `null` when unlinked. `prs: []` means no attached PRs; explicit PRs also work without Linear. Never derive a Linear association from a local ID, folder, title or branch. Existing linked records require no migration.
 
@@ -27,7 +27,7 @@ GSD is optional. Check whether each client exposes an installed `gsd-quick` work
 
 ## Render the workflow
 
-Back up each file you will modify with private permissions, outside any repository. Preserve unrelated content and concurrent edits. The workflow directory (`FLOW_DIR`) is `~/.agents/feature-flow/` in global mode and the primary worktree's `.agents/feature-flow/` in local mode. Create `FLOW_DIR/WORKFLOW.md` by rendering `WORKFLOW.template.md`: replace `{{FLOW_PLUGIN_ROOT}}` with the absolute plugin directory and `{{REPOSITORY_SETTINGS}}` with the block for the chosen mode below. Keep `{{DATE}}` inside the Tracking record text; it names the STATE template marker. Quote shell commands for the actual shell (for POSIX shells, Python `shlex.join` is suitable). Do not interpolate raw paths into shell commands; cover spaces, apostrophes, dollar signs and backticks. No other unresolved template markers may remain. Keep this as the single workflow body.
+Back up each file you will modify with private permissions, outside any repository. Preserve unrelated content and concurrent edits. The workflow directory (`FLOW_DIR`) is `~/.agents/feature-flow/` in global mode and the primary worktree's `.agents/feature-flow/` in local mode. Create `FLOW_DIR/WORKFLOW.md` by rendering `WORKFLOW.template.md`: replace `{{REPOSITORY_SETTINGS}}` with the block for the chosen mode below, then replace every `{{FLOW_PLUGIN_ROOT}}` with the absolute plugin directory and, in global mode, `{{FLOW_DIR}}`, `{{BRANCH_FALLBACK}}` and `{{MERGE_FALLBACK}}` with their values. Angle-bracket names such as `<PRIMARY_REPO>` in the global block stay as written; the flow resolves them when it runs. Quote shell commands for the actual shell (for POSIX shells, Python `shlex.join` is suitable). Do not interpolate raw paths into shell commands; cover spaces, apostrophes, dollar signs and backticks. No other unresolved template markers may remain. Keep this as the single workflow body.
 
 Local mode settings block, with resolved values:
 
@@ -40,14 +40,14 @@ Local mode settings block, with resolved values:
 - Client loaders: repository-local; see **Linked worktrees and clients**.
 ```
 
-Global mode settings block, with the actual `FLOW_DIR` and `FLOW_PLUGIN_ROOT`:
+Global mode settings block. Before rendering it, ask the user once for the fallbacks used when a repository's policy names no integration branch or merge method. Render each as a short phrase, for example `the repository's default branch`, `a merge commit`, or `ask the user and record the answer in DISCOVERY.md`:
 
 ```markdown
 - `PRIMARY_REPO`: the current repository's permanent main checkout, resolved as **Local flow identity** describes.
-- Integration branch: current repository policy. If policy names none, ask the user at step 8 and record the answer in `DISCOVERY.md`.
-- Merge method: current repository policy. If policy names none, ask the user before merging and record the answer in `DISCOVERY.md`.
-- Templates directory: `<FLOW_DIR>`.
-- Validator: run `bun <FLOW_PLUGIN_ROOT>/src/checkFlow.ts <PRIMARY_REPO>/.planning/drafts`, quoting each argument for the active shell.
+- Integration branch: current repository policy; if policy names none, {{BRANCH_FALLBACK}}.
+- Merge method: current repository policy; if policy names none, {{MERGE_FALLBACK}}.
+- Templates directory: `{{FLOW_DIR}}`.
+- Validator: run `bun {{FLOW_PLUGIN_ROOT}}/src/checkFlow.ts <PRIMARY_REPO>/.planning/drafts`, quoting each argument for the active shell.
 - Private drafts: before creating the first draft in a repository, add `/.planning/drafts/` to `$(git rev-parse --path-format=absolute --git-common-dir)/info/exclude` unless that path is already ignored or intentionally tracked.
 - Client loaders: global; no per-repository or per-worktree loader is needed.
 ```
@@ -68,7 +68,7 @@ Linked worktrees share private draft state through `PRIMARY_REPO`, but their loc
 
 ## Global mode: instruction trigger
 
-Render `global-loader.template.md` with `{{WORKFLOW_FILE}}` set to the absolute `FLOW_DIR/WORKFLOW.md` path. Merge the result into each client's global instructions file: `~/.claude/CLAUDE.md` for Claude Code and `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` for Codex. If both paths are symlinks to one file, edit that target once; never replace or remove a symlink. Update an existing `feature-flow` managed block in place; otherwise append exactly one block. Preserve all other content. Global mode adds no repository files and no repository-local client configuration.
+Render `global-loader.template.md` with `{{WORKFLOW_FILE}}` set to the absolute `FLOW_DIR/WORKFLOW.md` path. Merge the result into each client's global instructions file: `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md` for Claude Code and `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` for Codex. If `${CODEX_HOME:-$HOME/.codex}/AGENTS.override.md` exists, Codex reads it instead of `AGENTS.md`; merge the block there and report it. If both paths are symlinks to one file, edit that target once; never replace or remove a symlink. Update an existing `herdr-flow-status` managed block in place; otherwise append exactly one block. Preserve all other content. Global mode adds no repository files and no repository-local client configuration.
 
 ## Plugin and optional live sources
 
@@ -88,10 +88,10 @@ Verify the returned plugin pane shows the expected branch and flows. The offline
 
 ## Verification and handoff
 
-Run `bun "$FLOW_PLUGIN_ROOT/src/checkFlow.ts" <temporary-drafts-directory>` against a temporary flow directory containing the bundled example. Delete the temporary fixture afterward. Do not run the example as a real task. Search rendered files for unresolved `{{...}}` markers other than the Tracking record's `{{DATE}}`, and for stale project names/paths. In local mode, parse Codex TOML with a TOML parser, resolve the Claude import and Codex loader to the exact same workflow, verify each private file with `git check-ignore`, and confirm `git ls-files` does not list it; a tracked file is not made private by an ignore rule. In global mode, confirm each client's global instructions file contains exactly one `feature-flow` block naming the same existing workflow path, and that symlinked instruction files are still symlinks.
+Run `bun "$FLOW_PLUGIN_ROOT/src/checkFlow.ts" <temporary-drafts-directory>` against a temporary flow directory containing the bundled example. Delete the temporary fixture afterward. Do not run the example as a real task. Search rendered files for unresolved `{{...}}` markers and for stale project names/paths. In local mode, parse Codex TOML with a TOML parser, resolve the Claude import and Codex loader to the exact same workflow, verify each private file with `git check-ignore`, and confirm `git ls-files` does not list it; a tracked file is not made private by an ignore rule. In global mode, confirm each client's global instructions file contains exactly one `herdr-flow-status` block naming the same existing workflow path, and that symlinked instruction files are still symlinks.
 
 Check the required skills in both client discovery contexts. Report whether each client exposes `gsd-quick`; either result is valid. Report missing dependencies, untrusted project configuration, unavailable live credentials and checks not run separately. Do not claim agent-loaded instructions solely because a file exists: new sessions must load the private instructions; existing sessions need a restart or the client's documented reload process. Do not launch billable agent sessions solely to test an installation without task authorization.
 
-Report exact installed paths, resolved policies, files changed, verification evidence and the next step. The next step is discussion or an explicitly chosen plan, never automatic execution. Roll back only the managed flow edits after comparing backups for unrelated changes: in global mode, remove the `feature-flow` blocks and `~/.agents/feature-flow/`; remove a plugin registration only if this setup created it and no other repo uses it.
+Report exact installed paths, resolved policies, files changed, verification evidence and the next step. The next step is discussion or an explicitly chosen plan, never automatic execution. Roll back only the managed flow edits after comparing backups for unrelated changes: in global mode, remove the `herdr-flow-status` blocks and `~/.agents/feature-flow/`; remove a plugin registration only if this setup created it and no other repo uses it.
 
 Client integration contracts: [Claude local instructions and imports](https://code.claude.com/docs/en/memory) and [Codex configuration precedence](https://learn.chatgpt.com/docs/config-file/config-basic).
