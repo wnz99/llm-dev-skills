@@ -188,21 +188,32 @@ the skills or create development flow records. The
 [plugin README](../plugins/flow-status/README.md) owns the panel and record
 reference.
 
-### Set up a project's flow producer
+### Set up the flow producer
 
-The panel reads records written by a workflow coordinator. In the target Git
-repository, ask Claude Code or Codex to run the bundled setup prompt:
+The panel reads records written by a workflow coordinator. Install the
+workflow in one of two modes:
+
+- **Global:** one workflow for every Git repository on the machine. A short
+  trigger in each client's global instructions loads it when you start
+  discussing a feature.
+- **Local:** one repository, loaded through that repository's private client
+  configuration.
+
+Ask Claude Code or Codex to run the bundled setup prompt. For a local install,
+run it from the target Git repository:
 
 ```text
-Read /absolute/path/to/llm-dev-skills/plugins/flow-status/setup/PROMPT.md and follow its prompt to set up the standard local development flow in this repository for both Claude Code and Codex. BUNDLE_ROOT is /absolute/path/to/llm-dev-skills/plugins/flow-status.
+Read /absolute/path/to/llm-dev-skills/plugins/flow-status/setup/PROMPT.md and follow its prompt to set up the standard development flow for both Claude Code and Codex in MODE install mode. BUNDLE_ROOT is /absolute/path/to/llm-dev-skills/plugins/flow-status.
 ```
 
-Replace both paths with your persistent checkout's actual location. Setup
-checks the workflow's required skills, including `wnz-plan-simplicity-review`,
-and per-project GSD. It preserves repository policy and installs private
-client loaders pointing to one shared workflow. Follow the
-[setup procedure](../plugins/flow-status/setup/PROCEDURE.md) for GSD checks,
-client trust/restart requirements and loaders in linked worktrees.
+Replace both paths with your persistent checkout's actual location, and
+`MODE` with `global` or `local`. Setup checks the workflow's required skills,
+including `wnz-plan-simplicity-review`, and preserves repository policy. Both
+clients share one workflow file. GSD is optional: without it, the workflow
+writes its own GSD-style record under `.planning/quick/` and
+`.planning/STATE.md`. Follow the
+[setup procedure](../plugins/flow-status/setup/PROCEDURE.md) for each mode's
+files, client trust/restart requirements and loaders in linked worktrees.
 
 Setup does not start a feature or create a sample flow. After setup, discuss
 your task and explicitly choose formal planning to create a real flow.
