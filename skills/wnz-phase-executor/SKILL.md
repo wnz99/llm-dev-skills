@@ -66,6 +66,7 @@ Before dispatching implementation:
 - `wnz-code-reviewer`: owns implemented task and aggregate review, including clean-code assessment.
 - `wnz-dead-code`: owns mandatory audit/cleanup evidence for plan steps and independent code-review audits.
 - `wnz-grill-me`: required only for an accepted or explicitly requested clarification interview before dependent planning.
+- `wnz-repo-cleanup`: required for the final task-owned worktree/local-branch inventory and housekeeping handoff; it owns discovery, retention, item-level approval and safe removal.
 
 Resolve these by name through the host's installed-skill discovery before the
 affected work. Obtain missing skills from their matching directory in
@@ -427,9 +428,27 @@ After the last task:
    finding set. Require worker verification and a fresh reviewer to rebuild
    the full package and validate fixes/disputes. Repeat until both verdicts
    approve with no unresolved High or Medium findings.
-6. Accept only current complete receipts/indexes, then summarize requirement-to-
+6. Dispatch a fresh operational worker using discovered `wnz-repo-cleanup` to
+   inventory task-owned worktrees and local branches against the explicit
+   integration ref. Include setup/implementation worktree pointers and ownership
+   evidence; this is housekeeping, not another independent review gate. Before
+   proposing removal, preserve final source/state identities and usable plan,
+   verification and review evidence pointers in the existing reports/ledger
+   outside any candidate checkout. Retain anything still needed for review.
+   Apply that skill's discovery, approval and ownership protections; do not
+   duplicate its deletion algorithm. An open PR retains its review branch and
+   needed checkout. Never remove the current checkout or force past active,
+   dirty, missing or unknown state. Execute only concrete items already approved
+   or obtain item-level approval after the inventory. If the dependency is
+   missing, report it and stop housekeeping; preserve the feature's verified
+   status and give the installation/handoff next action.
+7. Accept only current complete receipts/indexes, then summarize requirement-to-
    evidence pointers, verification results, review-loop counts, documentation
-   changes and known residual risks.
+   changes and known residual risks. Include the cleanup report pointer, exact
+   removed and retained paths/branches with reasons, and pending approval or
+   handoff action. Report feature acceptance and housekeeping status separately:
+   pending cleanup alone does not undo verified feature completion, and temporary
+   artifact removal alone does not establish worktree/branch cleanup completion.
 
 ## Blockers
 
