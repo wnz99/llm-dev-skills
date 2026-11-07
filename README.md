@@ -66,8 +66,8 @@ timing, plus optional Linear and PR status. Local flows need no external
 ticket or provider credentials.
 
 The [handbook's optional plugin guide](docs/installation-handbook.md#optional-flow-status-plugin)
-covers installation, project workflow setup, and opening the panel. Skills
-work without the plugin.
+covers installation, global or per-repository workflow setup, and opening the
+panel. Skills work without the plugin.
 
 ## Contributing
 

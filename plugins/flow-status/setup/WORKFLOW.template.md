@@ -47,13 +47,19 @@ The workflow below applies after the user chooses formal planning:
 
 ## Tracking record
 
-GSD is optional. At step 8, check whether this client exposes an installed `gsd-quick` workflow. If it does, use it as step 8 describes. If it does not, do not install GSD and do not block. Before writing the fallback, check whether the integration branch already tracks `.planning/STATE.md` or `.planning/quick/`, and whether `.planning/` is ignored or excluded by repository policy. If it tracks neither, or the path is ignored or excluded, reuse the answer recorded in an earlier flow's `DISCOVERY.md` for this repository; otherwise ask the user once whether to write the tracked record (default), keep a private record in a `## Tracking record` section of the flow's `DISCOVERY.md` (registration, progress and summary at the same milestones, no tracked files), or skip it. Record the answer in `DISCOVERY.md`. For a tracked record, write the same record shape yourself, in the feature worktree, at the same milestones and under the same commit rules. Elsewhere in this workflow, "GSD" means this record, whichever writer produced it.
+GSD is optional. At step 8, check whether this client exposes an installed `gsd-quick` workflow. If it does, use it as step 8 describes. If it does not, do not install GSD and do not block. Before writing the fallback, choose where the record goes:
+
+1. If the integration branch already tracks `.planning/STATE.md` or `.planning/quick/`, and `.planning/` is not ignored or excluded by repository policy, write the tracked record.
+2. Otherwise, if an earlier flow's `DISCOVERY.md` in this repository records a tracking-record choice, reuse it.
+3. Otherwise, ask the user once: write the tracked record (default), keep a private record in a `## Tracking record` section of the flow's `DISCOVERY.md`, or skip it.
+
+Record the choice in `DISCOVERY.md`. A private record holds the registration, progress and summary at the same milestones; a private or skipped record keeps FLOW.json `gsd_quick: null`, makes no tracked commits, and step 13 updates only `DISCOVERY.md` (or nothing, for skip). For a tracked record, write the same record shape yourself, in the feature worktree, at the same milestones and under the same commit rules. Elsewhere in this workflow, "GSD" means this record, whichever writer produced it.
 
 - ID: `<YYMMDD>-<xxx>`, the local date plus 3 random lowercase letters or digits, unique among `.planning/quick/` folders. Slug: the flow title in lowercase kebab case, at most 40 characters.
 - Step 8: create `.planning/quick/<id>-<slug>/` with `<id>-CONTEXT.md` (a `## Registration` note stating that no GSD tooling wrote the record, the draft path as plain text, then decisions and a short discovery summary) and `<id>-PLAN.md` (the approved plan, verbatim). If `.planning/STATE.md` is missing, create it from `STATE.template.md` in the templates directory, with its date marker set to today's date; otherwise preserve its content and add any missing table. Add a `Registered Work` row: `| <id> | <title> | Registered | [<id>-<slug>](./quick/<id>-<slug>/) |`; when the table already exists with other columns, follow its columns and heading level instead, and set FLOW.json `gsd_quick` to the folder path.
 - Steps 9 and 11: update that row's status and the `Last activity` line with task, review and PR progress.
 - Step 13 content: write `<id>-SUMMARY.md` with results, verification evidence, the PR number and any pending work, then move the row to `Quick Tasks Completed`, putting the PR number in a matching column or in the status.
-- Never claim GSD validation for a fallback record. If GSD becomes available later, keep updating an existing fallback record through this fallback at the remaining milestones; do not convert, re-register or validate it with GSD tooling.
+- Never claim GSD validation for a fallback record. If GSD becomes available later, keep updating an existing fallback record through this fallback at the remaining milestones; do not convert, re-register or validate it with GSD tooling. If GSD wrote an existing record and is unavailable now, keep that record's file names and columns when updating it.
 
 ## PR review loop
 
