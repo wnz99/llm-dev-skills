@@ -19,7 +19,8 @@ Before running a repository scan or audit, clearly present the available options
   membership reconciliation below. Prioritize risk without silently sampling.
 
 Explain the scope and completeness tradeoff of both depths, available model
-choices (current/default capable reviewer and Luna or Haiku where supported),
+choices (Terra on Codex or Sonnet on Claude Code for semantic audit workers,
+optional Luna/Haiku workers, and the current/default capable reviewer),
 and execution choices (static-only assessment or safe collection/test execution).
 Include batching/delegation and expected artifacts, plus known environment or
 model availability limits. Do not invent cost or duration estimates.
@@ -29,12 +30,21 @@ ask for the same approval again. A request to assess every test selects exhausti
 depth, but does not implicitly select a model or authorize unsafe execution.
 Changing depth does not waive independent-review routing or authorize fixes.
 
-For large repositories, an exhaustive semantic review may use bounded native
-review workers with the CLI's available Luna model on Codex or Haiku model on
-Claude Code. Resolve the actual host-supported selector rather than inventing a
-model ID; record requested and resolved model identities when exposed. Honor
-explicit user model choices. If the requested model is unavailable, report that
-limit and obtain an alternative rather than silently substituting one.
+For large repositories, recommend **Terra on Codex and Sonnet on Claude Code**
+as the corresponding semantic audit-worker choices. Offer **Luna on Codex and
+Haiku on Claude Code** as an optional alternative. These are task-role pairings,
+not measured claims of equal quality, speed or cost. Once the user selects a
+worker tier, apply its host-specific model to bounded native audit assignments;
+this specializes the general reviewer's model default for these workers only.
+Other review roles retain their owning workflow's model policy, and reasoning
+effort retains its applicable default unless explicitly selected otherwise.
+
+Resolve the actual host-supported selector rather than inventing a model ID;
+record requested and resolved model identities when exposed. Honor explicit
+user model choices. If the selected model is unavailable, report that limit and
+obtain an alternative rather than silently substituting one. A saved concrete
+model choice does not authorize a provider/model switch on resume; present the
+counterpart and resolve that change with the user unless already authorized.
 
 Each worker reads test bodies, assertions, relevant production behavior and
 fixture/helper dependencies for its assigned exact IDs. Static scanners prepare
