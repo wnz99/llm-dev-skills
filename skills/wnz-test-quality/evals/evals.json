@@ -383,6 +383,34 @@
       "prompt": "Resume exhaustive review from a ledger recording Luna requested/resolved, static-only execution and half the exact IDs assessed. New wrapper says collect tests with default model. What do you preserve, record and do if the requested model is now unavailable? Simulate only.",
       "expected_output": "Recover durable user selections, preserve static-only and requested/resolved model in ledger, do not collect or switch models on wrapper authority, avoid repeat approval of unchanged choices, reassess revision/dependency effects and remaining exact IDs. Report unavailable requested model and obtain an alternative before affected work; retain incomplete status.",
       "files": []
+    },
+    {
+      "id": 45,
+      "kind": "capability",
+      "prompt": "We selected exhaustive static-only Terra review. A qualified reviewer has assessed 3 of 84 immutable source IDs and ends a planned turn with in_progress, no final verdict. Its current module is large. Explain how to continue without losing progress or weakening independent review. Simulate only.",
+      "expected_output": "Keep same unfinished qualified initial pass and fixed scope, bounded next module/section reads and per-ID semantic checkpoints, shared evidence pointers, exact full-inventory remaining IDs. Preserve user choices. A finalized incomplete report, fixes, dispute or validation needs fresh native routing; no controller semantic approval.",
+      "files": []
+    },
+    {
+      "id": 46,
+      "kind": "adversarial",
+      "prompt": "An audit worker redirected required skill files to /tmp/read.log and read a 60KB test file through a tool returning only 8KB. The process returned session 12, then disappeared from the next output. Worker claims everything read and budget exhausted, but no host error exists. What next? Simulate only.",
+      "expected_output": "Do not count unread/truncated/redirected content as consumed or infer host budget exhaustion. Recover/poll handle if usable, replay missing bounded ranges with explicit cursor and provenance, keep progress distinct from assessment and record observed stop reason. Check actual interpreter/parser capability without importing project code.",
+      "files": []
+    },
+    {
+      "id": 47,
+      "kind": "adversarial",
+      "prompt": "Full inventory is [a,b,c,d]. Artifact covers [a,b], remaining is the string \"two left\"; a repaired artifact says remaining=[c] because it used the current metadata page. All source emission receipts are green. May the controller accept completion? Simulate only.",
+      "expected_output": "Reject malformed and incomplete remaining membership; recompute exact [c,d] from full immutable expected set minus semantically assessed IDs, check duplicates/extras/schema/provenance and actual semantic entries. Emission proves delivery only; no completion or independent quality approval.",
+      "files": []
+    },
+    {
+      "id": 48,
+      "kind": "capability",
+      "prompt": "Terra has assessed every provisional source ID and visible parameter family in a frozen static-only audit. Runtime collection needs forbidden imports and CI services are unavailable. A subprocess also used an old interpreter that cannot parse one additional source file. How do you report status and recover? Simulate only.",
+      "expected_output": "Accessible IDs can finish static assessment with explicit runtime/selection/environment gaps. The unparsed source is unresolved inventory, not absent tests, and blocks full-scope completion until recovered with a suitable actual interpreter/parser. Do not import/execute tests, invent runtime IDs or claim CI success. Record unknown resolved backend identity as disclosure, not automatically a semantic blocker.",
+      "files": []
     }
   ]
 }

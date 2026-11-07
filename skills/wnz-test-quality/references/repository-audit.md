@@ -166,7 +166,11 @@ For large suites, size bounded batches by source volume and fixture/helper
 dependencies, not test count alone. Group tests sharing setup contracts; split
 large files by named classes or ID ranges and retain cross-batch dependency
 pointers. Read shared fixtures before judging consumers and revisit affected
-batches when their interpretation changes. Persist progress after each batch.
+batches when their interpretation changes. When a batch may span turns, or a
+worker repeatedly stops before finishing, read
+[long-audits.md](long-audits.md) before dispatch or resume. Its bounded reads,
+per-ID checkpoints and controller reconciliation apply to any selected model,
+including Terra. Persist progress during review, not only after a whole batch.
 Prioritize risky areas first; exhaustive mode must finish the inventory.
 Reconcile ledger membership against collection and source inventory, not just
 equal totals. Mark inaccessible or unassessed tests unresolved. Report assessed

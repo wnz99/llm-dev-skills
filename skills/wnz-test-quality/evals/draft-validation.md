@@ -410,3 +410,44 @@ choices remain the authority for the private helper's two supported variants;
 its raw authoring-tool error tracebacks were left as a non-blocking style nit.
 The final small corrections and this receipt were appended after that review;
 fresh verification covers them. No normal-mode task gained an automatic audit.
+
+## Resumable audit trial, 2026-11-08
+
+A read-only static trial used a frozen cc-monorepo revision,
+`70bfbc51ab7fa7fdbebc388b8053d08e197a7a62`. Requested native model selector was
+`gpt-6.1-terra`, medium effort; resolved backend identity was unavailable.
+No project imports, collection, tests, builds or services were run. Controller
+artifacts and instruction/source read cursors lived outside the checkout.
+
+Bounded instruction/source delivery, per-ID semantic checkpoints and planned
+continuation of one unfinished qualified review pass produced a complete
+84-provisional-ID, eight-file static batch. Three focal modules containing nine
+source definitions also received fresh independent static validation. These
+sets overlap: the nine definitions are not nine additional batch IDs. Fresh
+validation of the complete 84-ID batch subsequently finished with all IDs
+accounted for. It confirmed three Medium test-quality findings: two invalid
+bootstrap fixtures mask guard regressions, and a worker path skips two tests.
+The full repository audit was incomplete; neither source delivery receipts nor
+membership checks establish semantic approval or runtime success.
+
+The earlier partial Luna and Terra returns did not expose a host budget error.
+One worker voluntarily stopped; another transport lost pending output. Several
+workflow controls changed together, so this trial does not isolate one cause,
+rank models, or measure speed, cost or whole-repository audit reliability.
+
+Fresh non-inheriting Terra simulations compared old and revised packages on
+case 45 (unfinished-pass continuation) and case 47 (malformed remaining IDs).
+The revised package preserved the unfinished pass in case 45; the old package
+restarted it. Both rejected malformed and page-limited membership in case 47.
+Case 46 additionally checked lost/truncated/redirected reads and unsupported
+budget claims. Case 48 preserved static-only boundaries while treating parser
+failure as an unresolved inventory gap; metadata-first activation selected an
+audit and rejected a command-only task. These are simulated decisions, not host-loader or production
+capacity tests. Raw outputs are in the external trial workspace; unavailable
+time/token statistics were not invented.
+
+Package verification after the runtime/eval additions: all 55 repository tests
+passed; installed skill-creator quick validation passed. An isolated package
+copy passed YAML, Markdown, closed-fence, contained-relative-link and 48-unique-
+eval-ID checks. No runtime dependency or script was added. The existing required
+routing prerequisite and missing-dependency stop behavior remain unchanged.
