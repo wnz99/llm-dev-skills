@@ -4,15 +4,15 @@ One read-only dashboard for Claude Code, Codex and any Git repository using the 
 
 Flows need no Linear issue or external ticket. Choose a stable local flow ID such as `cache-cleanup` and store its record at `.planning/drafts/cache-cleanup/FLOW.json`. Schema 1 keeps the historical `ticket` key for this required local ID. Omit `linear_id` or set it to `null` when unlinked; attach a Linear issue explicitly when wanted. Use `prs: []` when no PR is attached. Existing linked records keep working without migration.
 
-## Set up another repository
+## Set up the flow
 
 Ask either agent:
 
 ```text
-Read /absolute/path/to/llm-dev-skills/plugins/flow-status/setup/PROMPT.md and follow its prompt to set up the standard local development flow in this repository for both Claude Code and Codex. BUNDLE_ROOT is /absolute/path/to/llm-dev-skills/plugins/flow-status.
+Read /absolute/path/to/llm-dev-skills/plugins/flow-status/setup/PROMPT.md and follow its prompt to set up the standard development flow for both Claude Code and Codex in MODE install mode. BUNDLE_ROOT is /absolute/path/to/llm-dev-skills/plugins/flow-status.
 ```
 
-Replace the two absolute paths with this checkout's actual location. [The exact prompt](setup/PROMPT.md) delegates [the setup procedure](setup/PROCEDURE.md). The bundle includes the shared workflow, Claude and Codex loader templates, an approval-free `FLOW.json` example, and plan/discovery templates. Installation preserves existing repo policy, uses private ignored instructions, and does not start a feature. Both clients load one workflow body.
+Replace the two absolute paths with this checkout's actual location, and `MODE` with `global` (every repository on the machine, triggered when you start discussing a feature) or `local` (run from one target repository). [The exact prompt](setup/PROMPT.md) delegates [the setup procedure](setup/PROCEDURE.md). The bundle includes the shared workflow, the Claude, Codex and global loader templates, an approval-free `FLOW.json` example, and plan, discovery and GSD-style state templates. GSD is optional; without it, the workflow writes its own tracking record. Installation preserves existing repo policy and does not start a feature. Both clients load one workflow body.
 
 ## Install the dashboard
 

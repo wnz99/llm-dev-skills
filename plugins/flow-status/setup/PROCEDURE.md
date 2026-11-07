@@ -1,28 +1,62 @@
-# Install the flow in a repository
+# Install the development flow
 
-This procedure installs private instructions for Claude Code and Codex. It does not modify the project's tracked development policy or begin a feature. Use `PROMPT.md` when delegating the procedure to an agent.
+This procedure installs private instructions for Claude Code and Codex. It does not modify any project's tracked development policy or begin a feature. Use `PROMPT.md` when delegating the procedure to an agent.
+
+## Choose the install mode
+
+Ask the user which mode to install unless the request already names one:
+
+- **Global**: one workflow for every Git repository on this machine. Setup renders the workflow under `~/.agents/feature-flow/` and adds a short trigger to each client's global instructions. The flow starts to apply when the user begins discussing a feature in any repository; repository-specific values are resolved when the flow runs.
+- **Local**: one repository. Setup renders the workflow into that repository's private files and loads it through repository-local client configuration. Repository-specific values are resolved during setup.
+
+A repository with a local install keeps it. The global trigger skips its read when a repository-local flow is already loaded. Sections below apply to both modes unless they name one.
 
 A flow tracks local work and needs no Linear issue or external ticket. Choose a stable local flow ID such as `cache-cleanup`. Schema 1 stores that required ID in its historical `ticket` key; normally use the same ID for `.planning/drafts/<flow-id>/`. `linear_id` is optional: omit it or use `null` when unlinked. `prs: []` means no attached PRs; explicit PRs also work without Linear. Never derive a Linear association from a local ID, folder, title or branch. Existing linked records require no migration.
 
 ## Inputs and inventory
 
-Required inputs are the target Git repository and the absolute canonical plugin directory (`FLOW_PLUGIN_ROOT`). Use macOS or Linux, Git, Bun 1.3.13 or newer, and Herdr 0.9.1 or newer for the optional dashboard. Python is not required by this plugin. Preserve existing client versions and authentication.
+Required inputs are the absolute canonical plugin directory (`FLOW_PLUGIN_ROOT`) and, in local mode, the target Git repository. Use macOS or Linux, Git, Bun 1.3.13 or newer, and Herdr 0.9.1 or newer for the optional dashboard. Python is not required by this plugin. Preserve existing client versions and authentication.
 
-Read the target repository's `AGENTS.md`, `CLAUDE.md`, contribution/release policies, Git status and worktree list. Resolve `PRIMARY_REPO` from the first `worktree` entry of `git worktree list --porcelain -z`; verify it is the permanent repository main checkout, not temporary or bare metadata. Stop if that permanent checkout is missing or ambiguous. Preserve existing flow state elsewhere and coordinate migration before writing; never create a second writable flow copy. For a nonstandard metadata layout, confirm the intended private-draft owner with the user rather than guessing from metadata parents; resolve `GIT_COMMON_DIR` with `git rev-parse --path-format=absolute --git-common-dir`. Resolve the target session's actual checkout separately. Do not switch a shared checkout's branch.
+In local mode, read the target repository's `AGENTS.md`, `CLAUDE.md`, contribution/release policies, Git status and worktree list. Resolve `PRIMARY_REPO` from the first `worktree` entry of `git worktree list --porcelain -z`; verify it is the permanent repository main checkout, not temporary or bare metadata. Stop if that permanent checkout is missing or ambiguous. Preserve existing flow state elsewhere and coordinate migration before writing; never create a second writable flow copy. For a nonstandard metadata layout, confirm the intended private-draft owner with the user rather than guessing from metadata parents; resolve `GIT_COMMON_DIR` with `git rev-parse --path-format=absolute --git-common-dir`. Resolve the target session's actual checkout separately. Do not switch a shared checkout's branch.
 
-Determine the integration/base branch and merge method from existing repository policy. If either is unresolved, ask the user before rendering those decisions. Do not assume `develop`, `main`, merge commits, production promotion, deployment or branch cleanup rules. User approval of setup does not authorize any of those operations.
+In local mode, determine the integration/base branch and merge method from existing repository policy. If either is unresolved, ask the user before rendering those decisions. Global mode records no branch or merge decisions; the rendered workflow takes them from each repository's policy, or asks the user, when the flow runs. Do not assume `develop`, `main`, merge commits, production promotion, deployment or branch cleanup rules. User approval of setup does not authorize any of those operations.
 
 Discover these required skills through the host: `wnz-implementation-planner`, `wnz-plan-simplicity-review`, `wnz-plan-reviewer`, `wnz-phase-executor`, `wnz-task-implementer`, `wnz-code-reviewer`, `wnz-ship`, `wnz-dead-code`, `wnz-independent-review`, and their declared dependencies. Resolve installed paths through discovery, not relative sibling directories. Sources live in `wnz99/llm-dev-skills`; use each skill's installation/update instructions. Shared user skills belong under `~/.agents/skills`; preserve existing Claude discovery links. Missing dependencies block the affected workflow; do not silently omit gates. `wnz-ship` owns PR creation and whole-description preparation; setup only checks discovery and never publishes. Repository-specific release-note tooling is optional; use the repository's PR template when no release-note skill is installed.
 
-Inspect each client's installed GSD workflows. If absent, use `npx @opengsd/gsd-core --help` to verify the current installer contract before a per-project `--local --claude` or `--local --codex` install, within existing authorization. Never install GSD globally. Preserve existing runtimes and hook ownership; investigate conflicts before changing them. Setup must not invoke the full quick workflow, which also executes work.
+GSD is optional. Check whether each client exposes an installed `gsd-quick` workflow and report the result. Do not install GSD. Without it, the workflow writes its own GSD-shaped tracking record (see **Tracking record** in `WORKFLOW.template.md`); missing GSD never blocks setup or a flow. Setup must not invoke the full quick workflow, which also executes work.
 
-## Private files and one instruction owner
+## Render the workflow
 
-Back up each file you will modify outside the repository with private permissions. Preserve unrelated content and concurrent edits. In the primary worktree create `.agents/feature-flow/WORKFLOW.md` by rendering `WORKFLOW.template.md`. Replace `{{PRIMARY_REPO}}`, `{{FLOW_PLUGIN_ROOT}}`, `{{BASE_BRANCH}}` and `{{MERGE_METHOD}}` with the resolved values. Render `{{VALIDATE_COMMAND}}` as one shell-safe command from the argv list `["bun", FLOW_PLUGIN_ROOT + "/src/checkFlow.ts", PRIMARY_REPO + "/.planning/drafts"]`, quoting each argument for the actual shell (for POSIX shells, Python `shlex.join` is suitable). Do not interpolate raw paths into shell commands; cover spaces, apostrophes, dollar signs and backticks. No unresolved template markers may remain. Keep this as the single workflow body.
+Back up each file you will modify with private permissions, outside any repository. Preserve unrelated content and concurrent edits. The workflow directory (`FLOW_DIR`) is `~/.agents/feature-flow/` in global mode and the primary worktree's `.agents/feature-flow/` in local mode. Create `FLOW_DIR/WORKFLOW.md` by rendering `WORKFLOW.template.md`: replace `{{FLOW_PLUGIN_ROOT}}` with the absolute plugin directory and `{{REPOSITORY_SETTINGS}}` with the block for the chosen mode below. Keep `{{DATE}}` inside the Tracking record text; it names the STATE template marker. Quote shell commands for the actual shell (for POSIX shells, Python `shlex.join` is suitable). Do not interpolate raw paths into shell commands; cover spaces, apostrophes, dollar signs and backticks. No other unresolved template markers may remain. Keep this as the single workflow body.
 
-Copy `FLOW.example.json`, `PLAN.template.md` and `DISCOVERY.template.md` to `.agents/feature-flow/` as reusable templates. Do not create a flow, a draft folder, `FLOW.json`, a feature worktree or GSD task during setup. Real drafts are created only after the user chooses formal planning, under the primary worktree's `.planning/drafts/<flow-id>/`. When creating a real draft, replace the sample's local ID, title and timestamp, and render `{{FLOW_ID}}` and `{{TITLE}}` in the plan/discovery templates. Keep unlinked `linear_id: null`, empty PRs and approvals until actual associations or approvals exist. Never infer approvals from the sample.
+Local mode settings block, with resolved values:
+
+```markdown
+- `PRIMARY_REPO`: `<absolute primary worktree path>`.
+- Integration branch fallback: `<resolved branch>`.
+- Merge method: `<resolved method>`.
+- Templates directory: `<PRIMARY_REPO>/.agents/feature-flow/`.
+- Validator: `<shell-safe command from the argv ["bun", FLOW_PLUGIN_ROOT + "/src/checkFlow.ts", PRIMARY_REPO + "/.planning/drafts"]>`.
+- Client loaders: repository-local; see **Linked worktrees and clients**.
+```
+
+Global mode settings block, with the actual `FLOW_DIR` and `FLOW_PLUGIN_ROOT`:
+
+```markdown
+- `PRIMARY_REPO`: the current repository's permanent main checkout, resolved as **Local flow identity** describes.
+- Integration branch: current repository policy. If policy names none, ask the user at step 8 and record the answer in `DISCOVERY.md`.
+- Merge method: current repository policy. If policy names none, ask the user before merging and record the answer in `DISCOVERY.md`.
+- Templates directory: `<FLOW_DIR>`.
+- Validator: run `bun <FLOW_PLUGIN_ROOT>/src/checkFlow.ts <PRIMARY_REPO>/.planning/drafts`, quoting each argument for the active shell.
+- Private drafts: before creating the first draft in a repository, add `/.planning/drafts/` to `$(git rev-parse --path-format=absolute --git-common-dir)/info/exclude` unless that path is already ignored or intentionally tracked.
+- Client loaders: global; no per-repository or per-worktree loader is needed.
+```
+
+Copy `FLOW.example.json`, `PLAN.template.md`, `DISCOVERY.template.md` and `STATE.template.md` to `FLOW_DIR` as reusable templates. Do not create a flow, a draft folder, `FLOW.json`, a feature worktree or GSD task during setup. Real drafts are created only after the user chooses formal planning, under the primary worktree's `.planning/drafts/<flow-id>/`. When creating a real draft, replace the sample's local ID, title and timestamp, and render `{{FLOW_ID}}` and `{{TITLE}}` in the plan/discovery templates. Keep unlinked `linear_id: null`, empty PRs and approvals until actual associations or approvals exist. Never infer approvals from the sample.
 
 The draft-folder limit does not replace `wnz-phase-executor`'s canonical ledger or detailed role reports. Discover that skill's runtime references, including `references/coordinator-templates.md` and `references/coordinator-boundary.md`, through the host. During execution, keep its required evidence outside the draft folder in an approved ignored location or external scratch path under executor rules; do not create it during setup. This exception permits required executor evidence, not arbitrary extra files or duplicate transcripts. FLOW.json remains a schema-1 dashboard projection: its author records supported status, steps, tasks, reviews, approvals and evidence pointers only. Never inject canonical gate, dispatch, source-state or role-status fields. The plugin reads this projection; executor gates and resume depend on the canonical ledger/reports, never FLOW.json or GSD summaries. Missing canonical artifacts block dependent execution even if the projection reports completion or approval. Records with task titles, task times and `active` steps need this plugin version or newer. Repo-local legacy dashboards and older plugin copies reject them as invalid, so migrate a repository to the shared plugin before re-rendering its workflow. Reopen Flow panes that were open before the update.
+
+## Local mode: private files and loaders
 
 Add root-anchored exclusions to `GIT_COMMON_DIR/info/exclude` for the private files in each client checkout: `/.agents/feature-flow/`, `/CLAUDE.local.md`, and `/.codex/config.toml`. Add `/.planning/drafts/` only if that path is not intentionally tracked already. Do not change tracked ignore policy or hide already tracked files. If any proposed private instruction/config file is tracked, preserve its existing ownership and ask the user which supported local override to use; do not overwrite or silently untrack it.
 
@@ -31,6 +65,10 @@ Merge `claude-loader.template.md` into each relevant checkout's `CLAUDE.local.md
 Merge the root-level `developer_instructions` from `codex-loader.template.toml` into each relevant checkout's `.codex/config.toml`, preserving existing developer instructions and all tables, comments, hooks, MCP servers, permissions and trust. Render `{{WORKFLOW_FILE}}` to the same absolute path used by Claude. Append a single loader paragraph if the root string already contains other instructions. Do not create duplicate TOML keys or append a root key under an existing table. Encode the loader as a valid TOML string, escaping any embedded quotes/backslashes; parse TOML after editing. Project Codex configuration loads only for trusted projects; report existing trust status and let the user handle any native trust prompt. Setup must not silently grant trust.
 
 Linked worktrees share private draft state through `PRIMARY_REPO`, but their local client files are separate. Install the loaders in the checkout(s) where sessions will run; before future sessions in newly created worktrees, repeat only the local-loader and ignore checks. Do not copy or fork the workflow body. Both clients must read the same primary-worktree path.
+
+## Global mode: instruction trigger
+
+Render `global-loader.template.md` with `{{WORKFLOW_FILE}}` set to the absolute `FLOW_DIR/WORKFLOW.md` path. Merge the result into each client's global instructions file: `~/.claude/CLAUDE.md` for Claude Code and `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` for Codex. If both paths are symlinks to one file, edit that target once; never replace or remove a symlink. Update an existing `feature-flow` managed block in place; otherwise append exactly one block. Preserve all other content. Global mode adds no repository files and no repository-local client configuration.
 
 ## Plugin and optional live sources
 
@@ -50,10 +88,10 @@ Verify the returned plugin pane shows the expected branch and flows. The offline
 
 ## Verification and handoff
 
-Run `bun "$FLOW_PLUGIN_ROOT/src/checkFlow.ts" <temporary-drafts-directory>` against a temporary flow directory containing the bundled example. Delete the temporary fixture afterward. Do not run the example as a real task. Parse Codex TOML with a TOML parser. Resolve the Claude import and Codex loader to the exact same workflow. Search rendered files for unresolved `{{...}}` markers and stale project names/paths. Verify each private file with `git check-ignore` and confirm `git ls-files` does not list it; a tracked file is not made private by an ignore rule.
+Run `bun "$FLOW_PLUGIN_ROOT/src/checkFlow.ts" <temporary-drafts-directory>` against a temporary flow directory containing the bundled example. Delete the temporary fixture afterward. Do not run the example as a real task. Search rendered files for unresolved `{{...}}` markers other than the Tracking record's `{{DATE}}`, and for stale project names/paths. In local mode, parse Codex TOML with a TOML parser, resolve the Claude import and Codex loader to the exact same workflow, verify each private file with `git check-ignore`, and confirm `git ls-files` does not list it; a tracked file is not made private by an ignore rule. In global mode, confirm each client's global instructions file contains exactly one `feature-flow` block naming the same existing workflow path, and that symlinked instruction files are still symlinks.
 
-Check the required skills in both client discovery contexts and each client's GSD command availability. Report missing dependencies, untrusted project configuration, unavailable live credentials and checks not run separately. Do not claim agent-loaded instructions solely because a file exists: new sessions must load the private instructions; existing sessions need a restart or the client's documented reload process. Do not launch billable agent sessions solely to test an installation without task authorization.
+Check the required skills in both client discovery contexts. Report whether each client exposes `gsd-quick`; either result is valid. Report missing dependencies, untrusted project configuration, unavailable live credentials and checks not run separately. Do not claim agent-loaded instructions solely because a file exists: new sessions must load the private instructions; existing sessions need a restart or the client's documented reload process. Do not launch billable agent sessions solely to test an installation without task authorization.
 
-Report exact installed paths, resolved policies, files changed, verification evidence and the next step. The next step is discussion or an explicitly chosen plan, never automatic execution. Roll back only the managed flow edits after comparing backups for unrelated changes; remove a plugin registration only if this setup created it and no other repo uses it.
+Report exact installed paths, resolved policies, files changed, verification evidence and the next step. The next step is discussion or an explicitly chosen plan, never automatic execution. Roll back only the managed flow edits after comparing backups for unrelated changes: in global mode, remove the `feature-flow` blocks and `~/.agents/feature-flow/`; remove a plugin registration only if this setup created it and no other repo uses it.
 
 Client integration contracts: [Claude local instructions and imports](https://code.claude.com/docs/en/memory) and [Codex configuration precedence](https://learn.chatgpt.com/docs/config-file/config-basic).
