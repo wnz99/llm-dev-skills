@@ -1,5 +1,54 @@
 # Validation record
 
+## Large-repository scan and audit update (2026-11-07)
+
+Added explicit quick/exhaustive depth, pre-run presentation and selection of
+model/execution options, optional CLI-specific Luna/Haiku semantic workers,
+static inventory without imports, dependency-aware batches, resumable exact-ID
+ledgers, explicit CI command chains and scanner-artifact verification. Focused
+test work keeps its existing scope. Collection version advances to 1.1.2 so
+the supported updater can accept the changed package.
+
+Two fresh native Codex workers compared baseline and revised runtime guidance
+on cases 36–38, without expected answers. Both met the three scenario contracts:
+unsafe-import static inventory and bounded scope; source/fixture-based batches
+and handoff; rejection of stale/truncated artifacts and equal-count mismatches.
+Cases shared context within each configuration. This establishes no measured
+effectiveness gain. The revised run preceded the final model/options wording.
+
+A separate fresh native worker read only final runtime guidance and answered
+the prompts for cases 41–43 without expected answers. Its decisions preserved
+host-supported model selection, semantic worker obligations and completeness,
+waited for unspecified choices, and reused explicit selections without repeat
+approval. Both comparison workers and the options worker classified the two
+metadata-only activation cases 39–40 as expected. Activation was simulated;
+no host loader, Luna/Haiku worker, model selector or live audit was exercised.
+The pre-publication review worker also saw expected answers during diff review;
+its scenario answers do not count as blind evaluation evidence.
+
+Author checks: 55 repository unittest tests passed; skill-creator quick validation
+passed; an isolated package copy passed YAML/Markdown parsing, local-link and
+bundled-input resolution, and 43 unique eval-ID checks before the follow-up
+case 44 was added. The declared routing
+dependency was discoverable; its existing explicit missing-dependency stop
+contract remains unchanged. No live missing-dependency routing probe was run.
+Whitespace checks passed. Full outputs and a static skill-creator viewer were
+generated in an external temporary workspace; they are not runtime dependencies.
+
+Limits: synthetic decisions, one run per configuration, shared context within
+batches, no broad historical eval rerun or measured cost/quality comparison.
+Resolved model snapshots and token/timing metrics were not exposed. Native
+agents were dispatched with no inherited conversation. The host exposes no
+agent-close control; completed turns do not establish resource cleanup.
+
+Pre-publication Claude Opus 5.5 evidence review, validated by a fresh native
+reviewer, identified a missing handoff requirement: persist selected execution
+mode and requested/resolved model in the ledger. Added those fields and resume
+reuse/missing-selection handling. Historical audit eval expectations now include
+the pre-run choices prerequisite, and case 44 exercises resumed static-only
+Luna selection. These follow-up changes require fresh verification and review;
+the earlier comparison does not validate them.
+
 ## Audit streamlining update (2026-10-20)
 
 Audit mode now explicitly traces complete-run orchestration cost, recommends
