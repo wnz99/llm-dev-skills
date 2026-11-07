@@ -9,7 +9,7 @@
   "wnz-doc-write-expert": ["wnz-independent-review"],
   "wnz-implementation-planner": ["wnz-independent-review", "wnz-dead-code", "wnz-grill-me"],
   "wnz-llm-assist": ["wnz-independent-review", "wnz-code-reviewer", "wnz-plan-reviewer"],
-  "wnz-phase-executor": ["wnz-independent-review", "wnz-implementation-planner", "wnz-plan-reviewer", "wnz-task-implementer", "wnz-code-reviewer", "wnz-dead-code", "wnz-grill-me"],
+  "wnz-phase-executor": ["wnz-independent-review", "wnz-implementation-planner", "wnz-plan-reviewer", "wnz-task-implementer", "wnz-code-reviewer", "wnz-dead-code", "wnz-grill-me", "wnz-repo-cleanup"],
   "wnz-plan-reviewer": ["wnz-independent-review", "wnz-dead-code"],
   "wnz-plan-simplicity-review": ["wnz-independent-review"],
   "wnz-pr-release-notes": ["wnz-independent-review"],
