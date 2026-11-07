@@ -48,7 +48,7 @@ effects. Exercise destructive behavior only in an isolated test environment.
 
 ## Choose the scope
 
-For a repository-wide test audit or a request to assess every test, read
+For a repository-wide quick scan, exhaustive audit, or request to assess every test, read
 [references/repository-audit.md](references/repository-audit.md) before starting.
 Use its inventory and reporting workflow, applying the test-value principles
 below to each test. Audit both test value and the cost of the complete execution
