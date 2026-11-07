@@ -121,6 +121,23 @@ class UpdateTests(unittest.TestCase):
             self.plan()
         self.assertFalse((self.home / '.agents/wnz-installation.json').exists())
 
+    def test_published_phase_executor_installs_cleanup_dependency(self):
+        published = SCRIPT.parents[3]
+        shutil.copytree(published / 'skills', self.source / 'skills', dirs_exist_ok=True)
+        shutil.copyfile(published / 'VERSION', self.source / 'VERSION')
+        self.commit()
+        root = self.home / '.agents/skills'
+        shutil.copytree(self.source / 'skills/wnz-phase-executor', root / 'wnz-phase-executor')
+
+        updater.install(self.home, self.plan())
+
+        self.assertIn('wnz-repo-cleanup', self.receipt()['packages'])
+        self.assertEqual(
+            (root / 'wnz-repo-cleanup/SKILL.md').read_bytes(),
+            (published / 'skills/wnz-repo-cleanup/SKILL.md').read_bytes())
+        self.assertTrue((self.home / '.claude/skills/wnz-repo-cleanup').is_symlink())
+        self.assertFalse((root / 'wnz-ascii-diagrams').exists())
+
     def test_install_detects_inspection_race(self):
         payload = self.plan()
         (self.home / '.agents/skills/wnz-one/SKILL.md').write_text('racing writer')
