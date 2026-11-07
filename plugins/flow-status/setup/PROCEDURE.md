@@ -9,7 +9,7 @@ Ask the user which mode to install unless the request already names one:
 - **Global**: one workflow for every Git repository on this machine. Setup renders the workflow under `~/.agents/feature-flow/` and adds a short trigger to each client's global instructions. The flow starts to apply when the user begins discussing a feature in any repository; repository-specific values are resolved when the flow runs.
 - **Local**: one repository. Setup renders the workflow into that repository's private files and loads it through repository-local client configuration. Repository-specific values are resolved during setup.
 
-A repository with a local install keeps it. The global trigger skips its read when the repository's local Claude import or Codex loader points to a repository-local workflow. Sections below apply to both modes unless they name one.
+A repository with a local install keeps it. The global trigger skips its read when the primary worktree has `.agents/feature-flow/WORKFLOW.md`, or the repository's local Claude import or Codex loader points to a repository-local workflow. Sections below apply to both modes unless they name one.
 
 A flow tracks local work and needs no Linear issue or external ticket. Choose a stable local flow ID such as `cache-cleanup`. Schema 1 stores that required ID in its historical `ticket` key; normally use the same ID for `.planning/drafts/<flow-id>/`. `linear_id` is optional: omit it or use `null` when unlinked. `prs: []` means no attached PRs; explicit PRs also work without Linear. Never derive a Linear association from a local ID, folder, title or branch. Existing linked records require no migration.
 
@@ -27,20 +27,20 @@ GSD is optional. Check whether each client exposes an installed `gsd-quick` work
 
 ## Render the workflow
 
-Back up each file you will modify with private permissions, outside any repository. Preserve unrelated content and concurrent edits. The workflow directory (`FLOW_DIR`) is `~/.agents/feature-flow/` in global mode and the primary worktree's `.agents/feature-flow/` in local mode. Create `FLOW_DIR/WORKFLOW.md` by rendering `WORKFLOW.template.md`: replace `{{REPOSITORY_SETTINGS}}` with the block for the chosen mode below, then replace every `{{FLOW_PLUGIN_ROOT}}` with the absolute plugin directory and, in global mode, `{{FLOW_DIR}}`, `{{BRANCH_FALLBACK}}` and `{{MERGE_FALLBACK}}` with their values. Angle-bracket names such as `<PRIMARY_REPO>` in the global block stay as written; the flow resolves them when it runs. Quote shell commands for the actual shell (for POSIX shells, Python `shlex.join` is suitable). Do not interpolate raw paths into shell commands; cover spaces, apostrophes, dollar signs and backticks. No other unresolved template markers may remain. Keep this as the single workflow body.
+Back up each file you will modify with private permissions, outside any repository. Preserve unrelated content and concurrent edits. The workflow directory (`FLOW_DIR`) is the absolute path of `$HOME/.agents/feature-flow/` in global mode and the primary worktree's `.agents/feature-flow/` in local mode; render it without `~`. Create `FLOW_DIR/WORKFLOW.md` by rendering `WORKFLOW.template.md`: replace `{{REPOSITORY_SETTINGS}}` with the block for the chosen mode below, then replace every `{{FLOW_PLUGIN_ROOT}}` with the absolute plugin directory and the block's other `{{...}}` markers with their resolved values. Angle-bracket names such as `<PRIMARY_REPO>` in the global block stay as written; the flow resolves them when it runs. Quote shell commands for the actual shell (for POSIX shells, Python `shlex.join` is suitable). Do not interpolate raw paths into shell commands; cover spaces, apostrophes, dollar signs and backticks. No other unresolved template markers may remain. Keep this as the single workflow body.
 
-Local mode settings block, with resolved values:
+Local mode settings block. Render `{{PRIMARY_REPO}}` as the absolute primary worktree path, `{{BASE_BRANCH}}` and `{{MERGE_METHOD}}` as the resolved policy choices, and `{{VALIDATE_COMMAND}}` as one shell-safe command from the argv `["bun", FLOW_PLUGIN_ROOT + "/src/checkFlow.ts", PRIMARY_REPO + "/.planning/drafts"]`:
 
 ```markdown
-- `PRIMARY_REPO`: `<absolute primary worktree path>`.
-- Integration branch fallback: `<resolved branch>`.
-- Merge method: `<resolved method>`.
-- Templates directory: `<PRIMARY_REPO>/.agents/feature-flow/`.
-- Validator: `<shell-safe command from the argv ["bun", FLOW_PLUGIN_ROOT + "/src/checkFlow.ts", PRIMARY_REPO + "/.planning/drafts"]>`.
+- `PRIMARY_REPO`: `{{PRIMARY_REPO}}`.
+- Integration branch fallback: `{{BASE_BRANCH}}`.
+- Merge method: `{{MERGE_METHOD}}`.
+- Templates directory: `{{PRIMARY_REPO}}/.agents/feature-flow/`.
+- Validator: `{{VALIDATE_COMMAND}}`.
 - Client loaders: repository-local; see **Linked worktrees and clients**.
 ```
 
-Global mode settings block. Before rendering it, ask the user once for the fallbacks used when a repository's policy names no integration branch or merge method. Render each as a short phrase, for example `the repository's default branch`, `a merge commit`, or `ask the user and record the answer in DISCOVERY.md`:
+Global mode settings block. Render `{{FLOW_DIR}}` as the absolute workflow directory. Before rendering, ask the user once for the fallbacks used when a repository's policy names no integration branch or merge method, and render `{{BRANCH_FALLBACK}}` and `{{MERGE_FALLBACK}}` as short phrases, for example `the repository's default branch`, `a merge commit`, or `ask the user and record the answer in DISCOVERY.md`:
 
 ```markdown
 - `PRIMARY_REPO`: the current repository's permanent main checkout, resolved as **Local flow identity** describes.
@@ -68,7 +68,7 @@ Linked worktrees share private draft state through `PRIMARY_REPO`, but their loc
 
 ## Global mode: instruction trigger
 
-Render `global-loader.template.md` with `{{WORKFLOW_FILE}}` set to the absolute `FLOW_DIR/WORKFLOW.md` path. Merge the result into each client's global instructions file: `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md` for Claude Code and `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` for Codex. If `${CODEX_HOME:-$HOME/.codex}/AGENTS.override.md` exists, Codex reads it instead of `AGENTS.md`; merge the block there and report it. If both paths are symlinks to one file, edit that target once; never replace or remove a symlink. Update an existing `herdr-flow-status` managed block in place; otherwise append exactly one block. Preserve all other content. Global mode adds no repository files and no repository-local client configuration.
+Render `global-loader.template.md` with `{{WORKFLOW_FILE}}` set to the absolute `FLOW_DIR/WORKFLOW.md` path. Merge the result into each client's global instructions file: `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md` for Claude Code and `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` for Codex. If `${CODEX_HOME:-$HOME/.codex}/AGENTS.override.md` exists, Codex reads it instead of `AGENTS.md`; merge the block there and report it. If both paths resolve (after following symlinks) to the same file, edit it once; never replace or remove a symlink. If a file does not exist, create it with private permissions containing only the block. Update an existing `herdr-flow-status` managed block in place; otherwise append exactly one block. Preserve all other content. Global mode adds no repository files and no repository-local client configuration.
 
 ## Plugin and optional live sources
 
