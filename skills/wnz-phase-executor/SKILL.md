@@ -44,7 +44,9 @@ Before dispatching implementation:
 1. Read the relevant project instructions, including the nearest `AGENTS.md`.
 2. Read the issue, todo, plan, PR description, or runbook that defines the
    target behavior.
-3. Confirm that subagent delegation is authorized by the user and host policy.
+3. Use subagents by default when higher-priority instructions and host policy
+   permit delegation; this skill requires no separate user permission to spawn
+   workers. Honor explicit user limits and any host-required approval.
    All substantive work requires fresh non-inheriting workers. If delegation
    or required identity evidence is unavailable, block affected planning and
    execution; recover metadata and report the limitation without an inline fallback.
@@ -158,7 +160,7 @@ without a demonstrated defect path remain residuals.
 
 ## Independent Adversarial Plan Review Gate
 
-After self-review and before requesting parallel permission or dispatching any
+After self-review and before dispatching any
 implementer, follow the complete
 [`references/independent-plan-review.md`](references/independent-plan-review.md)
 gate. Read that reference in full every time this skill produces or revises a
@@ -172,21 +174,24 @@ Each review cycle is capped at two independent design reviews; user annotations,
 requested changes, and clarification answers automatically open a fresh cycle,
 even after an earlier cycle exhausted its cap. Prior approval does not cover an
 amended plan. Only an `APPROVED` verdict for the latest semantic revision
-permits implementation or parallel-permission requests. At the cycle cap, collect
+clears the independent design gate. It does not supply user approval to implement.
+At the cycle cap, collect
 unresolved design or product blockers and ask the operator once instead of
 reviewing again.
 
-If the plan contains at least one parallel-safe implementation wave, ask the
-user for explicit permission to execute implementation tasks in parallel before
-starting any implementation. Summarize the proposed waves, isolation strategy,
-and integration order in that request. A yes authorizes only the planned
-parallel waves; a no selects sequential execution for the entire plan. Record
-the choice in the plan and progress ledger. Do not ask again for each wave.
+Before implementation, confirm user approval of the latest semantic plan revision
+and its decision points, separately from the reviewer's `APPROVED` verdict.
+Reuse existing user approval that covers that revision; otherwise present the
+reviewed plan and wait for the user's approval. Permission to use subagents or
+parallel workers never supplies plan or implementation approval.
 
-If no implementation wave is parallel-safe, say so and offer fresh-subagent
-sequential execution orchestrated by the controller. Do not assume permission to spawn
-subagents, run parallel implementation, make commits, or create branches; the
-user’s request and host policy control those actions.
+Within authorized execution, use parallel-safe waves by default when host policy
+and user limits permit; otherwise use fresh-subagent sequential execution.
+Summarize the selected waves, isolation strategy and integration order, and
+record the execution mode and authority in the existing plan and ledger. Ask
+about delegation or parallelism only when higher-priority instructions or host
+policy require approval. Commits and branch creation retain their applicable
+authorization requirements.
 
 ## Subagent Execution Control
 
@@ -225,10 +230,10 @@ Before Task 1:
    and obtain planner-authored bounded task briefs as it defines. It also covers
    implementer dispatch, parallel waves, the review package, and reviewer
    instructions; reread it before a later dispatch if it has left your context.
-6. Reconfirm the recorded execution choice. When parallel-safe waves exist and
-   permission has not yet been recorded, stop and ask before dispatching any
-   implementer. If permission was denied, flatten every wave into the plan's
-   deterministic sequential order.
+6. Reconfirm recorded user plan approval, execution authority and selected mode.
+   Missing user plan approval blocks implementation even when independent review
+   is `APPROVED`. If parallelism is disallowed, flatten every wave into the
+   plan's deterministic sequential order; do not request routine worker permission.
 7. For approved parallel execution, require setup-worker evidence for the
    isolation boundaries before dispatching any wave implementer.
 
@@ -465,15 +470,17 @@ Do not mark the task complete while blocked.
 ## Non-Negotiable Controls
 
 - Do not start implementation without an implementation-ready plan and
-  acceptance traceability that has passed the independent plan review gate.
+  acceptance traceability that has passed the independent plan review gate,
+  plus user approval covering that semantic plan revision.
 - Do not let the plan author, a planned implementer, or a prior plan reviewer
   serve as the fresh independent reviewer of the latest plan revision.
 - Do not implement while an architecture, requirements, sequencing, or material
   product clarification from the plan gate remains unresolved. Resolve
   implementation-detail notes during the relevant task's TDD and code-review
   loop; they do not reset the two-round cap within a review cycle.
-- Do not start parallel implementation without a dependency/wave plan and the
-  user's explicit recorded permission. A denial means sequential execution.
+- Do not start parallel implementation without a dependency/wave plan,
+  execution authority and policy compliance. A user sequential-only limit
+  means sequential execution.
 - Do not dispatch a task without rereading its requirements and prerequisites.
 - Do not give a fresh implementer the entire session transcript or accumulated
   task history; provide a bounded brief and explicit interfaces.
