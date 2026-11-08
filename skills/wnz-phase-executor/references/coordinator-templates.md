@@ -132,7 +132,7 @@ gate:
     source_state_ref: {{reviewed state or none}}
     verdict: {{native plan verdict or none}}
     report_path: {{review report or none}}
-execution_authorization: {{delegation, sequential/parallel choice, limits and evidence}}
+execution_authorization: {{user approval evidence for current plan revision, implementation scope, policy/user limits, selected sequential/parallel mode}}
 task_order: {{plan-defined deterministic order or unavailable: reason}}
 integration_order: {{plan-defined order or not applicable: sequential}}
 tasks:

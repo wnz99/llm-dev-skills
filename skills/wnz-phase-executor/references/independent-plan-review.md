@@ -5,6 +5,10 @@ Apply [coordinator-boundary.md](coordinator-boundary.md) for every worker:
 planner authoring and self-review remain separate from independent assessment.
 Use the canonical [dispatch and receipt templates](coordinator-templates.md)
 before dispatch, and its ledger/current-view skeleton for gate records.
+`APPROVED` is an independent design verdict, not user approval to implement.
+Apply the separate user plan-approval and execution-authority checks in
+[SKILL.md](../SKILL.md#independent-adversarial-plan-review-gate) before implementation;
+worker permission cannot satisfy them.
 
 ## Reviewer independence
 

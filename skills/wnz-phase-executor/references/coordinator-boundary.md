@@ -150,6 +150,11 @@ Every proposed dispatch must pass all authority, required-skill, explicit-model,
 fresh-identity/isolation, independence, capacity and prerequisite checks. A higher
 priority action cannot bypass those checks. Block its dependent work and report
 the exact blocker rather than choosing a lower-priority dependent dispatch.
+For implementation, check recorded user approval of the current semantic plan
+separately from the independent review tuple. If absent, present the reviewed
+plan and wait for user approval under the existing execution controls; do not
+dispatch a recovery worker to manufacture authority. Permitted delegation and
+parallel scheduling do not supply that approval.
 
 | Priority | Condition in updated current view | Next existing action and owner |
 | --- | --- | --- |
