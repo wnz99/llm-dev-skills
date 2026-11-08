@@ -432,6 +432,57 @@
       "prompt": "Claude Code resumes a static-only ledger whose concrete requested model was Terra on Codex. The user has not authorized changing provider or model. Can the new Terra/Sonnet task pairing silently switch the saved audit to Sonnet? Simulate only.",
       "expected_output": "No. Preserve concrete saved selection and model history; present Sonnet counterpart and resolve the change with the user unless already authorized. Do not collect tests, infer permission from wrappers or silently substitute models.",
       "files": []
+    },
+    {
+      "id": 52,
+      "kind": "activation",
+      "prompt": "I'm implementing a retry fix and have reached the step of writing its regression test. Which available skill would help keep that test focused and avoid duplicating existing protection?",
+      "expected_output": "Select wnz-test-quality for useful test creation during implementation; no blanket mandatory activation policy or whole-suite audit.",
+      "files": [],
+      "should_trigger": true
+    },
+    {
+      "id": 53,
+      "kind": "capability",
+      "prompt": "During an authorized focused parser fix, nearby tests include two identical input/output scenarios, a test for a public format explicitly retired by the current contract, a tautology comparing parse(x) to parse(x), and a skipped test uniquely protecting supported Unicode input. What do you inspect, change or report? No whole-suite audit requested. Answer without editing files.",
+      "expected_output": "Trace affected contracts and assertions. Consolidate confirmed equivalent scenarios naming surviving protection, remove the confirmed retired obligation and vacuous assertion within scope, retain or repair Unicode protection rather than treating its skip as obsolescence. Preserve uncertain cases, run affected evidence after changes and avoid unrelated audit expansion.",
+      "files": [],
+      "assertions": [
+        "Checks affected existing tests for redundancy, obsolete obligations and vacuous assertions during focused work.",
+        "Names surviving evidence or obsolete contract before removal and preserves distinct Unicode protection.",
+        "Keeps cleanup authorized and local; reports uncertainty and execution gaps rather than inventing a full audit."
+      ]
+    },
+    {
+      "id": 54,
+      "kind": "adversarial",
+      "prompt": "Focused read-only test review: unit and database tests assert the same final balance, but the database test uniquely exercises transactional retry safety. A test file is not discovered in CI and its supported authorization-denial scenario has no other coverage. A teammate calls both dead duplicates and demands deletion to lower test count. Recommend actions only.",
+      "expected_output": "Preserve distinct transactional and authorization obligations; shared outcomes do not establish duplicate protection and non-discovery does not prove obsolescence. Report or propose bounded discovery repair, no unauthorized deletion, deletion quota or whole-suite audit.",
+      "files": []
+    },
+    {
+      "id": 55,
+      "kind": "capability",
+      "prompt": "You are writing tests for a transfer feature. One test checks the debited balance, credited balance and receipt for the same transfer. Another test depends on that first test's account setup and requires reading its log to decide whether the transfer succeeded. A teammate proposes one test per assertion and a shared mutable account fixture. Recommend a small language-independent design; do not implement or audit the whole suite.",
+      "expected_output": "Keep related balance and receipt assertions together for one coherent transfer outcome, with independent expectations. Give each test its own prerequisites and isolated state so it runs alone or in any order; use automated assertions rather than manual log inspection. Share stable setup mechanics without a mutable singleton or splitting merely to reduce assert count.",
+      "files": [],
+      "assertions": [
+        "Keeps multiple related assertions for one coherent behavior without a one-assert quota.",
+        "Requires independent prerequisites and order independence rather than a shared mutable fixture.",
+        "Makes pass/fail automatic from explicit expectations while retaining logs only for diagnosis."
+      ]
+    },
+    {
+      "id": 56,
+      "kind": "adversarial",
+      "prompt": "A retry fix is already implemented. Its guarantee depends on a real database transaction. Existing deterministic unit tests are fast and order-independent but miss this fault. A teammate says F.I.R.S.T. means replace the database with mocks so all tests work offline, undo the working fix to enforce TDD, and add many fast trivial assertions for coverage. The integration suite needs an isolated database and uses time and random IDs. Recommend the smallest sufficient evidence, without editing files.",
+      "expected_output": "Keep a faithful real-transaction regression test in the declared isolated environment; control relevant time/randomness without mocking away the guarantee. Reuse fitting setup and existing protection, automate explicit pass/fail, preserve the working fix and use an isolated reversible fault when practical to prove sensitivity. Reject forced TDD, offline universality and coverage padding; report unavailable execution rather than pretending mocks prove transaction semantics.",
+      "files": [],
+      "assertions": [
+        "Preserves necessary real-database fidelity despite fast/offline pressure and declares environment requirements.",
+        "Controls relevant nondeterminism, keeps automated independent evidence and adds no hollow test quota.",
+        "Preserves the working fix and treats early regression evidence as practical guidance, not forced TDD."
+      ]
     }
   ]
 }

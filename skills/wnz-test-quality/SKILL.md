@@ -1,6 +1,6 @@
 ---
 name: wnz-test-quality
-description: Select, write, organize, and review tests that catch meaningful failures without redundant coverage, repeated setup, or implementation coupling. Use for risk-based test design, whole-repository test audits, removing low-value or AI-generated test bloat, making full test runs faster, coverage decisions for features or fixes, and simplifying tests, fixtures, mocks, or suite orchestration. Do not use merely to run an existing suite, troubleshoot a test runner, or edit prose without a test-design decision.
+description: Create useful, focused tests with DRY/KISS setup and meaningful failure detection. Use when writing or changing tests, including during feature or bug-fix implementation, reviewing tests, choosing coverage, auditing repository tests, removing obsolete or redundant tests, or simplifying fixtures and suite execution. Helps avoid coverage padding, duplication, and implementation coupling. Excludes merely running existing tests, troubleshooting runner startup, or editing prose without test-design decisions.
 ---
 
 # Test Quality
@@ -89,6 +89,13 @@ Check whether an existing assertion already detects the failure. Prefer reusing
 it or extending the nearest suitable test over adding a parallel test file,
 harness, dependency, or abstraction.
 
+Check affected existing tests for obsolete obligations, redundant scenarios,
+and assertions that cannot detect the claimed failure. Name the obsolete
+contract or equally faithful surviving protection before proposing removal.
+Skipped or undiscovered tests may expose missing protection rather than dead
+tests. Keep uncertain cases and report the gap. Apply cleanup only within edit
+authorization; keep this check local rather than auditing unrelated suites.
+
 ### 2. Justify each proposed test
 
 Before writing a test body, identify:
@@ -145,12 +152,31 @@ Use coverage to locate possible gaps, not as a universal target. Honor mandated
 thresholds without padding the suite with hollow assertions. There is no fixed
 quota of tests, test types, or happy/negative cases.
 
-### 4. Write assertions that survive valid changes
+### 4. Write robust, self-validating tests
+
+Apply F.I.R.S.T. across languages and testing frameworks:
+
+- **Fast:** choose the cheapest test that faithfully detects the failure;
+  retain necessary integration and environmental protection.
+- **Independent:** each test establishes its own prerequisites and runs alone
+  or in any order without relying on another test's effects.
+- **Repeatable:** control relevant state, time, randomness and dependencies.
+  Declare required environments, such as an isolated database; tests need not
+  all run offline.
+- **Self-validating:** explicit expectations determine pass or fail
+  automatically. Logs and generated artifacts support diagnosis rather than
+  replace assertions.
+- **Timely:** consider testability and useful evidence while designing the
+  change. Add regression evidence early without imposing a universal test-first
+  workflow; use step 3 for reproducing faults and preserving an existing fix.
+
+These properties do not establish test value: each test still needs a concrete
+failure and meaningful added evidence.
 
 Assert public outcomes, state changes, or contractually required interactions.
 Derive expected values independently of the implementation and its helpers.
-Prefer real, fast, deterministic collaborators; replace slow or destructive
-external effects at their boundary. Verify mock arguments, counts, or ordering
+Prefer real collaborators; replace slow or destructive external effects at
+their boundary. Verify mock arguments, counts, or ordering
 only when those interactions are themselves required behavior.
 
 Avoid assertions on private call sequences, helper existence, incidental CSS
@@ -158,9 +184,8 @@ classes, source substrings, or broad snapshots. Exact text or structure is valid
 when it is a supported contract, such as a wire format or accessibility attribute.
 Test your integration with a framework rather than its documented internals.
 
-Keep fixtures minimal and realistic, isolate shared state, and control clocks
-and randomness when needed. Prefer an integration test over elaborate mocks
-when real composition is the source of confidence.
+Keep fixtures minimal and realistic. Prefer an integration test over elaborate
+mocks when real composition is the source of confidence.
 
 Read [references/examples.md](references/examples.md) when deciding whether a
 negative, duplicate, implementation-coupled, or broader test adds value, or when
@@ -178,6 +203,8 @@ fakes; extract a small helper when repeated mock wiring or resource setup has th
 same purpose and changes together. Keep helpers near their consumers and share
 more broadly only when multiple suites genuinely need the same contract.
 
+Keep each test focused on one coherent behavior. Use multiple assertions when
+they establish that outcome; separate unrelated scenarios for clear failures.
 Keep each scenario's important inputs, actions, and expected outcomes visible.
 Do not have a setup helper calculate expected values from production logic or
 hide assertions that differ between scenarios. Prefer explicit overrides for
@@ -211,10 +238,9 @@ Check that assertions would fail for the named realistic fault. If unclear, use
 a small reversible mutation in an isolated copy and confirm the expected failure;
 restore the original and rerun. A mental check alone is not execution evidence.
 
-During a test audit, remove or consolidate a test only after confirming its
-obligation is obsolete or retained by equally faithful evidence. Fewer tests is
-not an independent success criterion. Fix flaky evidence or replace it with a
-reliable check of the same obligation; do not hide the gap with retries or deletion.
+Fewer tests is not an independent success criterion. Fix flaky evidence or
+replace it with a reliable check of the same obligation; do not hide the gap
+with retries or deletion.
 
 Stop adding tests when material changed behavior and affected contracts have
 sufficient evidence. Report, in proportion to the task:

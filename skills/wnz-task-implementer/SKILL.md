@@ -136,12 +136,17 @@ report only decisions that materially affect the design.
    pushes require existing authorization. Do not switch other checkouts, expand
    scope, or declare the project complete.
 
-## Optional quality skills
+## Quality skills
 
-Discover applicable `wnz-test-quality` for test design, `wnz-doc-write-expert`
-for durable prose, and `wnz-clean-code-py`, `wnz-clean-code-js` or
-`wnz-clean-code-rust` for explicit language refactors through host discovery.
-If absent, choose tests by concrete failure and independent expected behavior;
+`wnz-test-quality` helps create focused, useful tests with DRY/KISS setup and
+checks for redundant or obsolete tests. Consider it when writing or changing
+tests during implementation, even when the user did not explicitly ask for tests.
+
+Other relevant skills include
+`wnz-doc-write-expert` for durable prose, and `wnz-clean-code-py`,
+`wnz-clean-code-js` or `wnz-clean-code-rust` for explicit language refactors.
+Resolve these through host skill discovery. If absent, choose tests by concrete
+failure and independent expected behavior;
 write scoped docs from verified source and local corpus rules; preserve local
 language idioms and contracts for the named refactor. These bounded fallbacks
 do not waive required checks or the required dead-code dependency.
