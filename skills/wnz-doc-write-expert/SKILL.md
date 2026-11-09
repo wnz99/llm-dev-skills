@@ -23,7 +23,7 @@ legacy `doc-write-expert` copy after upgrading to avoid ambiguous routing.
 
 When changing review routing, read and run [evals/evals.json](evals/evals.json)
 in fresh contexts; classify activation from metadata alone. When changing
-language or register guidance, run cases 8–23 in fresh contexts on each
+language or register guidance, run cases 8–24 in fresh contexts on each
 supported host and record the results in
 [evals/language-validation.md](evals/language-validation.md).
 
@@ -60,8 +60,9 @@ author workflow.
 
 For an explicit review, audit or check of an existing document, route the
 review workflow independently before substantive assessment. For a pure
-write/update/fix request, use the local correctness and corpus checks of author
-step 6; these checks do not constitute independent approval.
+write/update/fix request, use the local correctness and corpus checks of
+[author step 6](references/author-workflow.md#6-validate-factual-and-corpus-correctness);
+these checks do not constitute independent approval.
 
 ### Hybrid mode
 
@@ -110,20 +111,24 @@ style. Fluent prose never adds facts or weakens obligations.
 
 Read only the files the task needs, before the work they govern:
 
-- **Any document prose**, including updates during code work and fixes after a
-  review: read
+- **Any document prose**, including updates during code work, fixes after a
+  review and fluency assessment in a review: read
   [references/language-and-register.md](references/language-and-register.md)
-  before writing or editing. It holds the sentence checks and the fluency,
-  fidelity and inference passes.
+  before writing, editing or assessing prose. It holds the sentence checks and
+  the fluency, fidelity and inference passes.
 - **New document or substantial new section:** read
   [references/author-workflow.md](references/author-workflow.md) and follow its
   steps in order.
+- **Scoped update or fix of an existing document:** read and apply step 6 of
+  [references/author-workflow.md](references/author-workflow.md#6-validate-factual-and-corpus-correctness).
 - **Review, audit or check:** after independent routing, read
   [references/review-workflow.md](references/review-workflow.md).
+- **Applying review findings**, including the author leg of hybrid mode: read
+  and apply step 5 of
+  [references/review-workflow.md](references/review-workflow.md#5-apply-approved-edits-surgically).
 
-For a scoped update without the author workflow, still verify changed claims
-against their sources and parse any changed YAML frontmatter with a real YAML
-parser.
+Even without opening a reference, verify changed claims against their sources
+and parse any changed YAML frontmatter with a real YAML parser.
 
 ## Final handoff
 

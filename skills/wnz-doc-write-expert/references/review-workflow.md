@@ -13,7 +13,7 @@ Read the complete document and inventory checkable claims:
 - Procedures, ordering, prerequisites, warnings, diagrams, and structural tables
 - Policies, ownership, roles, dates, decisions, commitments, and stated outcomes
 
-Also record language, locale, register, tone, formatting, frontmatter, containing indexes, inbound links, reserved filename status, and corpus rules. Apply the language and register guidance when assessing fluency; preserve appropriate existing voice during scoped corrections.
+Also record language, locale, register, tone, formatting, frontmatter, containing indexes, inbound links, reserved filename status, and corpus rules. Apply the [language and register guidance](language-and-register.md) when assessing fluency; preserve appropriate existing voice during scoped corrections.
 
 ## 2. Read local guidance and map claims to evidence
 

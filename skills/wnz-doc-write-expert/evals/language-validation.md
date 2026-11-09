@@ -164,10 +164,42 @@ and check every load link.
 ### Behavior checks
 
 Fresh sessions ran the split package (v5) once per host on T1, T2, T3, case 17
-and cases 21–23, with the published 1.1.7 package (v4) on T1 and T2 for
-comparison. Both hosts opened `references/language-and-register.md` and
-`references/author-workflow.md` before writing; Claude reads were confirmed
-from its tool-call stream. Cases 22 and 23 behaved as with v4 on both hosts.
-In case 21 one of three Codex runs added a verb to the verbless cheat sheet;
-the other two kept its style, as did Claude. In case 17 Claude still added
-unsupported statements, as with v4.
+and cases 21–23; Codex ran case 21 three times. The published 1.1.7 package
+(v4) ran on T1 and T2 for comparison; its T3 and case 17 outputs came from the
+earlier 1.1.7 runs. Both hosts opened `references/language-and-register.md`
+and `references/author-workflow.md` before writing; Claude reads were
+confirmed from its tool-call stream. Cases 22 and 23 behaved as with v4 on
+both hosts. In case 21 one of three Codex runs added a verb to the verbless
+cheat sheet; the other two and the Claude run kept its style. In case 17
+Claude still added unsupported statements, as with v4.
+
+After review, the load conditions also cover scoped updates (author step 6),
+applying review findings (review step 5) and fluency assessment in a read-only
+review. Case 24, a read-only Italian fluency review, loaded the language
+guidance, the review workflow and the Italian section of `language-quality.md`
+on both hosts and reported findings without edits; Codex also opened files the
+task did not need.
+
+### Blind comparison
+
+The same two judges scored v4 against v5 outputs for T1, T2-it, T2-es, T3 and
+case 17 without writer or version identity. Sums of fluency plus fidelity (100
+maximum):
+
+| Writer | Judge | v4 | v5 |
+| --- | --- | --- | --- |
+| Claude | Claude | 73 | 78 |
+| Claude | Codex | 83 | 89 |
+| Codex | Claude | 74 | 73 |
+| Codex | Codex | 88 | 90 |
+
+Differences are within the 1–4 point judging noise seen earlier except for
+Claude case 17, where v5 added fewer unsupported statements in one run. The
+split shows no regression.
+
+### Package checks
+
+`python3 -m unittest discover -s tests` passed (56 tests). `evals/evals.json`
+parses with unique IDs 1–24; frontmatter, all relative links and anchors in the
+package (except example links inside the bundled OKF snapshot), and
+`git diff --check` passed.

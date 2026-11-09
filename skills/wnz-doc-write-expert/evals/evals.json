@@ -161,6 +161,13 @@
       "prompt": "Improve the readability of the Backup section only, in clear technical Italian: \"## Avvio\\n\\nContainer report: avvio con compose, porta 8080 solo locale.\\n\\n## Backup\\n\\nBackup: dump giornaliero ore 02:00, copia S3, retention 30 gg; restore: script restore.sh, solo con approvazione ops.\"",
       "expected_output": "Rewrite only the Backup section in complete connected Italian sentences with every fact and the approval obligation preserved; leave the Avvio section unchanged.",
       "files": []
+    },
+    {
+      "id": 24,
+      "kind": "capability",
+      "prompt": "Review this Italian runbook paragraph for fluency and readability only; do not edit it: \"Accesso: tunnel SSH su bastion, chiave personale, niente password. Backup notturno, retention 7 giorni.\" Routing to an independent reviewer is already satisfied. State which guidance you loaded.",
+      "expected_output": "Load the language and register guidance and the Italian section of the language-quality reference before assessing; report the verbless, article-free sentences as findings with proposed fluent rewrites that keep every fact; make no edits.",
+      "files": []
     }
   ]
 }
