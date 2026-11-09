@@ -149,3 +149,83 @@ in absolute scores but agreement on direction; judges saw only the task source;
 no human native-speaker review; single-shot runs do not reproduce a long
 session in a terse mode. New eval cases 14–23 cover these behaviors for future
 regression checks.
+
+## Progressive disclosure split (2026-11-09)
+
+### Change
+
+`SKILL.md` shrank from 3,865 to 1,544 words (`wc -w`). The language and register rules,
+the author workflow and the review workflow moved verbatim to `references/`,
+with explicit load conditions in `SKILL.md`. The model policy and the ordering
+of mixed review-and-fix requests stay in `SKILL.md` because they apply to
+every activation; every activation still verifies changed claims and parses
+changed YAML frontmatter. The contract tests read the moved text from
+`references/author-workflow.md` and check the load links and step anchors.
+
+### Behavior checks
+
+The first split commit (v5, `4bffc99`) also moved the model policy. Fresh
+sessions ran it once per host on T1, T2, T3, case 17
+and cases 21–23; Codex ran case 21 three times. The published 1.1.7 package
+(v4) ran on T1 and T2 for comparison; its T3 and case 17 outputs came from the
+earlier 1.1.7 runs. Both hosts opened `references/language-and-register.md`
+and `references/author-workflow.md` before writing; Claude reads were
+confirmed from its tool-call stream. Cases 22 and 23 behaved as with v4 on
+both hosts. In case 21 one of three Codex runs added a verb to the verbless
+cheat sheet; the other two and the Claude run kept its style. In case 17
+Claude still added unsupported statements, as with v4.
+
+After review, the published split restores the model policy to `SKILL.md`,
+keeps the mixed review-and-fix ordering there, and adds load conditions for
+scoped updates and readability rewrites (author step 6), blank-page
+replacements and the author leg of hybrid mode (author workflow), applying
+review findings (review steps 5 and 6) and fluency assessment in a read-only
+review.
+
+On commit `3226225`, fresh sessions on both hosts ran T1 (case 14), T3 (case
+16) and cases 21–23. Both hosts kept the verbless cheat sheet verbless (21),
+changed only the port (22), rewrote only the Backup section (23), and wrote
+connected Italian prose for T1 and T3. On commit `007ce2d`, case 5 kept the
+order findings first, then scoped corrections without a permission pause, on
+both hosts. The blind comparison below ran on v5, before these load-condition
+changes. The description is unchanged from 1.1.7, so the activation results
+for cases 18–20 still apply.
+
+A later review added a load condition for delegated work and case 25. On
+commit `64e3442`, case 5 kept the review-then-fix ordering on both hosts and
+case 25 produced a brief that tells the child to activate the skill and read
+`references/author-workflow.md` and `references/language-and-register.md` on
+both hosts.
+
+Earlier versions of case 24 asserted reviewer qualification in the prompt,
+which the routing contract treats as a hint, not proof (case 2); their results
+are not counted. The published case 24 runs in root context and expects
+routing to a fresh reviewer. On the `64e3442` package, both hosts declined to
+assess inline and wrote a brief that tells the reviewer to activate the skill
+and read the review workflow, the language guidance and the Italian section of
+`language-quality.md`; Claude named the three files, Codex named the review
+and language references and the Italian section.
+
+### Blind comparison
+
+The same two judges scored v4 against v5 outputs for T1, T2-it, T2-es, T3 and
+case 17 without writer or version identity. Sums of fluency plus fidelity (100
+maximum):
+
+| Writer | Judge | v4 | v5 |
+| --- | --- | --- | --- |
+| Claude | Claude | 73 | 78 |
+| Claude | Codex | 83 | 89 |
+| Codex | Claude | 74 | 73 |
+| Codex | Codex | 88 | 90 |
+
+Differences are within the 1–4 point judging noise seen earlier except for
+Claude case 17, where v5 added fewer unsupported statements in one run. The
+split shows no regression.
+
+### Package checks
+
+`python3 -m unittest discover -s tests` passed (56 tests). `evals/evals.json`
+parses with unique IDs 1–25; frontmatter, all relative links and anchors in the
+package (except example links inside the bundled OKF snapshot), and
+`git diff --check` passed.

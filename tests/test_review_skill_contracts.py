@@ -257,18 +257,56 @@ class ReviewSkillContractsTest(unittest.TestCase):
 
     def test_doc_writer_requires_progressive_reader_context(self) -> None:
         skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
+        author = (DOC_WRITE_EXPERT / "references" / "author-workflow.md").read_text(
+            encoding="utf-8"
+        )
 
         self.assertIn("Build understanding progressively", skill)
-        self.assertIn("familiar input → purpose of the transformation", skill)
-        self.assertIn("Delay internal IDs, hashes, file paths, schemas", skill)
-        self.assertIn("support the narrative", skill)
+        self.assertIn("references/author-workflow.md", skill)
+        self.assertIn("familiar input → purpose of the transformation", author)
+        self.assertIn("Delay internal IDs, hashes, file paths, schemas", author)
+        self.assertIn("support the narrative", author)
 
     def test_doc_writer_requires_parser_validated_yaml_frontmatter(self) -> None:
         skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
+        author = (DOC_WRITE_EXPERT / "references" / "author-workflow.md").read_text(
+            encoding="utf-8"
+        )
 
-        self.assertIn("Parse every YAML frontmatter block with a real YAML parser", skill)
-        self.assertIn('title: "Data flow: current architecture"', skill)
-        self.assertIn("validate every\nfrontmatter-bearing document", skill)
+        self.assertIn("changed YAML frontmatter with a real YAML parser", skill)
+        self.assertIn("Parse every YAML frontmatter block with a real YAML parser", author)
+        self.assertIn('title: "Data flow: current architecture"', author)
+        self.assertIn("validate every\nfrontmatter-bearing document", author)
+
+    def test_doc_writer_loads_workflows_on_demand(self) -> None:
+        skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
+
+        for reference in ("language-and-register.md", "author-workflow.md",
+                          "review-workflow.md"):
+            with self.subTest(reference=reference):
+                self.assertIn(f"references/{reference}", skill)
+                self.assertTrue((DOC_WRITE_EXPERT / "references" / reference).is_file())
+
+        for reference, heading in (
+            ("author-workflow.md", "## 6. Validate factual and corpus correctness"),
+            ("review-workflow.md", "## 5. Apply approved edits surgically"),
+        ):
+            with self.subTest(anchor=reference):
+                text = (DOC_WRITE_EXPERT / "references" / reference).read_text(
+                    encoding="utf-8"
+                )
+                slug = heading.lstrip("# ").lower().replace(".", "").replace(" ", "-")
+                self.assertIn(heading, text.splitlines())
+                self.assertIn(f"references/{reference}#{slug}", skill)
+
+        self.assertIn("Disclose an unenforceable default", skill)
+        self.assertIn("read and apply steps 5 and 6", skill)
+        self.assertIn("the independent reviewer returns findings\nfirst", skill)
+        review = (DOC_WRITE_EXPERT / "references" / "review-workflow.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("## 6. Cold-read and verify", review.splitlines())
+        self.assertIn("follow the ordering in `SKILL.md` under Review mode", review)
 
     def test_phase_executor_reviews_user_feedback_in_fresh_bounded_cycles(self) -> None:
         skill = (PHASE_EXECUTOR / "SKILL.md").read_text(encoding="utf-8")

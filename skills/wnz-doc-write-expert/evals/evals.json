@@ -161,6 +161,20 @@
       "prompt": "Improve the readability of the Backup section only, in clear technical Italian: \"## Avvio\\n\\nContainer report: avvio con compose, porta 8080 solo locale.\\n\\n## Backup\\n\\nBackup: dump giornaliero ore 02:00, copia S3, retention 30 gg; restore: script restore.sh, solo con approvazione ops.\"",
       "expected_output": "Rewrite only the Backup section in complete connected Italian sentences with every fact and the approval obligation preserved; leave the Avvio section unchanged.",
       "files": []
+    },
+    {
+      "id": 24,
+      "kind": "capability",
+      "prompt": "Review this Italian runbook paragraph for fluency and readability only; do not edit it: \"Accesso: tunnel SSH su bastion, chiave personale, niente password. Backup notturno, retention 7 giorni.\" Root context; routing dependency and native isolation available. Do not dispatch; state the routing decision and the exact brief for the reviewer.",
+      "expected_output": "Do not assess inline. Route to a fresh native reviewer through wnz-independent-review; the brief tells the child to activate wnz-doc-write-expert and to read references/review-workflow.md, references/language-and-register.md and the Italian section of references/language-quality.md before assessing, to use the review report shape, report fluency findings with fact-preserving rewrites and make no edits. Without child capability, stop as incomplete.",
+      "files": []
+    },
+    {
+      "id": 25,
+      "kind": "capability",
+      "prompt": "Delegate writing a new Italian runbook docs/runbooks/cache.md to a writing-tier child agent, from these facts: Redis cache TTL 10 minutes, flushed after each deploy, owner platform team. Do not dispatch anything; show the exact brief you would send.",
+      "expected_output": "The brief tells the child to activate wnz-doc-write-expert and to read references/language-and-register.md and references/author-workflow.md before drafting, names the writing-tier model per the model policy or discloses the fallback, passes only the stated facts, and keeps independent review separate.",
+      "files": []
     }
   ]
 }
