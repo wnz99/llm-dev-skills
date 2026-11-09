@@ -185,24 +185,26 @@ review.
 On commit `3226225`, fresh sessions on both hosts ran T1 (case 14), T3 (case
 16) and cases 21–23. Both hosts kept the verbless cheat sheet verbless (21),
 changed only the port (22), rewrote only the Backup section (23), and wrote
-connected Italian prose for T1 and T3. On commit `007ce2d`, case 24 (a read-only Italian fluency review inside a
-qualified reviewer assignment) loaded the review workflow, the language
-guidance and the Italian section of `language-quality.md` on both hosts and
-reported findings without edits; Codex additionally dispatched a fresh
-reviewer, following a user-level instruction outside this skill. Case 5 kept
-the order findings first, then scoped corrections without a permission pause,
-on both hosts. The blind comparison below ran on v5, before these
-load-condition changes. The description is unchanged from 1.1.7, so the
-activation results for cases 18–20 still apply.
+connected Italian prose for T1 and T3. On commit `007ce2d`, case 5 kept the
+order findings first, then scoped corrections without a permission pause, on
+both hosts. The blind comparison below ran on v5, before these load-condition
+changes. The description is unchanged from 1.1.7, so the activation results
+for cases 18–20 still apply.
 
 A later review added a load condition for delegated work and case 25. On
 commit `64e3442`, case 5 kept the review-then-fix ordering on both hosts and
 case 25 produced a brief that tells the child to activate the skill and read
 `references/author-workflow.md` and `references/language-and-register.md` on
-both hosts. In case 24 Claude produced the expected read-only report; Codex
-loaded the same guidance but stopped as incomplete because its routing
-dependency could not confirm native child identity from the prompt, which the
-routing contract requires (case 2). Case 24 now accepts that outcome.
+both hosts.
+
+Earlier versions of case 24 asserted reviewer qualification in the prompt,
+which the routing contract treats as a hint, not proof (case 2); their results
+are not counted. The published case 24 runs in root context and expects
+routing to a fresh reviewer. On the `64e3442` package, both hosts declined to
+assess inline and wrote a brief that tells the reviewer to activate the skill
+and read the review workflow, the language guidance and the Italian section of
+`language-quality.md`; Claude named the three files, Codex named the review
+and language references and the Italian section.
 
 ### Blind comparison
 
