@@ -300,6 +300,13 @@ class ReviewSkillContractsTest(unittest.TestCase):
                 self.assertIn(f"references/{reference}#{slug}", skill)
 
         self.assertIn("Disclose an unenforceable default", skill)
+        self.assertIn("read and apply steps 5 and 6", skill)
+        self.assertIn("the independent reviewer returns findings\nfirst", skill)
+        review = (DOC_WRITE_EXPERT / "references" / "review-workflow.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("## 6. Cold-read and verify", review.splitlines())
+        self.assertIn("follow the ordering in `SKILL.md` under Review mode", review)
 
     def test_phase_executor_reviews_user_feedback_in_fresh_bounded_cycles(self) -> None:
         skill = (PHASE_EXECUTOR / "SKILL.md").read_text(encoding="utf-8")

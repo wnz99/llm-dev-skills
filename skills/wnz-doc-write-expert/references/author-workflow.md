@@ -1,7 +1,8 @@
 # Author mode workflow
 
-Read this file before creating a new document or a substantial new section,
-and follow its steps in order.
+For a new document, a blank-page replacement, a substantial new section or the
+author leg of hybrid mode, follow these steps in order. For a scoped update,
+fix or readability rewrite, apply only step 6.
 
 ## 1. Establish the writing brief
 

@@ -1,7 +1,8 @@
 # Review mode workflow
 
-Read this file for an explicit review, audit or check of an existing document,
-after independent routing.
+For an explicit review, audit or check of an existing document, follow these
+steps after independent routing. When applying review findings, apply steps 5
+and 6.
 
 ## 1. Read the target end-to-end
 

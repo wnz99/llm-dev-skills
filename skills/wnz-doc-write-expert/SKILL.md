@@ -146,7 +146,7 @@ Read only the files the task needs, before the work they govern:
   [references/author-workflow.md](references/author-workflow.md#6-validate-factual-and-corpus-correctness).
 - **Review, audit or check:** after independent routing, read
   [references/review-workflow.md](references/review-workflow.md).
-- **Applying review findings:** read and apply step 5 of
+- **Applying review findings:** read and apply steps 5 and 6 of
   [references/review-workflow.md](references/review-workflow.md#5-apply-approved-edits-surgically).
 
 In every case, verify changed claims against their sources and parse any

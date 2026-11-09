@@ -1,7 +1,8 @@
 # Language and register
 
-Read this file before writing or editing any document prose. It applies to new
-documents, updates during code work and fixes after a review.
+Read this file before writing, editing or assessing any document prose. It
+applies to new documents, updates during code work, fixes after a review and
+fluency assessment in a review.
 
 Write idiomatically in the target language, whether authoring, adapting source
 material, or updating an existing document. Compose for its readers rather than
