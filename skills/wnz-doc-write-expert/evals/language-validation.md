@@ -154,7 +154,7 @@ regression checks.
 
 ### Change
 
-`SKILL.md` shrank from 3,865 to 1,513 words. The language and register rules,
+`SKILL.md` shrank from 3,865 to 1,544 words (`wc -w`). The language and register rules,
 the author workflow and the review workflow moved verbatim to `references/`,
 with explicit load conditions in `SKILL.md`. The model policy and the ordering
 of mixed review-and-fix requests stay in `SKILL.md` because they apply to
@@ -195,6 +195,15 @@ on both hosts. The blind comparison below ran on v5, before these
 load-condition changes. The description is unchanged from 1.1.7, so the
 activation results for cases 18–20 still apply.
 
+A later review added a load condition for delegated work and case 25. On
+commit `64e3442`, case 5 kept the review-then-fix ordering on both hosts and
+case 25 produced a brief that tells the child to activate the skill and read
+`references/author-workflow.md` and `references/language-and-register.md` on
+both hosts. In case 24 Claude produced the expected read-only report; Codex
+loaded the same guidance but stopped as incomplete because its routing
+dependency could not confirm native child identity from the prompt, which the
+routing contract requires (case 2). Case 24 now accepts that outcome.
+
 ### Blind comparison
 
 The same two judges scored v4 against v5 outputs for T1, T2-it, T2-es, T3 and
@@ -215,6 +224,6 @@ split shows no regression.
 ### Package checks
 
 `python3 -m unittest discover -s tests` passed (56 tests). `evals/evals.json`
-parses with unique IDs 1–24; frontmatter, all relative links and anchors in the
+parses with unique IDs 1–25; frontmatter, all relative links and anchors in the
 package (except example links inside the bundled OKF snapshot), and
 `git diff --check` passed.
