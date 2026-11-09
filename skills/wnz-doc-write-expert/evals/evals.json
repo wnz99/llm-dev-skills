@@ -96,7 +96,7 @@
       "id": 14,
       "kind": "capability",
       "prompt": "The Italian in this README section is not fluent and clear; rewrite it in clear technical Italian as a proficient engineer would write it, not a literal translation, keeping every fact: \"Il setup contiene soltanto progetti e ambienti; si gestisce manualmente da main revisionato. Il percorso storico foundation evita una migrazione backend. UUID verificati sono configurazione pubblica; il runtime non legge stati altrui. Disabilitare una risorsa già gestita propone la distruzione: prevent_destroy e il controllo di sicurezza del piano devono impedirla. Consul è bootstrap esterno: non gestisce se stesso.\"",
-      "expected_output": "Complete connected Italian sentences with articles and explicit agents (for example 'il piano ne propone la distruzione'); short names and identifiers formatted with a governing noun; the insider phrase explained only with stated facts; Consul still described as external bootstrap not managed by itself, not as 'non gestisce il proprio stato'; no fact, obligation or identifier dropped or added; separate fluency, fidelity and inference passes reported.",
+      "expected_output": "Complete connected Italian sentences with articles and explicit agents (for example 'il piano ne propone la distruzione'); short names and identifiers formatted with a governing noun; 'Il percorso storico foundation evita una migrazione backend' explained only with stated facts; Consul still described as external bootstrap not managed by itself, not as 'non gestisce il proprio stato'; no fact, obligation or identifier dropped or added; separate fluency, fidelity and inference passes reported.",
       "files": []
     },
     {
@@ -132,6 +132,13 @@
       "kind": "activation",
       "prompt": "Rename the Terraform variable netdata_enabled to netdata_service_enabled in variables.tf and the tfvars files; there are no documentation references to update.",
       "expected_output": "Do not activate the documentation workflow for a code-only change without durable prose.",
+      "files": []
+    },
+    {
+      "id": 20,
+      "kind": "activation",
+      "prompt": "Fix the off-by-one error in paginate() and update its docstring and the inline comment above the loop to match the new behavior.",
+      "expected_output": "Do not activate the documentation workflow for docstring or code comment changes; they are not durable prose documents.",
       "files": []
     }
   ]

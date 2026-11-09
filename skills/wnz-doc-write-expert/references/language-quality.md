@@ -1,34 +1,22 @@
 # Language quality: pitfalls and examples
 
-Read this file with the sentence and paragraph checks in `SKILL.md` before
-writing in a language covered below. The examples show failure patterns, not
-facts to reuse. Identifiers stay unchanged in every version. Repository
-glossaries and established corpus terms take precedence over the term choices
-suggested here.
-
-## Common failure patterns
-
-| Pattern | Symptom |
-| --- | --- |
-| Telegraphic notes | Missing articles and verbs; colons, slashes or arrows used as verbs |
-| Calque | English word order or idiom rendered word for word |
-| Bare short names | `dev`, `prd`, `stg` used as ordinary words |
-| Fact list | Sentences that share a topic but have no connectives |
-| Ambiguous referent | Pronoun or implicit subject with two possible antecedents |
-| Loanword drift | The same concept called by an English and a local term |
-| Plausible inference | A fluent "because", "only" or "without interruption" absent from the evidence |
-| Meta-text | The document talks about its notes, sources or rewriting |
+Read the section for the target language together with the sentence and
+paragraph checks in `SKILL.md`. The examples show failure patterns, not facts
+to reuse, and each rewrite keeps exactly the facts of its source. Identifiers
+stay unchanged. Repository glossaries and established corpus terms take
+precedence over the term choices suggested here.
 
 ## Italian
 
 - Use the article before nouns, including technical ones: "il repository", "lo
-  stack `prd`", "la registry", "gli output".
-- Write procedures with the impersonal infinitive ("Verificare", "Eseguire")
-  and keep it consistent within one document.
-- Prefer "il codice" or "la configurazione nel repository" to "il sorgente".
-- Distinguish an artifact from an operation when English uses one word: for an
-  OpenTofu plan, "il piano" is the artifact; "l'apply" or "applicare le
-  modifiche" is the operation.
+  stack `prd`", "gli output". For loanwords whose gender varies, such as
+  "il/la registry", follow the corpus.
+- Write procedures with the impersonal infinitive ("Verificare", "Eseguire"),
+  or the form the corpus already uses, and keep it consistent in a document.
+- Prefer "il codice" or "la configurazione" to "il sorgente" for source code.
+- When English uses one word for an artifact and an operation, name them
+  separately: for example "il piano" for a saved plan and "applicare le
+  modifiche" for the operation.
 - Avoid "andare a" + infinitive ("andare a modificare") and "in termini di".
 
 | Avoid | Write |
@@ -36,8 +24,8 @@ suggested here.
 | Ogni modifica architetturale: dichiarare decisione, aggiornare documento. | Ogni modifica architetturale richiede di dichiarare la decisione e di aggiornare il documento. |
 | Dopo modifiche: `make check`. | Dopo ogni modifica, eseguire `make check`. |
 | Il flag è attivo solo in prd; dev/stg restano `false`. | Il flag è attivo soltanto nello stack `prd`; negli stack `dev` e `stg` resta `false`. |
-| Backup giornaliero, retention 7 giorni, restore testato mensilmente. | Il backup viene eseguito ogni giorno e conservato per 7 giorni; il ripristino viene provato una volta al mese. |
-| Il plugin gli invia un byte in più. | Il plugin invia al motore AppSec un byte in più rispetto alla soglia. |
+| Log ruotati ogni notte, conservati 14 giorni, poi cancellati. | I log vengono ruotati ogni notte, conservati per 14 giorni e poi cancellati. |
+| Il plugin gli invia un byte in più. | Il plugin invia al motore AppSec un byte in più. |
 
 ## Spanish
 
@@ -50,14 +38,14 @@ suggested here.
 
 | Avoid | Write |
 | --- | --- |
-| Creds en Coolify; no poner valores en compose/commits. | Las credenciales se guardan en Coolify. No incluya sus valores en el archivo Compose ni en los commits. |
+| Token en vault; no ponerlo en scripts/tickets. | El token se guarda en el gestor de secretos. No incluya el valor del token en los scripts ni en los tickets. |
 
 ## French
 
 - Keep articles and the full negation ("ne ... pas"); use the infinitive for
   procedures ("Vérifier", "Exécuter").
-- Prefer "déployer", "mot de passe" and "jeton" to unnecessary English terms;
-  keep a loanword such as "conteneur" or "container" as the corpus does.
+- Prefer native terms such as "déployer", "mot de passe", "jeton" and
+  "conteneur" unless the corpus has established an English term.
 
 ## German
 

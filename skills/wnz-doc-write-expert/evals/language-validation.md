@@ -53,8 +53,9 @@ while implementing a refactor, so documentation was a side effect of code work.
 
 ### Method
 
-Three tasks ran in fresh non-interactive Codex (`codex exec`, default
-`gpt-6.1-sol`, medium effort) and Claude Code (`claude -p`) sessions, each in an
+Three tasks ran in fresh non-interactive Codex CLI 0.167.0 (`codex exec`,
+configured default `gpt-6.1-sol`, medium effort) and Claude Code 2.1.316
+(`claude -p`, configured default model and effort) sessions, each in an
 isolated directory with a telegraphic `AGENTS.md`:
 
 - T1: rewrite a telegraphic Italian README section for readability;
@@ -62,15 +63,16 @@ isolated directory with a telegraphic `AGENTS.md`:
 - T3: implement a flag and update the Italian README as part of the change.
 
 Variants were the previous skill (v0), v0 with the terse mode switched off,
-and two revisions (v1: register isolation, sentence checks and separate
-passes; v2: v1 plus implementation-time writing, paragraph checks, meta-text
-and the inference audit, which is this change). Outputs were anonymized and
-scored for fluency and fidelity (1–10 each) by one Claude and one Codex judge
-that did not know the writers.
+and two drafts (v1: register isolation, sentence checks and separate passes;
+v2: v1 plus implementation-time writing, paragraph checks, meta-text and the
+inference audit). Outputs were anonymized and scored for fluency and fidelity
+(1–10 each) by one Claude and one Codex judge that did not know the writers.
+Judges saw the task source, not the full workspace.
 
 ### Results
 
-Sums of fluency plus fidelity over T1, T2-it, T2-es and T3:
+Sums of fluency plus fidelity over T1, T2-it, T2-es and T3 in the second
+judging round:
 
 | Writer | Judge | v0 | v1 | v2 |
 | --- | --- | --- | --- | --- |
@@ -79,23 +81,47 @@ Sums of fluency plus fidelity over T1, T2-it, T2-es and T3:
 | Claude | Claude | 69 | 67 | 67 |
 | Claude | Codex | 71 | 71 | 70 |
 
-Codex improved with each revision under both judges, mainly in fidelity: the
+Codex improved from v0 to v2 under both judges, mainly in fidelity: the
 inference audit removed plausible but unstated claims, and T3 fidelity rose
-from 7 to 9 under both judges. Claude was already strong and stayed flat; its
+from 7 to 9 under both judges. The v1 to v2 step under the Codex judge (72 to
+74) is within judging noise. Claude was already strong and stayed flat; its
 lower v2 T3 fidelity came mostly from correct environment variable names that
 the judge could not see in its source excerpt. Switching the terse mode off
 had no consistent effect in single-shot runs. Codex fluency stayed at about
 6–7 of 10 under the Claude judge: residual fact-list paragraphs, calques and
 short disconnected sentences are not fully solved by instructions.
 
-The published wording differs from the tested v2 only in tone and ordering.
-A confirmation round re-ran Codex on all tasks with the final package (v3)
-and judged it blind against v0 and v2: Claude judge 54, 66 and 70; Codex judge
-66, 75 and 75. The final package therefore performs at least as well as v2.
+A confirmation round re-ran Codex on all tasks with v3, the v2 wording revised
+for tone, and judged it blind against v0 and v2: Claude judge 54, 66 and 70;
+Codex judge 66, 75 and 75. Re-judging the same v0 and v2 outputs moved their
+scores by 1–4 points, so differences of that size are noise; the v0 to v3 gain
+is larger. Claude was re-run with v3 on T3 only.
+
+After independent review, the published package differs from v3: an explicit
+document-style request from the user or repository takes precedence over the
+register rule; readability requests authorize voice changes, while other edits
+keep untouched text unchanged; duplicated checks were merged; the inference
+audit accepts facts verified from code; reference examples no longer reuse eval
+inputs; and the description excludes code comments and docstrings. These
+changes were not re-run through the capability tasks.
+
+### Activation
+
+From metadata alone, cases 6, 7, 11, 12, 18, 19 and 20 were classified twice by
+Claude (Sonnet) and Codex. The previous description activated on the docstring
+case 20 in one of two Claude runs; the published description, which excludes
+code comments and docstrings, matched all seven expectations on both hosts.
+
+### Package checks
+
+`python3 -m unittest discover -s tests` passed (55 tests). `evals/evals.json`
+parses with unique IDs 1–20; frontmatter, relative links and
+`git diff --check` passed.
 
 ### Limits
 
 One run per cell; LLM judges, one of each family, with visible self-preference
-in absolute scores but agreement on direction; no human native-speaker review;
-single-shot runs do not reproduce a long session in a terse mode. New eval
-cases 14–19 cover these behaviors for future regression checks.
+in absolute scores but agreement on direction; judges saw only the task source;
+no human native-speaker review; single-shot runs do not reproduce a long
+session in a terse mode. New eval cases 14–20 cover these behaviors for future
+regression checks.
