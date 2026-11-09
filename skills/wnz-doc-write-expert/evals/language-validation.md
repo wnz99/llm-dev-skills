@@ -41,3 +41,61 @@ were saved locally as `/tmp/doc-language-eval-new.md` and
 
 The host exposes no agent close/shutdown control; completed agents could not
 be explicitly closed.
+
+## Readability revision (2026-11-09)
+
+### Trigger
+
+Codex-authored Italian infrastructure documentation stayed telegraphic despite
+the 2026-11-04 guidance. The session that wrote it had loaded this skill, had a
+terse response mode active and rewrote a README inside a generated code string
+while implementing a refactor, so documentation was a side effect of code work.
+
+### Method
+
+Three tasks ran in fresh non-interactive Codex (`codex exec`, default
+`gpt-6.1-sol`, medium effort) and Claude Code (`claude -p`) sessions, each in an
+isolated directory with a telegraphic `AGENTS.md`:
+
+- T1: rewrite a telegraphic Italian README section for readability;
+- T2: write Italian and Spanish runbooks from terse English notes;
+- T3: implement a flag and update the Italian README as part of the change.
+
+Variants were the previous skill (v0), v0 with the terse mode switched off,
+and two revisions (v1: register isolation, sentence checks and separate
+passes; v2: v1 plus implementation-time writing, paragraph checks, meta-text
+and the inference audit, which is this change). Outputs were anonymized and
+scored for fluency and fidelity (1–10 each) by one Claude and one Codex judge
+that did not know the writers.
+
+### Results
+
+Sums of fluency plus fidelity over T1, T2-it, T2-es and T3:
+
+| Writer | Judge | v0 | v1 | v2 |
+| --- | --- | --- | --- | --- |
+| Codex | Claude | 51 | 57 | 62 |
+| Codex | Codex | 65 | 72 | 74 |
+| Claude | Claude | 69 | 67 | 67 |
+| Claude | Codex | 71 | 71 | 70 |
+
+Codex improved with each revision under both judges, mainly in fidelity: the
+inference audit removed plausible but unstated claims, and T3 fidelity rose
+from 7 to 9 under both judges. Claude was already strong and stayed flat; its
+lower v2 T3 fidelity came mostly from correct environment variable names that
+the judge could not see in its source excerpt. Switching the terse mode off
+had no consistent effect in single-shot runs. Codex fluency stayed at about
+6–7 of 10 under the Claude judge: residual fact-list paragraphs, calques and
+short disconnected sentences are not fully solved by instructions.
+
+The published wording differs from the tested v2 only in tone and ordering.
+A confirmation round re-ran Codex on all tasks with the final package (v3)
+and judged it blind against v0 and v2: Claude judge 54, 66 and 70; Codex judge
+66, 75 and 75. The final package therefore performs at least as well as v2.
+
+### Limits
+
+One run per cell; LLM judges, one of each family, with visible self-preference
+in absolute scores but agreement on direction; no human native-speaker review;
+single-shot runs do not reproduce a long session in a terse mode. New eval
+cases 14–19 cover these behaviors for future regression checks.

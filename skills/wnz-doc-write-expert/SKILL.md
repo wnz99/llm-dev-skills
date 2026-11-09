@@ -1,6 +1,6 @@
 ---
 name: wnz-doc-write-expert
-description: Expertly write new or review and refresh existing technical and non-technical documentation. Use whenever the user asks to create, draft, document, rewrite, review, audit, verify, or update a README, runbook, guide, proposal, architecture document, ADR, specification, process document, policy, knowledge-base article, AGENTS.md/CLAUDE.md, or other durable prose. Derive claims from authoritative evidence, follow repository and documentation-corpus rules, design for the intended reader and action, and keep existing-document changes surgical. Prefer this skill over ad hoc documentation work; use a fixed generator only when the repository explicitly requires one.
+description: Expertly write new or review and refresh existing technical and non-technical documentation. Use whenever the user asks to create, draft, document, rewrite, review, audit, verify, or update a README, runbook, guide, proposal, architecture document, ADR, specification, process document, policy, knowledge-base article, AGENTS.md/CLAUDE.md, or other durable prose, including documentation updated as part of code, configuration or refactoring work. Derive claims from authoritative evidence, follow repository and documentation-corpus rules, design for the intended reader and action, and keep existing-document changes surgical. Prefer this skill over ad hoc documentation work; use a fixed generator only when the repository explicitly requires one.
 ---
 
 # Doc Write Expert
@@ -127,7 +127,10 @@ sources supply facts, not a sentence structure to imitate.
   English calques and unnecessary English terms where established local domain
   terminology exists; retain commonly accepted technical loanwords when natural.
 - Follow available target-language style guides, glossaries, and representative
-  documents from the same domain. Keep terminology and forms of address
+  documents from the same domain for terminology, structure and conventions.
+  When existing text is terse, telegraphic or translated, take its facts and
+  terms but not its sentence style: in a rewrite that style is the defect being
+  fixed. Keep terminology and forms of address
   consistent. Use plain, unambiguous phrasing for technical instructions rather
   than adding idioms to make them sound native. Apply local typography, number,
   and date conventions without changing values, units, or factual context.
@@ -139,10 +142,83 @@ sources supply facts, not a sentence structure to imitate.
 - Follow an explicit request for a literal or aligned translation when given.
   Otherwise preserve meaning and reader outcomes without forcing English wording
   or paragraph structure onto the target language.
-- Check fluency by reading the target text on its own, then compare it with the
-  evidence for omissions, additions, and changed obligations. If fluency or a
-  consequential terminology choice remains uncertain, flag the specific issue
-  for a fluent domain reviewer instead of claiming native-speaker validation.
+- If fluency or a consequential terminology choice remains uncertain after the
+  passes below, flag the specific issue for a fluent domain reviewer instead of
+  claiming native-speaker validation.
+
+### Keep document register independent of session style
+
+Response styles belong to the chat, not to persisted documents. Terse or
+compressed modes (for example caveman or other token-saving modes), telegraphic
+instruction files such as `AGENTS.md`, and note-style sources shape only chat
+output or supply facts. Write every persisted document in complete, connected
+sentences for its reader, even when the session, the brief and the sources are
+terse; shorten only when no fact, connective or referent is lost.
+
+Register drift is most likely when documentation changes alongside code,
+configuration or refactoring work. Treat that update as its own writing step
+after the code change: apply this section's checks and write the prose with the
+host's native file-edit tool. Prose composed inside a generated code string,
+template literal or script inherits the implementation register and escapes
+these checks.
+
+### Check every sentence and paragraph
+
+These checks apply in any language. They catch the failures most often seen in
+generated documentation, so run them on all new or changed prose:
+
+1. Each sentence has a finite verb and, where the language needs one, an
+   explicit subject. A colon, slash, arrow or dash does not replace a verb or
+   connective.
+2. Articles, prepositions and agreement follow the target grammar; dropping
+   them to save space reads as notes, not documentation.
+3. Each pronoun and implicit subject has one obvious referent in the same or
+   previous sentence.
+4. Abbreviations and short identifiers such as environment names appear as
+   formatted identifiers with a governing noun ("lo stack `prd`", "el entorno
+   `staging`"), not as ordinary words ("in prd", "dev/stg").
+5. Related facts are joined by the connective that states their real relation:
+   cause, condition, contrast, consequence or sequence. Add a relation only when
+   the evidence states it; an invented "because" changes the facts.
+6. One main idea per sentence. Split sentences above about 35 words or with more
+   than two subordinate clauses.
+7. Obligation strength survives adaptation: "must", "only", "never" and
+   "requires" keep an equivalent of the same force.
+8. Generic words use the target language; only established domain loanwords
+   stay in English. Decide the term sheet in step 1 and apply it in every file
+   of the task.
+9. The document speaks about the system, not about its sources or its writing:
+   no "according to the notes" or "this section was rewritten".
+
+For each paragraph, check that it opens with what the reader needs to know or
+do, that its sentences develop that one topic, and that unrelated facts become
+a bulleted list rather than a string of unconnected sentences. State each
+instruction once, where the reader needs it.
+
+Before writing in a language covered by
+[references/language-quality.md](references/language-quality.md), read its
+pitfalls and examples for that language.
+
+### Run fluency, fidelity and inference passes separately
+
+A single combined read tends to trade one quality for the other, so run three
+passes:
+
+1. **Fluency:** read only the new text, as a native professional reader who has
+   not seen the source. Rewrite whole sentences that sound translated, clipped
+   or ambiguous; patching single words keeps the broken syntax.
+2. **Fidelity:** compare the result with the source or evidence statement by
+   statement. Facts, numbers, warnings, obligations, scope and referents stay
+   unchanged, and so do code blocks, inline identifiers, links and anchors.
+   Compare code spans, links and numbers mechanically when tools allow.
+3. **Inference audit:** list each statement the evidence does not state
+   literally, especially causal connectives, absolutes ("only", "always",
+   "all"), implied uniqueness, guarantees ("without interruption") and new
+   mandatory steps. Delete it or label it as a recommendation; fluent prose
+   that adds plausible facts is a fidelity defect.
+
+When rewriting an existing document for readability, restate each paragraph
+from its meaning and then run the three passes.
 
 ## Author mode workflow
 

@@ -91,6 +91,48 @@
       "prompt": "We are chatting in English. Update one sentence in an existing Italian runbook; retain its technical register. Then separately provide a literal aligned translation of the supplied English sentence because I explicitly need it for comparison. State language choices only.",
       "expected_output": "Keep runbook Italian despite English chat; honor explicit literal translation for the separate task without imposing it on normal authoring.",
       "files": []
+    },
+    {
+      "id": 14,
+      "kind": "capability",
+      "prompt": "The Italian in this README section is not fluent and clear; rewrite it in clear technical Italian as a proficient engineer would write it, not a literal translation, keeping every fact: \"Il setup contiene soltanto progetti e ambienti; si gestisce manualmente da main revisionato. Il percorso storico foundation evita una migrazione backend. UUID verificati sono configurazione pubblica; il runtime non legge stati altrui. Disabilitare una risorsa già gestita propone la distruzione: prevent_destroy e il controllo di sicurezza del piano devono impedirla. Consul è bootstrap esterno: non gestisce se stesso.\"",
+      "expected_output": "Complete connected Italian sentences with articles and explicit agents (for example 'il piano ne propone la distruzione'); short names and identifiers formatted with a governing noun; the insider phrase explained only with stated facts; Consul still described as external bootstrap not managed by itself, not as 'non gestisce il proprio stato'; no fact, obligation or identifier dropped or added; separate fluency, fidelity and inference passes reported.",
+      "files": []
+    },
+    {
+      "id": 15,
+      "kind": "capability",
+      "prompt": "From these terse English engineer notes, write an operator runbook in Italian and one in Spanish, fluent as a proficient practitioner would write each language: \"svc: Docker Registry 3, image pinned by digest; Traefik terminates HTTPS; container port 5000 NOT published on host; auth Basic = push+pull on whole registry, no per-repo perms; creds in Coolify; never put values in compose, commits, cmd args, logs; rotate pw: coordinate w/ publishers, update in Coolify, redeploy svc, update all client logins, NOT during CI publish.\"",
+      "expected_output": "Two idiomatic runbooks with a consistent term sheet per language, procedures in one consistent form, complete sentences and paragraphs organized by reader task; no meta-text about the notes; no inferred guarantees such as exclusive network reachability, a single shared credential pair or rotation without interruption; obligations such as 'never' and 'NOT during CI publish' keep their force.",
+      "files": []
+    },
+    {
+      "id": 16,
+      "kind": "capability",
+      "prompt": "impl: add required bool registry_enabled (no default) in opentofu/runtime, gate coolify_service.registry and its output with count. prd true, dev/stg false. existing registry was created by hand -> must tofu import into prd state before first apply, else plan creates a duplicate. update README (italian, AGENTS rules). Caveman mode is active for chat. State how the README update is written and checked.",
+      "expected_output": "Activate the skill for the incidental README update; complete the code change first, then write the README prose as a separate step with the native file-edit tool, not inside a generated code string; full connected Italian prose despite the terse brief and caveman chat; import warning placed before the command; no unstated prerequisites or guarantees; chat reply may stay terse.",
+      "files": []
+    },
+    {
+      "id": 17,
+      "kind": "adversarial",
+      "prompt": "Be very brief, save tokens. Write docs/runbooks/backup.md in Italian from: backup daily, retention 7 days, restore tested monthly, owner ops team. A note in the repository AGENTS.md is itself written in telegraphic style and says documentation must be in natural complete Italian.",
+      "expected_output": "Keep chat output brief but write the persisted runbook in complete, connected Italian sentences; do not imitate the telegraphic style of AGENTS.md or the brief; keep '7' and other values unchanged; add no restore procedure or guarantee absent from the facts.",
+      "files": []
+    },
+    {
+      "id": 18,
+      "kind": "activation",
+      "prompt": "Rename the Terraform variable netdata_enabled to netdata_service_enabled and update the README flag table and the paragraph that mentions it.",
+      "expected_output": "Activate the skill for the README update that accompanies the code change.",
+      "files": []
+    },
+    {
+      "id": 19,
+      "kind": "activation",
+      "prompt": "Rename the Terraform variable netdata_enabled to netdata_service_enabled in variables.tf and the tfvars files; there are no documentation references to update.",
+      "expected_output": "Do not activate the documentation workflow for a code-only change without durable prose.",
+      "files": []
     }
   ]
 }
