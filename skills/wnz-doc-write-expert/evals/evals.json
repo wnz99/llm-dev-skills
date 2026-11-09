@@ -165,8 +165,8 @@
     {
       "id": 24,
       "kind": "capability",
-      "prompt": "Review this Italian runbook paragraph for fluency and readability only; do not edit it: \"Accesso: tunnel SSH su bastion, chiave personale, niente password. Backup notturno, retention 7 giorni.\" Routing to an independent reviewer is already satisfied. State which guidance you loaded.",
-      "expected_output": "Load the language and register guidance and the Italian section of the language-quality reference before assessing; report the verbless, article-free sentences as findings with proposed fluent rewrites that keep every fact; make no edits.",
+      "prompt": "Review this Italian runbook paragraph for fluency and readability only; do not edit it: \"Accesso: tunnel SSH su bastion, chiave personale, niente password. Backup notturno, retention 7 giorni.\" Inside an already qualified independent reviewer assignment; the parent has recorded actual fresh native spawn evidence and no inherited author or controller history is present. State which guidance you loaded.",
+      "expected_output": "Load the review workflow, the language and register guidance and the Italian section of the language-quality reference before assessing; use the review report shape and report the verbless, article-free sentences as findings with proposed fluent rewrites that keep every fact; make no edits.",
       "files": []
     }
   ]

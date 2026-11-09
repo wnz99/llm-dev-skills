@@ -1,8 +1,8 @@
 # Language quality: pitfalls and examples
 
 Read the section for the target language together with the sentence and
-paragraph checks in [language-and-register.md](language-and-register.md). The examples show failure patterns, not facts
-to reuse; each rewrite adds no fact absent from its source and its context.
+paragraph checks in [language-and-register.md](language-and-register.md). The
+examples show failure patterns, not facts to reuse; each rewrite adds no fact absent from its source and its context.
 Identifiers stay unchanged. Repository glossaries and established corpus terms
 take precedence over the term choices suggested here.
 

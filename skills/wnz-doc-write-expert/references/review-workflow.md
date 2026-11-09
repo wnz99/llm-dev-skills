@@ -60,12 +60,8 @@ For a review-only request, provide this report before any editing:
 <Unverifiable claims and judgment calls.>
 ```
 
-If the document is fresh, say so and stop. Do not manufacture edits. For mixed
-review-and-fix requests, the independent reviewer returns findings first;
-the authorized author then applies scoped corrections without a permission
-pause. Keep review read-only and author edits separate; do not create a fresh
-review gate for every microedit. Any requested follow-up review uses fresh
-routing. Report first and obtain approval before material structural changes.
+If the document is fresh, say so and stop. Do not manufacture edits. Mixed
+review-and-fix requests follow the ordering in `SKILL.md` under Review mode.
 
 ## 5. Apply approved edits surgically
 

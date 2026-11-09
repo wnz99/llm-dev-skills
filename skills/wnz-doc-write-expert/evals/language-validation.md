@@ -154,16 +154,18 @@ regression checks.
 
 ### Change
 
-`SKILL.md` shrank from 3,865 to 1,309 words. The language and register rules,
-the author workflow, the review workflow and the model policy moved verbatim
-to `references/`, with explicit load conditions in `SKILL.md`; a scoped update
-still verifies changed claims and parses changed YAML frontmatter. The
-contract tests now read the moved text from `references/author-workflow.md`
-and check every load link.
+`SKILL.md` shrank from 3,865 to 1,513 words. The language and register rules,
+the author workflow and the review workflow moved verbatim to `references/`,
+with explicit load conditions in `SKILL.md`. The model policy and the ordering
+of mixed review-and-fix requests stay in `SKILL.md` because they apply to
+every activation; every activation still verifies changed claims and parses
+changed YAML frontmatter. The contract tests read the moved text from
+`references/author-workflow.md` and check the load links and step anchors.
 
 ### Behavior checks
 
-Fresh sessions ran the split package (v5) once per host on T1, T2, T3, case 17
+The first split commit (v5, `4bffc99`) also moved the model policy. Fresh
+sessions ran it once per host on T1, T2, T3, case 17
 and cases 21–23; Codex ran case 21 three times. The published 1.1.7 package
 (v4) ran on T1 and T2 for comparison; its T3 and case 17 outputs came from the
 earlier 1.1.7 runs. Both hosts opened `references/language-and-register.md`
@@ -173,12 +175,19 @@ both hosts. In case 21 one of three Codex runs added a verb to the verbless
 cheat sheet; the other two and the Claude run kept its style. In case 17
 Claude still added unsupported statements, as with v4.
 
-After review, the load conditions also cover scoped updates (author step 6),
-applying review findings (review step 5) and fluency assessment in a read-only
-review. Case 24, a read-only Italian fluency review, loaded the language
-guidance, the review workflow and the Italian section of `language-quality.md`
-on both hosts and reported findings without edits; Codex also opened files the
-task did not need.
+After review, the published split restores the model policy to `SKILL.md`,
+keeps the mixed review-and-fix ordering there, and adds load conditions for
+scoped updates and readability rewrites (author step 6), blank-page
+replacements and the author leg of hybrid mode (author workflow), applying
+review findings (review step 5) and fluency assessment in a read-only review.
+On the published package, case 24 (a read-only Italian fluency review inside a
+qualified reviewer assignment) loaded the review workflow, the language
+guidance and the Italian section of `language-quality.md` on both hosts and
+reported findings without edits; Codex additionally dispatched a fresh
+reviewer, following a user-level instruction outside this skill. Case 5 kept
+the order findings first, then scoped corrections without a permission pause,
+on both hosts. The blind comparison below and cases 21–23 ran on v5, before
+these load-condition changes.
 
 ### Blind comparison
 

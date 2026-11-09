@@ -273,7 +273,7 @@ class ReviewSkillContractsTest(unittest.TestCase):
             encoding="utf-8"
         )
 
-        self.assertIn("parse any changed YAML frontmatter with a real YAML", skill)
+        self.assertIn("changed YAML frontmatter with a real YAML parser", skill)
         self.assertIn("Parse every YAML frontmatter block with a real YAML parser", author)
         self.assertIn('title: "Data flow: current architecture"', author)
         self.assertIn("validate every\nfrontmatter-bearing document", author)
@@ -282,10 +282,24 @@ class ReviewSkillContractsTest(unittest.TestCase):
         skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
 
         for reference in ("language-and-register.md", "author-workflow.md",
-                          "review-workflow.md", "model-policy.md"):
+                          "review-workflow.md"):
             with self.subTest(reference=reference):
                 self.assertIn(f"references/{reference}", skill)
                 self.assertTrue((DOC_WRITE_EXPERT / "references" / reference).is_file())
+
+        for reference, heading in (
+            ("author-workflow.md", "## 6. Validate factual and corpus correctness"),
+            ("review-workflow.md", "## 5. Apply approved edits surgically"),
+        ):
+            with self.subTest(anchor=reference):
+                text = (DOC_WRITE_EXPERT / "references" / reference).read_text(
+                    encoding="utf-8"
+                )
+                slug = heading.lstrip("# ").lower().replace(".", "").replace(" ", "-")
+                self.assertIn(heading, text.splitlines())
+                self.assertIn(f"references/{reference}#{slug}", skill)
+
+        self.assertIn("Disclose an unenforceable default", skill)
 
     def test_phase_executor_reviews_user_feedback_in_fresh_bounded_cycles(self) -> None:
         skill = (PHASE_EXECUTOR / "SKILL.md").read_text(encoding="utf-8")

@@ -64,6 +64,13 @@ write/update/fix request, use the local correctness and corpus checks of
 [author step 6](references/author-workflow.md#6-validate-factual-and-corpus-correctness);
 these checks do not constitute independent approval.
 
+For mixed review-and-fix requests, the independent reviewer returns findings
+first; the authorized author then applies scoped corrections without a
+permission pause. Keep review read-only and author edits separate; do not
+create a fresh review gate for every microedit. Any requested follow-up review
+uses fresh routing. Report first and obtain approval before material structural
+changes.
+
 ### Hybrid mode
 
 Use when reviewing an existing document reveals that a split, replacement, or companion document is necessary. Complete the review findings and obtain approval for structural changes before creating the new document.
@@ -80,9 +87,24 @@ requested.
 
 ## Model policy
 
-Before delegating writing or review work, or when the user names a model or
-effort level, read [references/model-policy.md](references/model-policy.md).
-Model choice never authorizes structural changes or invented decisions.
+For authoring, rewriting, and correctness edits, default to
+`claude-sonnet-5-5` with the host's effort default on Claude, or `gpt-6.1-sol`
+with `medium` effort on Codex. For read-only audits and independent document
+reviews, default to `claude-opus-5-5` or `gpt-6.1-sol`, both with `medium`
+effort. In hybrid work, assess the findings with the review tier and draft the
+authorized replacement with the writing tier. Model choice does not authorize
+structural changes or allow inventing architectural or policy decisions.
+
+An explicit user override changes only the named model or effort control. Use
+available native selection or authorized bounded delegation; prose cannot
+switch the caller's model. Disclose an unenforceable default and its
+host-supported fallback before work. If an explicit control cannot be honored,
+stop the affected work until the user permits an alternative. Report unexposed
+resolved controls as unavailable instead of claiming selection succeeded. Do
+not invoke an external provider solely to enforce this policy.
+
+When changing this policy, run the cases in
+[references/model-policy-evals.md](references/model-policy-evals.md).
 
 ## Shared operating principles
 
@@ -103,9 +125,8 @@ not decide the issue.
 ## Language and register
 
 Write idiomatically in the target language for the document's readers. Chat
-response modes, the user's task wording and notes supply facts, not a sentence
-style; the document's own conventions and explicit style requests decide its
-style. Fluent prose never adds facts or weakens obligations.
+response modes do not set document style; the document's own conventions and
+explicit style requests do.
 
 ## Load the workflow for the task
 
@@ -116,19 +137,20 @@ Read only the files the task needs, before the work they govern:
   [references/language-and-register.md](references/language-and-register.md)
   before writing, editing or assessing prose. It holds the sentence checks and
   the fluency, fidelity and inference passes.
-- **New document or substantial new section:** read
+- **New document, blank-page replacement, substantial new section, or the
+  author leg of hybrid mode:** read
   [references/author-workflow.md](references/author-workflow.md) and follow its
   steps in order.
-- **Scoped update or fix of an existing document:** read and apply step 6 of
+- **Scoped update, fix or readability rewrite of an existing document:** read
+  and apply step 6 of
   [references/author-workflow.md](references/author-workflow.md#6-validate-factual-and-corpus-correctness).
 - **Review, audit or check:** after independent routing, read
   [references/review-workflow.md](references/review-workflow.md).
-- **Applying review findings**, including the author leg of hybrid mode: read
-  and apply step 5 of
+- **Applying review findings:** read and apply step 5 of
   [references/review-workflow.md](references/review-workflow.md#5-apply-approved-edits-surgically).
 
-Even without opening a reference, verify changed claims against their sources
-and parse any changed YAML frontmatter with a real YAML parser.
+In every case, verify changed claims against their sources and parse any
+changed YAML frontmatter with a real YAML parser.
 
 ## Final handoff
 
