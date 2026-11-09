@@ -130,9 +130,7 @@ sources supply facts, not a sentence structure to imitate.
   terminology exists; retain commonly accepted technical loanwords when natural.
 - Follow available target-language style guides, glossaries, and representative
   documents from the same domain for terminology, structure and conventions.
-  When existing text is terse, telegraphic or translated, take its facts and
-  terms but not its sentence style for new prose. Keep terminology and forms of address
-  consistent. Use plain, unambiguous phrasing for technical instructions rather
+  Keep terminology and forms of address consistent. Use plain, unambiguous phrasing for technical instructions rather
   than adding idioms to make them sound native. Apply local typography, number,
   and date conventions without changing values, units, or factual context.
 - Preserve source meaning, requirements, warnings, qualifications, quantities,
@@ -150,14 +148,17 @@ sources supply facts, not a sentence structure to imitate.
 ### Keep document register independent of session style
 
 Chat response styles do not transfer to persisted prose. Terse or compressed
-modes (for example caveman or other token-saving modes), the sentence style of
-telegraphic instruction files such as `AGENTS.md`, and note-style sources are
-not models for document prose; their rules and facts still apply. Write
-document prose in complete, connected sentences for its reader, even when the
-session, the brief and the sources are terse. An explicit document-style
-request from the user or the repository, such as a terse cheat sheet or a
-compact instruction file, takes precedence. Tables, headings and reference
-lists follow corpus conventions.
+modes (for example caveman or other token-saving modes), the brief, note-style
+sources and instruction files of another document type supply facts and rules,
+not a sentence style. Write document prose in complete, connected sentences for
+its reader, even when they are terse.
+
+The document's own conventions take precedence: an explicit document-style
+request from the user or the repository, and a consistent, deliberate style in
+the target document or its siblings, such as a compact cheat sheet or a terse
+`AGENTS.md`. Tables, headings and reference lists follow corpus conventions.
+When existing prose is terse because it is poorly written rather than by
+convention, take its facts and terms but not its sentence style for new prose.
 
 Register drift is most likely when documentation changes alongside code,
 configuration or refactoring work. Treat that update as its own writing step
@@ -174,21 +175,24 @@ generated documentation. Run them on new or changed prose sentences. Outside a
 readability request, text you do not change keeps its existing voice.
 
 1. Each sentence has a finite verb and, where the language needs one, an
-   explicit subject. A colon, slash, arrow or dash does not replace a verb or
+   explicit subject; procedure steps may use the infinitive or imperative form
+   the corpus uses. A colon, slash, arrow or dash does not replace a verb or
    connective.
 2. Articles, prepositions and agreement follow the target grammar; dropping
    them to save space reads as notes, not documentation.
 3. Each pronoun and implicit subject has one obvious referent in the same or
    previous sentence.
-4. Abbreviations and short identifiers such as environment names appear as
-   formatted identifiers with a governing noun ("lo stack `prd`", "el entorno
-   `staging`"), not as ordinary words ("in prd", "dev/stg").
+4. Short project identifiers such as environment, stack or branch names appear
+   as formatted identifiers with a governing noun ("el entorno `staging`"), not
+   as ordinary words ("in staging", "dev/stg"). Common acronyms such as HTTPS
+   stay plain.
 5. Related facts are joined by the connective that states their real relation
    (cause, condition, contrast, consequence or sequence) when the evidence
    supports it; see the inference audit below.
 6. One main idea per sentence. Split sentences above about 35 words or with more
    than two subordinate clauses.
-7. Generic words use the target language and follow the task's term sheet.
+7. Generic words use the target language and follow the term sheet or corpus
+   glossary when one exists.
 8. The document speaks about the system, not about its sources or its writing:
    no "according to the notes" or "this section was rewritten".
 
@@ -204,15 +208,15 @@ language's section of
 ### Run fluency, fidelity and inference passes separately
 
 A single combined read tends to trade one quality for the other, so run three
-passes before the reader-test, and for incidental updates before completion:
+separate passes:
 
 1. **Fluency:** read only the new text, as a native professional reader who has
    not seen the source. Rewrite whole sentences that sound translated, clipped
    or ambiguous; patching single words keeps the broken syntax.
 2. **Fidelity:** compare the result with the source or evidence statement by
-   statement. Facts, numbers, warnings, obligations, scope and referents stay
-   unchanged, and so do code blocks, inline identifiers, links and anchors.
-   Compare code spans, links and numbers mechanically when tools allow.
+   statement against the preservation rules above, including scope, referents,
+   links and anchors. Compare code spans, links and numbers mechanically when
+   tools allow.
 3. **Inference audit:** list each statement not directly supported by the
    evidence (sources, code or verified facts), especially causal connectives,
    absolutes ("only", "always", "all"), implied uniqueness, guarantees
@@ -321,6 +325,8 @@ frontmatter-bearing document changed in the corpus.
 
 ### 7. Reader-test
 
+First run the fluency, fidelity and inference passes on new or changed prose.
+
 Read the finished document from top to bottom as a fresh member of the intended audience:
 
 - Is the purpose clear immediately?
@@ -413,6 +419,7 @@ routing. Report first and obtain approval before material structural changes.
 
 ### 6. Cold-read and verify
 
+First run the fluency, fidelity and inference passes on new or changed prose.
 For procedural or onboarding material, confirm a fresh reader can complete the workflow. Re-run relevant commands or checks proportionate to the risk. For reference documents, emphasize schema, link, and corpus validation.
 
 ## Final handoff
@@ -432,7 +439,7 @@ Do not commit unless the user explicitly asks. Follow repository commit rules wh
 - Writing from remembered facts before inspecting sources
 - Drafting prose before understanding audience, purpose, placement, and outline
 - Creating a second source of truth instead of linking to the owner
-- Rewriting an existing document in a new voice without correctness justification
+- Rewriting an existing document in a new voice without correctness justification or a readability request
 - Inventing commands, flags, policies, dates, or examples
 - Treating an opinion as stale merely because the reviewer disagrees
 - Dropping warnings or caveats without evidence they are obsolete

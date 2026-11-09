@@ -140,6 +140,27 @@
       "prompt": "Fix the off-by-one error in paginate() and update its docstring and the inline comment above the loop to match the new behavior.",
       "expected_output": "Do not activate the documentation workflow for docstring or code comment changes; they are not durable prose documents.",
       "files": []
+    },
+    {
+      "id": 21,
+      "kind": "capability",
+      "prompt": "Add one entry to this compact Italian cheat sheet for `make lint`, which runs ruff check and mypy: \"# Comandi rapidi\\n\\n- `make test`: esegue pytest.\\n- `make fmt`: formatta con ruff.\\n- `make up`: avvia lo stack locale.\"",
+      "expected_output": "Add one list item in the existing compact `command: description` style; do not convert the cheat sheet into connected paragraphs or rewrite the other items.",
+      "files": []
+    },
+    {
+      "id": 22,
+      "kind": "capability",
+      "prompt": "In this Italian runbook the database port changed from 5432 to 6432; fix it: \"Accesso: tunnel SSH su bastion, chiave personale, niente password.\\n\\nIl database di staging accetta connessioni sulla porta 5432 dal solo bastion. Gli operatori aprono un tunnel locale e si collegano con il client preferito.\\n\\nBackup notturno, retention 7 giorni.\"",
+      "expected_output": "Change only the port in the second paragraph; leave the telegraphic first and third paragraphs unchanged because no readability rewrite was requested.",
+      "files": []
+    },
+    {
+      "id": 23,
+      "kind": "capability",
+      "prompt": "Improve the readability of the Backup section only, in clear technical Italian: \"## Avvio\\n\\nContainer report: avvio con compose, porta 8080 solo locale.\\n\\n## Backup\\n\\nBackup: dump giornaliero ore 02:00, copia S3, retention 30 gg; restore: script restore.sh, solo con approvazione ops.\"",
+      "expected_output": "Rewrite only the Backup section in complete connected Italian sentences with every fact and the approval obligation preserved; leave the Avvio section unchanged.",
+      "files": []
     }
   ]
 }

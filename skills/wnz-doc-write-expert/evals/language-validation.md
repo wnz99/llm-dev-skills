@@ -97,13 +97,20 @@ Codex judge 66, 75 and 75. Re-judging the same v0 and v2 outputs moved their
 scores by 1–4 points, so differences of that size are noise; the v0 to v3 gain
 is larger. Claude was re-run with v3 on T3 only.
 
-After independent review, the published package differs from v3: an explicit
-document-style request from the user or repository takes precedence over the
-register rule; readability requests authorize voice changes, while other edits
-keep untouched text unchanged; duplicated checks were merged; the inference
-audit accepts facts verified from code; reference examples no longer reuse eval
-inputs; and the description excludes code comments and docstrings. These
-changes were not re-run through the capability tasks.
+After independent review, the published package differs from v3: explicit
+document-style requests and a deliberate style of the target document or its
+siblings take precedence over the register rule; procedure steps may use the
+infinitive or imperative; readability requests authorize voice changes, while
+other edits keep untouched text unchanged; duplicated checks were merged; the
+inference audit accepts facts verified from code; reference examples use
+domains unrelated to the eval inputs; and the description excludes code
+comments and docstrings. T1–T3 were not re-run on this revision.
+
+Cases 21–23 exercise the precedence and scope rules. With the published
+package, fresh Codex and Claude sessions each kept the compact cheat sheet in
+its list style (21), changed only the port while leaving the telegraphic
+paragraphs untouched (22), and rewrote only the requested section in connected
+prose with its facts and approval obligation (23): 6 of 6 runs as expected.
 
 ### Activation
 
@@ -115,8 +122,10 @@ code comments and docstrings, matched all seven expectations on both hosts.
 ### Package checks
 
 `python3 -m unittest discover -s tests` passed (55 tests). `evals/evals.json`
-parses with unique IDs 1–20; frontmatter, relative links and
-`git diff --check` passed.
+parses with unique IDs 1–23; frontmatter, relative links and
+`git diff --check` passed. Raw run outputs, judge packets and verdicts were
+kept in the author's session scratch directory; they are not package
+resources.
 
 ### Limits
 
