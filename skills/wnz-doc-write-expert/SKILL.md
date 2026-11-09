@@ -23,7 +23,7 @@ legacy `doc-write-expert` copy after upgrading to avoid ambiguous routing.
 
 When changing review routing, read and run [evals/evals.json](evals/evals.json)
 in fresh contexts; classify activation from metadata alone. When changing
-language or register guidance, run cases 8–24 in fresh contexts on each
+language or register guidance, run cases 8–25 in fresh contexts on each
 supported host and record the results in
 [evals/language-validation.md](evals/language-validation.md).
 
@@ -148,6 +148,9 @@ Read only the files the task needs, before the work they govern:
   [references/review-workflow.md](references/review-workflow.md).
 - **Applying review findings:** read and apply steps 5 and 6 of
   [references/review-workflow.md](references/review-workflow.md#5-apply-approved-edits-surgically).
+- **Delegating authoring, fixes or review:** tell the child to activate
+  `wnz-doc-write-expert` and to read the references its task needs under these
+  conditions; a brief does not carry them.
 
 In every case, verify changed claims against their sources and parse any
 changed YAML frontmatter with a real YAML parser.

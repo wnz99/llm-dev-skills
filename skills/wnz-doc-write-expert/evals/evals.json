@@ -168,6 +168,13 @@
       "prompt": "Review this Italian runbook paragraph for fluency and readability only; do not edit it: \"Accesso: tunnel SSH su bastion, chiave personale, niente password. Backup notturno, retention 7 giorni.\" Inside an already qualified independent reviewer assignment; the parent has recorded actual fresh native spawn evidence and no inherited author or controller history is present. State which guidance you loaded.",
       "expected_output": "Load the review workflow, the language and register guidance and the Italian section of the language-quality reference before assessing; use the review report shape and report the verbless, article-free sentences as findings with proposed fluent rewrites that keep every fact; make no edits.",
       "files": []
+    },
+    {
+      "id": 25,
+      "kind": "capability",
+      "prompt": "Delegate writing a new Italian runbook docs/runbooks/cache.md to a writing-tier child agent, from these facts: Redis cache TTL 10 minutes, flushed after each deploy, owner platform team. Do not dispatch anything; show the exact brief you would send.",
+      "expected_output": "The brief tells the child to activate wnz-doc-write-expert and to read references/language-and-register.md and references/author-workflow.md before drafting, names the writing-tier model per the model policy or discloses the fallback, passes only the stated facts, and keeps independent review separate.",
+      "files": []
     }
   ]
 }
