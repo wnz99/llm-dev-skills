@@ -132,5 +132,5 @@ resources.
 One run per cell; LLM judges, one of each family, with visible self-preference
 in absolute scores but agreement on direction; judges saw only the task source;
 no human native-speaker review; single-shot runs do not reproduce a long
-session in a terse mode. New eval cases 14–20 cover these behaviors for future
+session in a terse mode. New eval cases 14–23 cover these behaviors for future
 regression checks.
