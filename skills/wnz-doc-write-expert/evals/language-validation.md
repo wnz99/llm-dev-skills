@@ -95,7 +95,9 @@ A confirmation round re-ran Codex on all tasks with v3, the v2 wording revised
 for tone, and judged it blind against v0 and v2: Claude judge 54, 66 and 70;
 Codex judge 66, 75 and 75. Re-judging the same v0 and v2 outputs moved their
 scores by 1–4 points, so differences of that size are noise; the v0 to v3 gain
-is larger. Claude was re-run with v3 on T3 only.
+is larger. Claude was re-run with v3 on T3 only, scoring 14 (Claude judge) and 16 (Codex
+judge) out of 20; the judges flagged correct workspace variables as unsupported
+and one omitted registry statement.
 
 After independent review, the published package differs from v3: explicit
 document-style requests and a deliberate style of the target document or its

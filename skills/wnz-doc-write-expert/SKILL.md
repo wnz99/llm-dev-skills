@@ -22,7 +22,10 @@ legacy `doc-write-expert` copy after upgrading to avoid ambiguous routing.
 ## Independent review routing
 
 When changing review routing, read and run [evals/evals.json](evals/evals.json)
-in fresh contexts; classify activation from metadata alone.
+in fresh contexts; classify activation from metadata alone. When changing
+language or register guidance, run cases 8–23 in fresh contexts on each
+supported host and record the results in
+[evals/language-validation.md](evals/language-validation.md).
 
 Require `wnz-independent-review` for standalone reviews and audits, including validation-only assessments.
 Resolve it by name through host skill discovery before substantive assessment.
@@ -44,6 +47,7 @@ Post one short line identifying the mode and target:
 
 - New document: `Using **wnz-doc-write-expert** to author <document/purpose> — I'll establish the reader, evidence, corpus rules, and structure before drafting.`
 - Existing document: `Using **wnz-doc-write-expert** to review <relative path> — I'll inventory checkable claims, verify them, and make only the edits the request authorizes.`
+- Update during code work: `Using **wnz-doc-write-expert** to update <relative path> alongside the code change — I'll apply the sentence checks and the three passes to the changed prose.`
 
 ## Choose the mode
 
@@ -132,7 +136,8 @@ sources supply facts, not a sentence structure to imitate.
   documents from the same domain for terminology, structure and conventions.
   Keep terminology and forms of address consistent. Use plain, unambiguous
   phrasing for technical instructions rather than adding idioms to make them
-  sound native. Apply local typography, number, and date conventions without changing values, units, or factual context.
+  sound native. Apply local typography, number, and date conventions without
+  changing values, units, or factual context.
 - Preserve source meaning, requirements, warnings, qualifications, quantities,
   and evidence. Fluent adaptation does not authorize new claims or weaker rules.
   Keep executable commands, code, API identifiers, paths, and exact UI labels
@@ -147,11 +152,13 @@ sources supply facts, not a sentence structure to imitate.
 
 ### Keep document register independent of session style
 
-Chat response styles do not transfer to persisted prose. Terse, compressed or
-token-saving response modes, the brief, note-style
-sources and instruction files of another document type supply facts and rules,
-not a sentence style. Write document prose in complete, connected sentences for
-its reader, even when the session, the brief and the sources are terse.
+Chat response modes, whether terse, compressed or token-saving, do not set
+document style. The user's task wording, note-style sources and instruction
+files of another document type supply facts and rules, not a sentence style.
+Write document prose in complete, connected sentences for its reader, even when
+the session, the task wording and the sources are terse. A brevity or
+token-saving request that does not name the document applies to chat output
+only.
 
 The document's own conventions take precedence: an explicit document-style
 request from the user or the repository, and a consistent, deliberate style in
