@@ -257,18 +257,35 @@ class ReviewSkillContractsTest(unittest.TestCase):
 
     def test_doc_writer_requires_progressive_reader_context(self) -> None:
         skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
+        author = (DOC_WRITE_EXPERT / "references" / "author-workflow.md").read_text(
+            encoding="utf-8"
+        )
 
         self.assertIn("Build understanding progressively", skill)
-        self.assertIn("familiar input → purpose of the transformation", skill)
-        self.assertIn("Delay internal IDs, hashes, file paths, schemas", skill)
-        self.assertIn("support the narrative", skill)
+        self.assertIn("references/author-workflow.md", skill)
+        self.assertIn("familiar input → purpose of the transformation", author)
+        self.assertIn("Delay internal IDs, hashes, file paths, schemas", author)
+        self.assertIn("support the narrative", author)
 
     def test_doc_writer_requires_parser_validated_yaml_frontmatter(self) -> None:
         skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
+        author = (DOC_WRITE_EXPERT / "references" / "author-workflow.md").read_text(
+            encoding="utf-8"
+        )
 
-        self.assertIn("Parse every YAML frontmatter block with a real YAML parser", skill)
-        self.assertIn('title: "Data flow: current architecture"', skill)
-        self.assertIn("validate every\nfrontmatter-bearing document", skill)
+        self.assertIn("parse any changed YAML frontmatter with a real YAML", skill)
+        self.assertIn("Parse every YAML frontmatter block with a real YAML parser", author)
+        self.assertIn('title: "Data flow: current architecture"', author)
+        self.assertIn("validate every\nfrontmatter-bearing document", author)
+
+    def test_doc_writer_loads_workflows_on_demand(self) -> None:
+        skill = (DOC_WRITE_EXPERT / "SKILL.md").read_text(encoding="utf-8")
+
+        for reference in ("language-and-register.md", "author-workflow.md",
+                          "review-workflow.md", "model-policy.md"):
+            with self.subTest(reference=reference):
+                self.assertIn(f"references/{reference}", skill)
+                self.assertTrue((DOC_WRITE_EXPERT / "references" / reference).is_file())
 
     def test_phase_executor_reviews_user_feedback_in_fresh_bounded_cycles(self) -> None:
         skill = (PHASE_EXECUTOR / "SKILL.md").read_text(encoding="utf-8")

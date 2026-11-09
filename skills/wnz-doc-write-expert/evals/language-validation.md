@@ -149,3 +149,25 @@ in absolute scores but agreement on direction; judges saw only the task source;
 no human native-speaker review; single-shot runs do not reproduce a long
 session in a terse mode. New eval cases 14–23 cover these behaviors for future
 regression checks.
+
+## Progressive disclosure split (2026-11-09)
+
+### Change
+
+`SKILL.md` shrank from 3,865 to 1,309 words. The language and register rules,
+the author workflow, the review workflow and the model policy moved verbatim
+to `references/`, with explicit load conditions in `SKILL.md`; a scoped update
+still verifies changed claims and parses changed YAML frontmatter. The
+contract tests now read the moved text from `references/author-workflow.md`
+and check every load link.
+
+### Behavior checks
+
+Fresh sessions ran the split package (v5) once per host on T1, T2, T3, case 17
+and cases 21–23, with the published 1.1.7 package (v4) on T1 and T2 for
+comparison. Both hosts opened `references/language-and-register.md` and
+`references/author-workflow.md` before writing; Claude reads were confirmed
+from its tool-call stream. Cases 22 and 23 behaved as with v4 on both hosts.
+In case 21 one of three Codex runs added a verb to the verbless cheat sheet;
+the other two kept its style, as did Claude. In case 17 Claude still added
+unsupported statements, as with v4.
