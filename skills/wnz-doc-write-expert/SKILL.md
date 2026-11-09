@@ -131,8 +131,8 @@ sources supply facts, not a sentence structure to imitate.
 - Follow available target-language style guides, glossaries, and representative
   documents from the same domain for terminology, structure and conventions.
   Keep terminology and forms of address consistent. Use plain, unambiguous
-  phrasing for technical instructions rather than adding idioms to make them sound native. Apply local typography, number,
-  and date conventions without changing values, units, or factual context.
+  phrasing for technical instructions rather than adding idioms to make them
+  sound native. Apply local typography, number, and date conventions without changing values, units, or factual context.
 - Preserve source meaning, requirements, warnings, qualifications, quantities,
   and evidence. Fluent adaptation does not authorize new claims or weaker rules.
   Keep executable commands, code, API identifiers, paths, and exact UI labels
@@ -147,16 +147,17 @@ sources supply facts, not a sentence structure to imitate.
 
 ### Keep document register independent of session style
 
-Chat response styles do not transfer to persisted prose. Terse or compressed
-modes (for example caveman or other token-saving modes), the brief, note-style
+Chat response styles do not transfer to persisted prose. Terse, compressed or
+token-saving response modes, the brief, note-style
 sources and instruction files of another document type supply facts and rules,
 not a sentence style. Write document prose in complete, connected sentences for
 its reader, even when the session, the brief and the sources are terse.
 
 The document's own conventions take precedence: an explicit document-style
 request from the user or the repository, and a consistent, deliberate style in
-the target document or its siblings, such as a compact cheat sheet or a terse
-`AGENTS.md`. Tables, headings and reference lists follow corpus conventions.
+the target document or in sibling documents of the same type, such as a
+compact cheat sheet. A terse `AGENTS.md` sets the style only when it is itself
+the target. Tables, headings and reference lists follow corpus conventions.
 When existing prose is terse because it is poorly written rather than by
 convention, take its facts and terms but not its sentence style for new prose.
 
@@ -186,7 +187,7 @@ surrounding text to apply these checks.
 4. Unless the corpus has another convention, abbreviated project identifiers
    such as environment, stack or branch names appear as formatted identifiers
    with a governing noun ("el entorno `qa`"), not as bare words or slash pairs
-   ("en qa", "prod/qa"). Common acronyms such as HTTPS stay plain.
+   ("en qa", "prod/qa"). Common acronyms such as URL stay plain.
 5. Related facts are joined by the connective that states their real relation
    (cause, condition, contrast, consequence or sequence) when the evidence
    supports it; see the inference audit below.

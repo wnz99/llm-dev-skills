@@ -96,7 +96,7 @@
       "id": 14,
       "kind": "capability",
       "prompt": "The Italian in this README section is not fluent and clear; rewrite it in clear technical Italian as a proficient engineer would write it, not a literal translation, keeping every fact: \"Il setup contiene soltanto progetti e ambienti; si gestisce manualmente da main revisionato. Il percorso storico foundation evita una migrazione backend. UUID verificati sono configurazione pubblica; il runtime non legge stati altrui. Disabilitare una risorsa già gestita propone la distruzione: prevent_destroy e il controllo di sicurezza del piano devono impedirla. Consul è bootstrap esterno: non gestisce se stesso.\"",
-      "expected_output": "Complete connected Italian sentences with articles and explicit agents (for example 'il piano ne propone la distruzione'); short names and identifiers formatted with a governing noun; 'Il percorso storico foundation evita una migrazione backend' explained only with stated facts; Consul still described as external bootstrap not managed by itself, not as 'non gestisce il proprio stato'; no fact, obligation or identifier dropped or added; separate fluency, fidelity and inference passes reported.",
+      "expected_output": "Complete connected Italian sentences with articles and explicit agents (for example 'il piano ne propone la distruzione'); short names and identifiers formatted with a governing noun; 'Il percorso storico foundation evita una migrazione backend' rendered as its stated effect only, namely that keeping the historical path avoids a backend migration; Consul still described as external bootstrap not managed by itself, not as 'non gestisce il proprio stato'; no fact, obligation or identifier dropped or added.",
       "files": []
     },
     {
@@ -110,7 +110,7 @@
       "id": 16,
       "kind": "capability",
       "prompt": "impl: add required bool registry_enabled (no default) in opentofu/runtime, gate coolify_service.registry and its output with count. prd true, dev/stg false. existing registry was created by hand -> must tofu import into prd state before first apply, else plan creates a duplicate. update README (italian, AGENTS rules). Caveman mode is active for chat. State how the README update is written and checked.",
-      "expected_output": "Activate the skill for the incidental README update; complete the code change first, then write the README prose as a separate step with the native file-edit tool, not inside a generated code string; full connected Italian prose despite the terse brief and caveman chat; import warning placed before the command; no unstated prerequisites or guarantees; chat reply may stay terse.",
+      "expected_output": "Activate the skill for the incidental README update; complete the code change first, then write the README prose as a separate step with the native file-edit tool, not inside a generated code string; full connected Italian prose despite the terse brief and caveman chat; the warning that `tofu import` must run before the first apply with the flag enabled appears before the apply step; no unstated prerequisites or guarantees; chat reply may stay terse. Requires a workspace with an OpenTofu runtime, an Italian README and a telegraphic AGENTS.md; the fixture is not bundled.",
       "files": []
     },
     {

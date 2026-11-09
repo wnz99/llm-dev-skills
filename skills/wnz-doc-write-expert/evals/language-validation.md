@@ -102,8 +102,18 @@ document-style requests and a deliberate style of the target document or its
 siblings take precedence over the register rule; procedure steps may use the
 infinitive or imperative; readability requests authorize voice changes, while
 other edits keep untouched text unchanged; duplicated checks were merged; the
-inference audit accepts facts verified from code; examples no longer reuse eval
-tokens; and the description excludes code comments and docstrings. T1–T3 were not re-run on this revision.
+inference audit accepts facts verified from code; reference examples no longer
+reuse eval tokens; a terse `AGENTS.md` sets the style only when it is itself the
+target; and the description excludes code comments and docstrings. T1 and T2
+were not re-run on this revision.
+
+On the published package, T3 and case 17 ran once per host with a telegraphic
+`AGENTS.md` in the workspace. Both hosts wrote connected Italian prose and did
+not imitate the `AGENTS.md` style. Codex added no unsupported facts. Claude
+added unsupported statements in both tasks: in T3 that the UUID appears in the
+Coolify page URL, and in case 17 a consequence of the retention period, an
+escalation path and a purpose of the restore test. The inference audit reduces
+but does not eliminate plausible additions.
 
 Cases 21–23 exercise the precedence and scope rules. With the published
 package, fresh Codex and Claude sessions each added a verbless item to the
