@@ -179,15 +179,21 @@ After review, the published split restores the model policy to `SKILL.md`,
 keeps the mixed review-and-fix ordering there, and adds load conditions for
 scoped updates and readability rewrites (author step 6), blank-page
 replacements and the author leg of hybrid mode (author workflow), applying
-review findings (review step 5) and fluency assessment in a read-only review.
-On the published package, case 24 (a read-only Italian fluency review inside a
+review findings (review steps 5 and 6) and fluency assessment in a read-only
+review.
+
+On commit `3226225`, fresh sessions on both hosts ran T1 (case 14), T3 (case
+16) and cases 21–23. Both hosts kept the verbless cheat sheet verbless (21),
+changed only the port (22), rewrote only the Backup section (23), and wrote
+connected Italian prose for T1 and T3. On commit `007ce2d`, case 24 (a read-only Italian fluency review inside a
 qualified reviewer assignment) loaded the review workflow, the language
 guidance and the Italian section of `language-quality.md` on both hosts and
 reported findings without edits; Codex additionally dispatched a fresh
 reviewer, following a user-level instruction outside this skill. Case 5 kept
 the order findings first, then scoped corrections without a permission pause,
-on both hosts. The blind comparison below and cases 21–23 ran on v5, before
-these load-condition changes.
+on both hosts. The blind comparison below ran on v5, before these
+load-condition changes. The description is unchanged from 1.1.7, so the
+activation results for cases 18–20 still apply.
 
 ### Blind comparison
 
