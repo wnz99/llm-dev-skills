@@ -102,15 +102,18 @@ document-style requests and a deliberate style of the target document or its
 siblings take precedence over the register rule; procedure steps may use the
 infinitive or imperative; readability requests authorize voice changes, while
 other edits keep untouched text unchanged; duplicated checks were merged; the
-inference audit accepts facts verified from code; reference examples use
-domains unrelated to the eval inputs; and the description excludes code
-comments and docstrings. T1–T3 were not re-run on this revision.
+inference audit accepts facts verified from code; examples no longer reuse eval
+tokens; and the description excludes code comments and docstrings. T1–T3 were not re-run on this revision.
 
 Cases 21–23 exercise the precedence and scope rules. With the published
-package, fresh Codex and Claude sessions each kept the compact cheat sheet in
-its list style (21), changed only the port while leaving the telegraphic
+package, fresh Codex and Claude sessions each added a verbless item to the
+verbless cheat sheet (21), changed only the port while leaving the telegraphic
 paragraphs untouched (22), and rewrote only the requested section in connected
 prose with its facts and approval obligation (23): 6 of 6 runs as expected.
+
+Cases 14–16 were written from the incident that motivated this change, so they
+are not fully held out from the guidance; the published examples avoid their
+literal tokens, but their failure patterns are the ones the checks target.
 
 ### Activation
 

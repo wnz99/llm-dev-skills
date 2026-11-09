@@ -144,8 +144,8 @@
     {
       "id": 21,
       "kind": "capability",
-      "prompt": "Add one entry to this compact Italian cheat sheet for `make lint`, which runs ruff check and mypy: \"# Comandi rapidi\\n\\n- `make test`: esegue pytest.\\n- `make fmt`: formatta con ruff.\\n- `make up`: avvia lo stack locale.\"",
-      "expected_output": "Add one list item in the existing compact `command: description` style; do not convert the cheat sheet into connected paragraphs or rewrite the other items.",
+      "prompt": "Add one entry to this compact Italian cheat sheet for `make lint`, which runs ruff check and mypy: \"# Comandi rapidi\\n\\n- `make test`: pytest\\n- `make fmt`: formattazione ruff\\n- `make up`: stack locale\"",
+      "expected_output": "Add one verbless list item in the existing compact `command: description` style, for example '- `make lint`: ruff check e mypy'; do not add verbs to satisfy the sentence checks, convert the cheat sheet into connected prose or rewrite the other items.",
       "files": []
     },
     {

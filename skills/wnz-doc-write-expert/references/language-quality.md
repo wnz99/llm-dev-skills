@@ -16,14 +16,14 @@ take precedence over the term choices suggested here.
 - "Il sorgente" is accepted usage; when the corpus also says "il codice", keep
   one term.
 - When English uses one word for an artifact and an operation, name them
-  separately: for example "il piano" for a saved plan and "applicare le
-  modifiche" for the operation.
+  separately: for example "la build" for the artifact and "compilare" for the
+  operation.
 - Avoid "andare a" + infinitive ("andare a modificare") and "in termini di".
 
 | Avoid | Write |
 | --- | --- |
 | Ogni modifica architetturale: dichiarare decisione, aggiornare documento. | Ogni modifica architetturale richiede di dichiarare la decisione e di aggiornare il documento. |
-| Dopo modifiche: `make check`. | Dopo ogni modifica, eseguire `make check`. |
+| Dopo modifiche: `make check`. | Dopo le modifiche, eseguire `make check`. |
 | Cache attiva solo su main; feature/* senza cache. | La cache è attiva soltanto sul ramo `main`; i rami `feature/*` non la usano. |
 | Log ruotati ogni notte, conservati 14 giorni, poi cancellati. | I log vengono ruotati ogni notte, conservati per 14 giorni e poi cancellati. |
 | (Contesto: il plugin inoltra il corpo al motore AppSec.) Il plugin gli invia un byte in più. | Il plugin invia al motore AppSec un byte in più. |
@@ -39,12 +39,13 @@ take precedence over the term choices suggested here.
 
 | Avoid | Write |
 | --- | --- |
-| Cache TTL 10 min; purgar tras deploy. | La caché tiene un TTL de 10 minutos. Púrguela después de cada despliegue. |
+| Cache TTL 10 min; purgar tras deploy. | La caché tiene un TTL de 10 minutos. Purgarla después del despliegue. |
 
 ## French
 
-- Keep articles and the full negation ("ne ... pas"); use the infinitive for
-  procedures ("Vérifier", "Exécuter").
+- Keep articles and the full negation ("ne ... pas"); use the infinitive
+  ("Vérifier") or the imperative ("Vérifiez") for procedures, as the corpus
+  does, and keep it consistent.
 - Prefer native terms such as "déployer", "mot de passe", "jeton" and
   "conteneur" unless the corpus has established an English term.
 

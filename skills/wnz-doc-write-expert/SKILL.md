@@ -67,9 +67,9 @@ Do not use either mode for fixed generated documentation when the repository man
 
 Authorization is determined once from the request: `review`, `audit`, or
 `check` alone is read-only; `update`, `fix`, `refresh`, or `rewrite` authorizes
-scoped correctness and conformance edits. A request to improve readability,
-fluency or clarity also authorizes changing voice and sentence structure within
-its scope. Document moves, splits, replacement,
+scoped correctness and conformance edits. A readability request, to improve
+readability, fluency or clarity, also authorizes changing voice and sentence
+structure within its scope. Document moves, splits, replacement,
 and other material structural changes require approval unless explicitly
 requested.
 
@@ -130,8 +130,8 @@ sources supply facts, not a sentence structure to imitate.
   terminology exists; retain commonly accepted technical loanwords when natural.
 - Follow available target-language style guides, glossaries, and representative
   documents from the same domain for terminology, structure and conventions.
-  Keep terminology and forms of address consistent. Use plain, unambiguous phrasing for technical instructions rather
-  than adding idioms to make them sound native. Apply local typography, number,
+  Keep terminology and forms of address consistent. Use plain, unambiguous
+  phrasing for technical instructions rather than adding idioms to make them sound native. Apply local typography, number,
   and date conventions without changing values, units, or factual context.
 - Preserve source meaning, requirements, warnings, qualifications, quantities,
   and evidence. Fluent adaptation does not authorize new claims or weaker rules.
@@ -151,7 +151,7 @@ Chat response styles do not transfer to persisted prose. Terse or compressed
 modes (for example caveman or other token-saving modes), the brief, note-style
 sources and instruction files of another document type supply facts and rules,
 not a sentence style. Write document prose in complete, connected sentences for
-its reader, even when they are terse.
+its reader, even when the session, the brief and the sources are terse.
 
 The document's own conventions take precedence: an explicit document-style
 request from the user or the repository, and a consistent, deliberate style in
@@ -162,17 +162,18 @@ convention, take its facts and terms but not its sentence style for new prose.
 
 Register drift is most likely when documentation changes alongside code,
 configuration or refactoring work. Treat that update as its own writing step
-after the code change: apply the language checks and corpus rules to the
-changed prose, and write it with the host's native file-edit tool. Prose
-composed inside a generated code string, template literal or script inherits
-the implementation register and escapes these checks. Use the full author
-workflow only when the update creates a new document or section.
+after the code change: apply the sentence checks, the three passes and the
+corpus rules to the changed prose, and write it with the host's native
+file-edit tool. Prose composed inside a generated code string, template literal
+or script inherits the implementation register and escapes these checks. Use
+the full author workflow only for a new document or a substantial new section.
 
 ### Check every sentence and paragraph
 
 These checks apply in any language and catch the failures most often seen in
-generated documentation. Run them on new or changed prose sentences. Outside a
-readability request, text you do not change keeps its existing voice.
+generated documentation. Run them on new or changed prose sentences, within the
+document conventions above. Outside a readability request, do not rewrite
+surrounding text to apply these checks.
 
 1. Each sentence has a finite verb and, where the language needs one, an
    explicit subject; procedure steps may use the infinitive or imperative form
@@ -182,19 +183,17 @@ readability request, text you do not change keeps its existing voice.
    them to save space reads as notes, not documentation.
 3. Each pronoun and implicit subject has one obvious referent in the same or
    previous sentence.
-4. Short project identifiers such as environment, stack or branch names appear
-   as formatted identifiers with a governing noun ("el entorno `staging`"), not
-   as ordinary words ("in staging", "dev/stg"). Common acronyms such as HTTPS
-   stay plain.
+4. Unless the corpus has another convention, abbreviated project identifiers
+   such as environment, stack or branch names appear as formatted identifiers
+   with a governing noun ("el entorno `qa`"), not as bare words or slash pairs
+   ("en qa", "prod/qa"). Common acronyms such as HTTPS stay plain.
 5. Related facts are joined by the connective that states their real relation
    (cause, condition, contrast, consequence or sequence) when the evidence
    supports it; see the inference audit below.
 6. One main idea per sentence. Split sentences above about 35 words or with more
    than two subordinate clauses.
-7. Generic words use the target language and follow the term sheet or corpus
-   glossary when one exists.
-8. The document speaks about the system, not about its sources or its writing:
-   no "according to the notes" or "this section was rewritten".
+7. The document speaks about the system, not about its sources or its writing:
+   no "as the ticket says" or "this section was rewritten".
 
 For each paragraph, check that it opens with what the reader needs to know or
 do, that its sentences develop that one topic, and that unrelated facts become
@@ -220,11 +219,11 @@ separate passes:
 3. **Inference audit:** list each statement not directly supported by the
    evidence (sources, code or verified facts), especially causal connectives,
    absolutes ("only", "always", "all"), implied uniqueness, guarantees
-   ("without interruption") and new mandatory steps. Delete it or label it as
+   ("with zero downtime") and new mandatory steps. Delete it or label it as
    a recommendation; fluent prose that adds plausible facts is a fidelity
    defect.
 
-For a readability rewrite, restate each paragraph from its meaning and then
+For a readability request, restate each paragraph from its meaning and then
 run the three passes.
 
 ## Author mode workflow
@@ -413,8 +412,8 @@ routing. Report first and obtain approval before material structural changes.
 - Preserve correct content, voice, examples, warnings, and formatting.
 - Copy exact commands and identifiers from evidence.
 - Update affected indexes, anchors, and inbound links.
-- Avoid unrelated tone rewrites and whitespace churn, unless the request is a
-  readability rewrite.
+- Avoid unrelated tone rewrites and whitespace churn, except within a
+  readability request.
 - Separate broad restructuring from correctness fixes and obtain approval first.
 
 ### 6. Cold-read and verify
