@@ -105,10 +105,12 @@ revising the description policy or explaining its rationale.
 
 ## Publish and verify
 
-Run relevant repository checks against the final intended changes. Honor required
-gates; report blockers rather than claiming readiness. Failed or unavailable
-checks must remain visible; use a draft when allowed and appropriate. Self-check
-the diff and description; do not call this independent review.
+Let installed repository hooks trigger quality checks during the normal push.
+Do not launch quality checks, tests or builds separately as part of shipping;
+CI owns builds and tests. Honor hook failures and report blockers rather than
+claiming readiness. Failed or unavailable checks must remain visible; use a
+draft when allowed and appropriate. Self-check the diff and description; do not
+call this independent review.
 
 Check for an existing open request with the same source repository/branch and
 target before creating. Push only the intended branch to its verified remote.

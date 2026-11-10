@@ -1,5 +1,6 @@
 {
   "method": "Manual simulated forward execution; no real host mutations, networking, pushes, PRs, or credentials. Activation decisions use frontmatter criteria only. Missing repository facts are explicit synthetic fixture facts, not discovered repository evidence.",
+  "policy_scope": "Historical results from before the hook-owned shipping policy. Case 1's separate pytest action is superseded by the current skill. See hook-policy-results.json for the bounded new-policy simulations.",
   "limitations": [
     "One evaluator context; not isolated fresh contexts per case.",
     "Expected outputs were visible in evals.json, so this is not a blinded benchmark.",
