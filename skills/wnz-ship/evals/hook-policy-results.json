@@ -1,5 +1,5 @@
 {
-  "method": "Two fresh native evaluator identities with fork_turns=none; manual simulated host responses only. No actual host operations, pushes, PRs, checks, builds or tests were executed by evaluators.",
+  "method": "Fresh native evaluator identities with fork_turns=none; manual simulated host responses only. No actual host operations, pushes, PRs, checks, builds or tests were executed by evaluators.",
   "evaluators": ["/root/ship_eval_hooks", "/root/ship_eval_failure", "/root/ship_policy_validation"],
   "cases": [
     {
