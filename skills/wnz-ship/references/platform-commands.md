@@ -21,7 +21,7 @@ git rev-parse HEAD
 git push --set-upstream "$ship_remote" "HEAD:refs/heads/$ship_head"
 ```
 
-Run the push only after scope and checks are established. Fetch the target from
+Run the push only after scope and check ownership are established. Fetch the target from
 its own remote when the push remote is a fork. These commands do not commit files.
 
 ## GitHub: gh
