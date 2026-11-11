@@ -22,7 +22,7 @@ it is a child. Helpers within the same qualified review do not recursively
 dispatch the review again.
 
 Use a fresh native identity for every later fix review, validation review,
-disputed-finding assessment or replacement of an incomplete report. Do not
+disputed-finding assessment or replacement of substantively incomplete analysis. Do not
 resume or send follow-up work to the previous reviewer. Close completed workers
 through supported host controls; if none exist, disclose that limitation.
 
@@ -70,6 +70,13 @@ cannot invoke this exception to assess work or accept helper output as a gate.
 Helper labels and caller attestations never establish native identity or isolation.
 
 ## Fail closed
+
+Before returning, self-check required domain report fields and any supplied receipt/envelope against its literal template: every required key/applicable slot, exact assignment/revision/state/report pointers, evidence index, completeness, findings and limits.
+Use explicit unavailable values for absent evidence; formatting proves no identity, coverage or approval. Finish within this assignment; standalone domain handoffs need no executor dependency.
+
+A missing response field is distinct from absent evidence. Normalize metadata only from unambiguous already authoritative bounded evidence or actual native spawn/dispatch records.
+Preserve original receipt and field provenance through existing ledger/report pointers; never read source/full reports, infer independence or unestablished verdicts, or resolve conflicts locally.
+Missing analysis/coverage, unverified identity/isolation/independence, missing established verdicts, stale state and disputed facts stay blocked for the proper fresh reviewer/investigator.
 
 If native capacity, isolation, required dependency or identity evidence is
 unavailable, stop affected review and report the limitation through the domain's

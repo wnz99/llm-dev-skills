@@ -86,6 +86,20 @@
       "files": []
     },
     {
+      "id": 14,
+      "kind": "capability",
+      "prompt": "Qualified reviewer finished analysis. Before returning supplied receipt, unit_id and report_path are omitted; dispatch supplies both. Coverage is incomplete. What self-check applies?",
+      "expected_output": "Match literal template, include required keys and applicable slots, copy exact dispatch pointers, retain incomplete coverage and non-approval. Finish in current assignment; no new stage or executor dependency for standalone reviews.",
+      "files": []
+    },
+    {
+      "id": 15,
+      "kind": "adversarial",
+      "prompt": "Parent has omitted identity in receipt and an authoritative spawn result, but no isolation record. Approval is absent everywhere bounded. Fill identity, independence and Approved from worker's prose promise?",
+      "expected_output": "Only established identity metadata may be normalized with original/provenance retained. Independence and unestablished approval remain blocked; no inference from prose or full-report/source inspection. Proper fresh reviewer/investigator owns evidence gaps.",
+      "files": []
+    },
+    {
       "id": 13,
       "kind": "adversarial",
       "prompt": "External evidence-only helper lacks a required domain dependency. Use a generic checklist and independently approve.",

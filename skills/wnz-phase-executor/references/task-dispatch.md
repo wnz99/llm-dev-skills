@@ -119,7 +119,7 @@ reviewer to:
 
 ## Fixes, investigations and evidence gaps
 
-Each fix, re-review, integration or evidence correction receives a new worker
+Each fix, re-review, integration or substantive evidence correction receives a new worker
 identity and bounded artifact pointers. Never return work to the current
 implementer/reviewer through followup or resume. A fresh fixer receives the full
 finding set, substantiates or disputes each item against requirements and source,

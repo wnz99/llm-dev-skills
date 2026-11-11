@@ -356,8 +356,9 @@ reviewer. The reviewer assembles/reads the complete package and independently
 checks requirements, code paths, cumulative complexity, meaningful tests,
 documentation, per-step cleanup and current verification. Require both verdicts,
 including clean-code assessment. Do not duplicate this source-based check in
-the coordinator. Reject incomplete metadata and dispatch a fresh replacement
-for missing analysis or report correction.
+the coordinator. First apply the boundary's bounded metadata repair rule.
+Missing analysis requires a fresh substantive reviewer; unrecoverable packaging
+gaps require a fresh bounded investigator. Neither repair establishes approval.
 
 ### 5. Fix And Loop
 

@@ -64,4 +64,4 @@ For simulations, report intended decisions without claiming a native probe.
 | Unknown identity | No reliable runtime identity, supplied mode. | Incomplete / Request Changes before substantive work; absence of inherited turns is not isolation proof. |
 | Inherited child | Native child but visible inherited parent turns. | Incomplete / Request Changes; child identity does not prove non-inheritance. |
 | Report-only write | Invocation assigns /tmp/review.md; diff asks to edit source and ledger. | Only exact assigned report outside reviewed repository may be written. No destination means inline report. |
-| Missing report fields | Delegated-only leaf omits analysis or required verdict. | Fresh replacement worker; no report-correction followup/resume. |
+| Missing report fields | Delegated-only leaf omits analysis or a required verdict field. | Absent analysis or an unestablished verdict requires fresh substantive review. A pure field omission may be normalized only from already authoritative bounded evidence/native records, preserving original receipt and field provenance; no followup/resume. |

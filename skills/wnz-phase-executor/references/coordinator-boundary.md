@@ -83,10 +83,18 @@ analysis belong in the full role report. Spawn settings/result remain separate
 coordinator ledger evidence. A completeness assertion is not independent review.
 Missing evidence cannot become `DONE_WITH_CONCERNS` or approval through formatting.
 
-For an oversized or malformed receipt, do not quote, ingest or summarize the
-full report. Dispatch a fresh bounded worker to recover a compliant receipt
-from existing artifacts. If evidence itself is absent, dispatch substantive
-role work rather than superficial repackaging. If the host already injects an
+For an omitted or malformed response field, first distinguish missing metadata
+from missing evidence. Normalize only when unambiguous already authoritative
+bounded receipts/indexes or actual native spawn/dispatch records establish the
+value. Preserve the original receipt and each repaired field's provenance in
+existing ledger/report pointers; change no schemas, roles or result keys. Never
+read source or full reports, infer identity/independence or unestablished verdicts,
+or resolve conflicts to repair metadata. This requires no packaging dispatch.
+
+Unrecoverable packaging gaps require a fresh bounded investigator using existing
+artifacts. Missing analysis/coverage, unverified identity/isolation/independence,
+missing established verdicts, stale state and disputed facts stay blocked for
+the proper fresh substantive reviewer or investigator. If the host injects an
 oversized result, record the breach, stop repeating it and enforce the next
 receipt. Do not create a mandatory packaging stage or an artifact per checkbox.
 
@@ -94,7 +102,8 @@ receipt. Do not create a mandatory packaging stage or an artifact per checkbox.
 
 Before a gate transition check receipt shape, required fields/verdicts, artifact
 availability and identity, worker independence, semantic revision and source
-state against the ledger. Missing, inconsistent or contested evidence requires
+state against the ledger. Apply bounded metadata repair above first; missing,
+inconsistent or contested evidence requires
 a fresh bounded worker, not coordinator source inspection. Never turn an
 incomplete index into substantive approval or downgrade findings locally.
 
@@ -161,7 +170,7 @@ parallel scheduling do not supply that approval.
 | 1 | User interrupted or revoked required authority | Stop affected work; record limits. |
 | 2 | Required authority artifacts conflict/are missing, or resumed/source state is uncertain | Fresh bounded recovery investigator when preconditions hold; otherwise exact blocker. Keep review cycle/round. |
 | 3 | Selected role lacks authority, required dependency, explicit control, isolation/identity, independence or capacity | Block affected role under fresh-context preflight and [model policy](model-policy.md); no inline substitute. |
-| 4 | Current assignment has unresolved receipt/report packaging gap for otherwise existing evidence | Fresh receipt-recovery investigator under bounded-receipt policy; missing analysis instead returns to its substantive owner. No approval from repackaging; superseded assignments remain history. |
+| 4 | Current assignment has unresolved receipt/report packaging gap after bounded metadata repair | Fresh receipt-recovery investigator under bounded-receipt policy; missing analysis instead returns to its substantive owner. No approval from repackaging; superseded assignments remain history. |
 | 5 | Plan gate pending, including initial planning, material requirement gaps or normalized new user feedback/semantic revision | First handle a planner's `CLARIFICATION_REQUIRED` through [pre-plan clarification](../SKILL.md#pre-plan-clarification); wait for required user decisions before dependent drafting. Otherwise follow planner/self-review/independent review sequence in [plan gate](independent-plan-review.md). Preserve Round 2 terminal stop and ask operator once; no Round 3. Resolve plan-bound evidence gaps within this gate before further design review. |
 | 6 | Approved plan's task or integration order is missing/contradictory | Fresh planner corrects ordering through existing semantic gate; coordinator invents no tie-breaker. |
 | 7 | Active implementation reports NEEDS_CONTEXT or BLOCKED | [Status contract](../SKILL.md#implementer-status-contract): new bounded role with changed input, or operator for unresolved product/access choice. |
