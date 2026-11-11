@@ -136,6 +136,10 @@ Review is read-only: assess the phase as scoped and do not edit or redesign it.
 
 ## Handoff
 
+Apply `wnz-independent-review`'s pre-return report/receipt self-check. Include
+the established plan verdict and reviewed revision explicitly; missing evidence
+stays incomplete rather than becoming approval through a completed template.
+
 Return the verdict, evidence-backed findings, reviewed revision, trace coverage,
 checks actually run, and limits. The controller coordinates corrections, annotation
 triage, approval binding and review-cycle caps. Do not start another review or

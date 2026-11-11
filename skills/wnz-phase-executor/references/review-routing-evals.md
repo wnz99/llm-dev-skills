@@ -24,7 +24,9 @@ Current ownership: the controller manages cycles; `wnz-plan-reviewer` owns
 design assessment; `wnz-code-reviewer` owns implemented-diff assessment.
 Install all declared required dependencies before running these cases.
 Review workers may write only their exact assigned report outside the reviewed
-repository. Missing analysis or report fields require a fresh replacement,
+repository. First normalize pure response-field omissions under the boundary's
+bounded metadata repair rule. Missing analysis or unestablished verdicts require
+fresh substantive review; unrecoverable packaging requires a fresh investigator,
 never a resumed reviewer. Native identity is separate from recursion markers.
 
 ## Historical validation — 2026-10-14

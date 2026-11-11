@@ -59,6 +59,14 @@ result slots verbatim from the table into `role_result`; omit other roles'
 slots. Required unavailable slots leave the gate unresolved. This envelope
 does not redefine the role's native report or vocabulary.
 
+Before returning, the worker compares its response with this literal template:
+all keys present, applicable role slots only, dispatch identifiers and pointers
+matched, report/index and established verdicts explicit, and at most 300 words.
+Mark absent evidence `unavailable: reason` and completeness incomplete; do not
+invent a value to pass this structural self-check. Finish it in the current
+assignment. The coordinator applies the boundary's metadata-repair rule before
+requesting a fresh worker; a missing response field alone is not missing evidence.
+
 | Role | Required `role_result` slots and owner |
 | --- | --- |
 | implementer (including fixer/integrator) | `status`: `DONE`, `DONE_WITH_CONCERNS`, `NEEDS_CONTEXT` or `BLOCKED`; `wnz-task-implementer` owns meaning/evidence |

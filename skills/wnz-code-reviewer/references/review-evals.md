@@ -1,5 +1,13 @@
 # Review behavior checks
 
+## Receipt completeness cases
+
+| Case | Input | Pass criteria |
+| --- | --- | --- |
+| Omitted result slots | Qualified reviewer established both task verdicts and report; draft supplied envelope omits quality_verdict. | Self-check literal template before returning, include established result and all applicable keys within current assignment; no new worker. |
+| Missing assessment | Template is complete but required trace coverage or clean-code analysis was never performed. | Report Incomplete/Request Changes with gaps; a filled template cannot supply approval. |
+| Standalone handoff | Review has no executor envelope. | Retain domain report and shared self-check; no new executor dependency or execution workflow. |
+
 ## Comment format and language cases
 
 Run these as bounded composition simulations, not independent code approval.

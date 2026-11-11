@@ -32,7 +32,8 @@ source and owns the verdict; helper recommendations cannot supply approval gates
 
 The reviewer leaf owns scope discovery, preparation and structural pre-pass;
 the outer coordinator supplies bounded artifact pointers and does no source
-prechecks. Missing output requires a fresh replacement worker. The marker
+prechecks. Missing substantive output requires a fresh replacement worker;
+pure metadata omissions follow `wnz-independent-review`'s bounded repair rule. The marker
 `INDEPENDENT_REVIEWER_LEAF` is a recursion hint, not identity evidence.
 
 For read-only review, the sole report-output exception is the exact assigned
@@ -311,7 +312,7 @@ remote diff when checkout would mix or overwrite local changes.
 
 The qualified reviewer performs scope discovery, preparation, structural
 pre-pass, In-Depth Analysis and Provide Feedback. The controller checks report
-completeness only; missing output requires a fresh replacement worker, never
+completeness only; missing substantive output requires a fresh replacement worker, never
 resuming the previous reviewer for report correction.
 
 #### For Remote PRs:

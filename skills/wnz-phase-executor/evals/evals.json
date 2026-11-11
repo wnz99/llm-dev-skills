@@ -202,7 +202,7 @@
       "kind": "adversarial",
       "role": "controller",
       "prompt": "Receipt A1 is malformed, but complete substantive report exists at assigned path. Fresh recovery A2 returns the same malformed metadata. Inputs and environment unchanged; old worker offers followup. Another receipt claims complete analysis but its report is absent. What next actions and stop?",
-      "expected_output": "Use canonical envelope/result slots; recovery only repackages existing evidence in fresh assignment. Stop identical failed recovery churn without changed input/scope/environment/capacity; no followup reuse. Absent substantive report routes to original substantive owner, never approval from packaging. Record precise blocker.",
+      "expected_output": "First normalize omitted/formatting metadata only if unambiguous authoritative bounded evidence or native dispatch records establish it, retaining original and field provenance. Otherwise use fresh bounded recovery without reading full reports in coordinator. Stop identical failed recovery churn; no followup reuse. Absent substantive report routes to substantive owner; no approval from packaging.",
       "files": []
     },
     {
@@ -394,6 +394,27 @@
       "role": "controller",
       "prompt": "All feature acceptance gates passed but wnz-repo-cleanup is absent from installed skill discovery. Repository sibling scripts exist. Skip housekeeping silently or mark feature failed? State final disposition only.",
       "expected_output": "Report missing dependency and stop affected housekeeping without sibling-path fallback. Give host installer/manual package source and pending inventory/handoff action. Preserve verified feature completion; do not claim cleanup complete or feature failed solely for cleanup dependency.",
+      "files": []
+    },
+    {
+      "id": 53,
+      "kind": "capability",
+      "prompt": "Current complete review receipt omits unit_id, report_path and worker_identity. Actual native spawn/dispatch records and already authoritative bounded index establish each value, current state, isolation and established verdicts unambiguously. Return next action without dispatch.",
+      "expected_output": "Normalize only omitted fields from these records; preserve original receipt and field-by-field provenance in existing ledger/report pointers. Recheck ordinary gates, no fresh packaging worker, source/full-report reading or new schema.",
+      "files": []
+    },
+    {
+      "id": 54,
+      "kind": "adversarial",
+      "prompt": "Receipt omits quality verdict, coverage and identity. Dispatch record has a copied worker label but no verified isolation; full report might contain approval. Infer Clean and inspect report as coordinator? Current HEAD matches but dirty state changed.",
+      "expected_output": "Block: missing established verdict/coverage, unverified identity/isolation and stale state are evidence gaps. Do not infer approval or independence, read source/full report, or resolve conflict locally. Route proper fresh substantive reviewer/investigator, preserve caps and original receipt.",
+      "files": []
+    },
+    {
+      "id": 55,
+      "kind": "activation",
+      "prompt": "Repair one omitted report_path from an authoritative dispatch record for a standalone code review; do not plan or execute phases.",
+      "expected_output": "Do not activate phase executor solely for metadata repair; retain standalone domain handoff and shared routing rule.",
       "files": []
     },
     {

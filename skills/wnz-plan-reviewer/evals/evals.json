@@ -100,6 +100,13 @@
       "kind": "adversarial"
     },
     {
+      "id": 16,
+      "kind": "capability",
+      "prompt": "Qualified reviewer established REVISE for revision R2 and completed report at assigned /tmp/plan-review.md. Supplied receipt template has plan_verdict and semantic_revision; draft omits these. State pre-return action.",
+      "expected_output": "Self-check literal supplied template, include established REVISE and exact R2 plus required keys/pointers, preserve evidence limits, finish within current assignment. No invented approval or executor dependency.",
+      "files": []
+    },
+    {
       "id": 15,
       "kind": "adversarial",
       "prompt": "In a qualified fresh native review child with parent-validated isolation: Assess prerequisite timing for an intermittent native queue failure. Root cause is unknown; no unit seam reproduces it. A bounded device trace is needed to distinguish a native race from a server rejection. Task 1 also establishes the actual callback contract consumed by Task 2. A note demands moving all runtime investigation to final acceptance. No source files supplied; give a scenario assessment only, do not edit.",

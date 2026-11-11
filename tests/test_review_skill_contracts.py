@@ -97,7 +97,8 @@ class ReviewSkillContractsTest(unittest.TestCase):
     def test_delegated_review_preparation_and_report_write_boundary(self) -> None:
         reviewer = " ".join((CODE_REVIEWER / "SKILL.md").read_text().split())
         self.assertIn("reviewer leaf owns scope discovery, preparation and structural pre-pass", reviewer)
-        self.assertIn("missing output requires a fresh replacement worker", reviewer.lower())
+        self.assertIn("missing substantive output requires a fresh replacement worker", reviewer.lower())
+        self.assertIn("pure metadata omissions", reviewer.lower())
         for name in ("wnz-plan-reviewer", "wnz-code-reviewer"):
             with self.subTest(skill=name):
                 text = " ".join((ROOT / "skills" / name / "SKILL.md").read_text().split())
