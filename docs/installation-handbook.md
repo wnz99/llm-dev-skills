@@ -33,7 +33,7 @@ assume an installer resolves skill dependencies.
 | Review/audit modes of `wnz-code-reviewer`, `wnz-plan-reviewer`, `wnz-plan-simplicity-review`, `wnz-dead-code`, language clean-code skills, `wnz-doc-write-expert`, `wnz-test-quality`, `wnz-repo-health`, `wnz-pr-release-notes`, `wnz-llm-assist`, `wnz-cross-review-pr` | `wnz-independent-review`; fresh native child without inherited author/controller history, with reliable identity and isolation evidence |
 | Review dispatches from `wnz-phase-executor`, `wnz-agent-coordinator`, `wnz-implementation-planner`, `wnz-task-implementer`, or a separately requested `wnz-repo-cleanup` review | `wnz-independent-review` before affected review; author checks and operational inventory remain local |
 | `wnz-code-reviewer`, `wnz-implementation-planner`, `wnz-plan-reviewer`, `wnz-task-implementer`, `wnz-clean-code-js`, `wnz-clean-code-py`, `wnz-clean-code-rust` | `wnz-dead-code` |
-| `wnz-phase-executor` | `wnz-implementation-planner`, `wnz-plan-reviewer`, `wnz-task-implementer`, `wnz-code-reviewer`, `wnz-dead-code`; native fresh workers without inherited history and reliable worker identity evidence |
+| `wnz-phase-executor` | `wnz-implementation-planner`, `wnz-plan-reviewer`, `wnz-task-implementer`, `wnz-code-reviewer`, `wnz-dead-code`; Python 3 on macOS or Linux for its bundled ledger command; native fresh workers without inherited history and reliable worker identity evidence |
 | `wnz-llm-assist` | Installed and authenticated CLI for the selected external provider; normally Claude from Codex, or Codex from Claude. Review/verification requires `wnz-independent-review`, the applicable domain skill (`wnz-code-reviewer` for code or `wnz-plan-reviewer` for plans), and its transitive dependencies. Ordinary authoring does not require review qualification. |
 | `wnz-cross-review-pr` | CLIs for selected external reviewers, plus authenticated GitHub CLI (`gh`) for PR work |
 | `wnz-pr-release-notes` | Authenticated GitHub CLI (`gh`) |
@@ -122,6 +122,25 @@ Then request a bounded task, such as “Use wnz-code-reviewer to review my local
 changes.” File existence alone does not prove client discovery. If a skill is
 missing, check the client location, symlink target, permissions and duplicate
 names before reinstalling. A missing dependency must not silently skip a gate.
+
+### Verify the executor ledger command
+
+When installing or updating `wnz-phase-executor`, include its complete package,
+especially `scripts/ledger.py` and `references/ledger-usage.md`. The ledger
+command uses Python's standard library and POSIX file locking; it needs no pip
+packages, Bun, or dashboard installation. Check it without creating a flow:
+
+```sh
+python3 "$HOME/.agents/skills/wnz-phase-executor/scripts/ledger.py" --help
+```
+
+The installed [ledger reference](../skills/wnz-phase-executor/references/ledger-usage.md)
+owns initialization, lifecycle commands, timestamp recovery and optional
+dashboard synchronization. Existing Markdown ledgers stay usable under their
+previous workflow until explicitly migrated: prepare a reviewed JSON seed,
+retain the original Markdown with `init --history`, and preserve unknown times
+as `null`. Installing an update does not migrate active flows or modify their
+records. Load the updated package in a new client session before using it.
 
 ## Update without losing local changes
 
@@ -225,6 +244,12 @@ Schema 1 stores this ID in `ticket`. Keep `linear_id` absent or `null`, and
 
 The dashboard summarizes workflow state. The executor's canonical ledger and
 detailed reports remain authoritative for execution gates and resume.
+For new executor flows, the bundled ledger command maintains canonical task
+state and optionally projects it to the existing `FLOW.json`. Phase and review
+metadata remain coordinator-owned. After updating the executor, re-render the
+installed global or local workflow from the current setup templates so it uses
+the command instead of manual task copying. Preserve existing flow records;
+re-rendering instructions does not authorize their migration.
 
 ### Open and check the panel
 

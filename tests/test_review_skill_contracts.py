@@ -22,8 +22,9 @@ class ReviewSkillContractsTest(unittest.TestCase):
         # assertions on incidental prose. Behavioral routing is evaluated separately.
         text = (PHASE_EXECUTOR / "references/coordinator-templates.md").read_text()
         envelopes = re.findall(r"```text\n(.*?)\n```", text, re.DOTALL)
-        self.assertEqual(len(envelopes), 3)
-        dispatch, receipt, ledger = envelopes
+        self.assertEqual(len(envelopes), 2)
+        dispatch, receipt = envelopes
+        ledger = json.loads(re.search(r"```json\n(.*?)\n```", text, re.DOTALL).group(1))
         fields = lambda block: set(re.findall(r"^([a-z_]+):", block, re.MULTILINE))
         shared = {"assignment_id", "unit_id", "role", "semantic_revision",
                   "baseline_state_ref", "current_state_ref", "report_path"}
@@ -39,11 +40,11 @@ class ReviewSkillContractsTest(unittest.TestCase):
         self.assertLessEqual(len(receipt.split()), 300)
         self.assertTrue({"gate", "dispatches", "execution_authorization", "task_order",
                          "integration_order", "invalidations_ref", "final_stages"}
-                        <= fields(ledger))
+                        <= ledger.keys())
         # Parent-observed spawn evidence and worker-observed identity must not
         # collapse into an assignment key or attestation.
-        self.assertIn("native_spawn_args_ref:", ledger)
-        self.assertIn("native_spawn_result_ref:", ledger)
+        self.assertIn("native_spawn_args_ref", ledger["dispatches"][0])
+        self.assertIn("native_spawn_result_ref", ledger["dispatches"][0])
         for document in ("SKILL.md", "references/coordinator-boundary.md",
                          "references/task-dispatch.md", "references/independent-plan-review.md"):
             self.assertIn("coordinator-templates.md", (PHASE_EXECUTOR / document).read_text())

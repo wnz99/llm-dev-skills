@@ -37,6 +37,10 @@ metadata acceptance and resume recovery. Apply it to every dispatch below.
 Before ledger initialization or first dispatch, read
 [`references/coordinator-templates.md`](references/coordinator-templates.md).
 Use its canonical envelopes/current view; reload after resume when unavailable.
+Read [`references/ledger-usage.md`](references/ledger-usage.md) before ledger
+initialization, explicit migration, task lifecycle changes or dashboard repair.
+Use its bundled command for task status and timing; keep gate decisions under
+the existing evidence and authorization rules.
 The boundary's ordered transition table selects the next existing action.
 
 Before dispatching implementation:
@@ -402,7 +406,7 @@ requested. Do not let optional polish expand the task.
 After review is clean, record:
 
 - What changed.
-- Completion time in the ledger task's `completed_at`.
+- Completion time through the ledger command's `complete` transition, with the accepted evidence pointer.
 - Verification commands and result.
 - Review loop count.
 - Any remaining Low/Nit findings or accepted risks.
