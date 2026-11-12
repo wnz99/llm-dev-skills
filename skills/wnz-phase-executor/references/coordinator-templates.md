@@ -109,62 +109,68 @@ Same HEAD or reused state label does not prove dirty-state equivalence. Use a
 fresh recovery investigator when uncertain; require no universal hashing or
 Git-only algorithm for other environments.
 
-Task `title`, `started_at` and `completed_at` are coordinator metadata, not
-substantive work. Take times from the host clock or `date -u
-+%Y-%m-%dT%H:%M:%SZ` when the event happens; never reconstruct missed times.
-When reopening a completed task, keep `started_at` and reset `completed_at` to
-`none`, so elapsed time spans every attempt. An unavailable time is only
-missing metadata. It does not make state uncertain and never justifies a
-dispatch. Projections such as a dashboard copy these values and omit
-unavailable ones.
+Task lifecycle metadata is managed by the bundled ledger command. Read
+[ledger-usage.md](ledger-usage.md) before initialization, migration, lifecycle
+changes or dashboard repair. Use the JSON below as a reviewed seed; replace
+placeholders and keep unknown times `null`. The command adds schema, update,
+history and dashboard metadata. Worker-native results remain in reports;
+task status is only `pending`, `in_progress` or `done`. Missing timing metadata
+does not make source state uncertain and never justifies a worker dispatch.
 
-```text
-authority:
-  requirements_ref: {{original requirements}}
-  plan_ref: {{authoritative plan}}
-  decisions_ref: {{accepted rationale and decisions}}
-  history_ref: {{ledger history or linked reports}}
-semantic_revision: {{current revision}}
-gate:
-  status: {{PENDING or APPROVED}}
-  cycle_id: {{current cycle}}
-  round: {{0, 1 or 2}}
-  trigger_feedback_id: {{user batch or none: initial cycle}}
-  handled_feedback_ref: {{batch IDs and dispositions}}
-  plan_review:
-    assignment_id: {{review dispatch or none}}
-    reviewer_identity: {{native identity or unavailable: reason}}
-    semantic_revision: {{reviewed revision or none}}
-    cycle_id: {{reviewed cycle or none}}
-    round: {{reviewed round or none}}
-    source_state_ref: {{reviewed state or none}}
-    verdict: {{native plan verdict or none}}
-    report_path: {{review report or none}}
-execution_authorization: {{user approval evidence for current plan revision, implementation scope, policy/user limits, selected sequential/parallel mode}}
-task_order: {{plan-defined deterministic order or unavailable: reason}}
-integration_order: {{plan-defined order or not applicable: sequential}}
-tasks:
-  - unit_id: {{task}}
-    title: {{plan heading text after "### Task N:", verbatim, or unavailable: reason}}
-    status: {{pending/active or role-native completion status}}
-    started_at: {{ISO-8601 time of first implementer dispatch, none before it, or unavailable: reason}}
-    completed_at: {{ISO-8601 time completion was recorded, none while open, or unavailable: reason}}
-    report_refs: {{implementation, verification and review pointers}}
-    accepted_state_ref: {{current accepted evidence or none}}
-current_state_ref: {{latest worker-recorded source state}}
-dispatches:
-  - assignment_id: {{unique dispatch key}}
-    unit_id: {{task or role unit}}
-    role: {{assigned role}}
-    brief_ref: {{envelope}}
-    native_spawn_args_ref: {{actual isolation/control arguments}}
-    native_spawn_result_ref: {{actual returned identity and limitations}}
-    receipt_ref: {{bounded receipt or none}}
-    disposition: {{pending/accepted/rejected and reason}}
-invalidations_ref: {{processed event/state/revision, affected evidence and unmet stages}}
-blockers_decisions_ref: {{all known blockers, dispositions and operator question state}}
-final_stages: {{planner conformance, aggregate verification, aggregate review pointers/status}}
-next_action: {{first applicable transition and owner, or exact stop}}
+```json
+{
+  "authority": {
+    "requirements_ref": "{{original requirements}}",
+    "plan_ref": "{{authoritative plan}}",
+    "decisions_ref": "{{accepted rationale and decisions}}",
+    "history_ref": "{{ledger history or linked reports}}"
+  },
+  "semantic_revision": "{{current revision}}",
+  "gate": {
+    "status": "PENDING",
+    "cycle_id": "{{current cycle}}",
+    "round": 0,
+    "trigger_feedback_id": "{{user batch or none: initial cycle}}",
+    "handled_feedback_ref": "{{batch IDs and dispositions}}",
+    "plan_review": {
+      "assignment_id": "{{review dispatch or none}}",
+      "reviewer_identity": "{{native identity or unavailable: reason}}",
+      "semantic_revision": "{{reviewed revision or none}}",
+      "cycle_id": "{{reviewed cycle or none}}",
+      "round": "{{reviewed round or none}}",
+      "source_state_ref": "{{reviewed state or none}}",
+      "verdict": "{{native plan verdict or none}}",
+      "report_path": "{{review report or none}}"
+    }
+  },
+  "execution_authorization": "{{user approval evidence for current plan revision, implementation scope, policy/user limits, selected sequential/parallel mode}}",
+  "task_order": "{{plan-defined deterministic order or unavailable: reason}}",
+  "integration_order": "{{plan-defined order or not applicable: sequential}}",
+  "tasks": [{
+    "unit_id": "{{stable task key}}",
+    "title": "{{verbatim plan task heading}}",
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "report_refs": [],
+    "accepted_state_ref": null
+  }],
+  "current_state_ref": "{{latest worker-recorded source state}}",
+  "dispatches": [{
+    "assignment_id": "{{unique dispatch key}}",
+    "unit_id": "{{task or role unit}}",
+    "role": "{{assigned role}}",
+    "brief_ref": "{{envelope}}",
+    "native_spawn_args_ref": "{{actual isolation/control arguments}}",
+    "native_spawn_result_ref": "{{actual returned identity and limitations}}",
+    "receipt_ref": "{{bounded receipt or none}}",
+    "disposition": "{{pending/accepted/rejected and reason}}"
+  }],
+  "invalidations_ref": "{{processed event/state/revision, affected evidence and unmet stages}}",
+  "blockers_decisions_ref": "{{all known blockers, dispositions and operator question state}}",
+  "final_stages": "{{planner conformance, aggregate verification, aggregate review pointers/status}}",
+  "next_action": "{{first applicable transition and owner, or exact stop}}"
+}
 ```
 
 ## Metadata self-check

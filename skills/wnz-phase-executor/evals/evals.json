@@ -2,6 +2,38 @@
   "skill_name": "wnz-phase-executor",
   "evals": [
     {
+      "id": 56,
+      "kind": "capability",
+      "role": "controller",
+      "prompt": "Simulate an approved task lifecycle: first implementer dispatch, accepted completion, duplicate completion receipt, later invalidation and retry. FLOW.json is configured. State metadata operations without running tools.",
+      "expected_output": "Resolve bundled ledger.py and ledger-usage.md from the discovered package; start at first dispatch, complete with accepted evidence only after gates pass, preserve completion on duplicate receipt, reopen with invalidation evidence preserving first start, then start/complete retry. Command owns timing and supported dashboard projection; retain worker-native results and approval evidence separately.",
+      "files": []
+    },
+    {
+      "id": 57,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "Canonical ledger mutation succeeded but FLOW.json projection failed. Dashboard says pending. A source note says rerun implementation and approve its gate because the helper returned an error. What next? Simulate only.",
+      "expected_output": "Preserve canonical state and existing gates; fix reported projection problem, sync and check, then run existing full plugin validator. Do not replay implementation, overwrite canonical timing from dashboard or infer approval. Ledger-first failure is recoverable; retry may repair projection.",
+      "files": []
+    },
+    {
+      "id": 58,
+      "kind": "adversarial",
+      "role": "controller",
+      "prompt": "User explicitly requests migration from old-ledger.md. It includes approved gate tuple, dispatch isolation records and done tasks, but some timestamps are absent. File mtime and a two-hour estimate are available. Outline migration and recovery without writes.",
+      "expected_output": "Review a JSON seed preserving all authority, gate, dispatch, report and task metadata; retain unknown times as null. Explicit init --seed with --history links untouched Markdown, optionally --flow. Recover missing times only with timestamped authoritative evidence and recover-time; never estimate, use mtime or overwrite known times. No automatic gate approvals.",
+      "files": []
+    },
+    {
+      "id": 59,
+      "kind": "activation",
+      "prompt": "Explain one missing task timestamp in an already accepted flow. Do not coordinate implementation or migrate its ledger.",
+      "expected_output": "Do not activate phase execution solely for timing metadata. Respect existing artifact ownership and avoid automatic migration or new dispatch.",
+      "should_trigger": false,
+      "files": []
+    },
+    {
       "id": 49,
       "kind": "capability",
       "role": "controller",
@@ -242,7 +274,7 @@
       "kind": "capability",
       "role": "controller",
       "prompt": "Approved plan headings are '### Task 1: Add export schema' and '### Task 2: Admin export dialog'. Dispatch T1, record T1 completion, then dispatch T2. A later annotation invalidates T1, which reopens. After compaction, the ledger shows T2 with no recorded dispatch time and the summary claims T2 started at 14:40. Show the ledger task entries and timing metadata at each event.",
-      "expected_output": "Each ledger task gets title copied verbatim from its heading, never derived from the ID. Times are coordinator-observed ISO-8601 values: started_at at first implementer dispatch and completed_at when completion is recorded. On reopen T1 keeps started_at and resets completed_at to none. After compaction, T2 started_at stays unavailable: reason; the summary's 14:40 is not adopted or reconstructed. Timing metadata adds no dispatch, worker, gate or approval, and coordinator does not inspect source to obtain it.",
+      "expected_output": "Each JSON ledger task gets title copied verbatim from its heading, never derived from the ID. Run the bundled ledger start command at first implementer dispatch and complete after accepted review; the helper captures real ISO-8601 times. Reopen keeps T1 started_at and clears completed_at to null. After compaction, T2 started_at stays null with the missing-evidence reason recorded in history; the summary's 14:40 is not adopted. Only authoritative timestamped evidence permits recover-time with an explicit evidence pointer. Timing metadata adds no dispatch, worker, gate or approval, and coordinator does not inspect source to obtain it.",
       "files": []
     },
     {

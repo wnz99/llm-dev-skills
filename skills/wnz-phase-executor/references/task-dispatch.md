@@ -39,6 +39,12 @@ return to the controller under the existing plan workflow. Require the
 implementer's bounded tooling and verification rules; do not add extra checkers
 or process stages to enforce them.
 
+At the first implementer dispatch, run the bundled ledger `start` command for
+the stable task `unit_id`, as specified in [ledger-usage.md](ledger-usage.md).
+Use `reopen` with invalidation evidence when completed work becomes open again;
+keep the first start time across fix and integration attempts. Missing timing
+alone is metadata repair, not a reason to dispatch another worker.
+
 ## Parallel wave execution
 
 For approved parallel execution, dispatch bounded setup work to create the planned isolation boundary for
