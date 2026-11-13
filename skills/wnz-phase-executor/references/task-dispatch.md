@@ -9,9 +9,12 @@ it owns freshness, non-inheritance, `delegated_only`, receipts and state binding
 
 ## Task brief
 
-Have the planner produce one bounded task brief per task. The brief is the task's full plan section,
-global constraints that apply verbatim, earlier-task interfaces it consumes,
-exact acceptance criteria, and report contract. Do not send the whole plan or
+Select the planner's compact task contract and the canonical requirement,
+acceptance and contract definitions it references, applicable constraints,
+evidence pointers and report contract. The existing implementer prepares routine
+tests/commands, private signatures, fixtures and internal steps from current
+source near dispatch, recording them in its existing task report. This creates
+no separate preparation agent, artifact schema or gate. Do not send the whole plan or
 accumulated session history to a fresh subagent.
 
 Include the relevant design rationale: workload, accepted operational tradeoffs,
@@ -34,7 +37,7 @@ required fields rather than copying a second execution checklist.
 
 Keep the assignment focused on its acceptance criteria. Routine implementation
 details within owned files and the brief's interfaces are the worker's decision;
-changes to architecture, interfaces, ownership, scope, or planned verification
+changes to architecture, material contracts, ownership, scope, or acceptance proof
 return to the controller under the existing plan workflow. Require the
 implementer's bounded tooling and verification rules; do not add extra checkers
 or process stages to enforce them.

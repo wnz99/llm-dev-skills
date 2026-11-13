@@ -67,9 +67,12 @@ Do not invoke another provider solely to force a default.
 Require a bounded task brief with goal and acceptance criteria, applicable project
 instructions/global constraints, prerequisites and exact consumed/produced
 interfaces, owned files/resources and exclusions, baseline/diff boundary,
-planned micro-steps/checks, authorization limits, and report destination.
+task-specific safeguards/cleanup obligation, authorization limits, and report destination.
 Identify missing context before dependent edits; do not use accumulated session
-history as a substitute for an explicit interface. In standalone work infer
+history as a substitute for an explicit interface. Prepare routine exact tests,
+commands, private signatures, fixtures and internal steps from current source
+near dispatch in the existing task report; no separate preparation agent or gate.
+In standalone work infer
 routine details from repository evidence, but request material product decisions.
 
 Carry relevant design rationale with the brief: workload, accepted tradeoffs,
@@ -83,7 +86,7 @@ report only decisions that materially affect the design.
 1. Re-read task requirements and relevant source/tests before editing. Confirm
    prerequisites and ownership. If evidence invalidates the approved plan,
    report it to the controller rather than silently changing architecture.
-2. Execute planned micro-steps in order, including test-first steps where
+2. Execute the task's locally prepared steps in dependency order, including test-first steps where
    practical. Use existing patterns and the smallest design that satisfies
    production requirements: keep each invariant owned once, cohesive
    responsibilities, explicit contracts/errors and no speculative layers.
@@ -104,7 +107,7 @@ report only decisions that materially affect the design.
    concerns rather than investigating or fixing them; surface observed security
    or data-loss risks before further dependent edits. Routine details within
    owned scope and interfaces need no plan revision; changes to architecture,
-   interfaces, ownership, scope or planned verification return to the controller.
+   material contracts, ownership, scope or acceptance proof return to the controller.
 3. Apply `wnz-dead-code` directly in audit mode as each step changes reachability,
    then cleanup mode within existing task edit authorization. Attach its
    per-step evidence contract. An unresolved out-of-scope removal or unavailable

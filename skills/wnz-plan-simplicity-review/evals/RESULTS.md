@@ -1,5 +1,73 @@
 # Verification
 
+## Compact planning update — 2026-11-13
+
+Author checks on baseline `0c0a104` and the candidate compact contract:
+
+- Extended the existing package-template assertion for canonical requirement,
+  contract and acceptance definitions before compact tasks; it also detects a
+  return to repeated cleanup fields or the fixed six-step template. This replaces
+  obsolete detailed-template assertions, not a new persistent gate.
+- `uv run --no-project python -m unittest discover -s tests -p
+  'test_skill_packages.py' -q`: 9 passed (reported test duration 0.974s).
+- The corresponding `test_review_skill_contracts.py` command: 20 passed
+  (reported test duration 0.125s). `git diff --check`: clean.
+- Whitespace word counts from Git baseline/current file: planner authoring
+  reference 2397/808; embedded PLAN template 956/238. These are instruction/template
+  sizes, not generated plans or total work. Deferred task preparation is not
+  included; no speed, quality or token-cost improvement is established.
+- Source-based author exercises: a one-task nullable profile note retains its
+  public nullability/authorization/acceptance contracts while deferring private
+  tests/fixtures/commands; a three-task payment migration cannot defer unknown
+  event/replay/rollback contracts. Existing activation cases still route plan
+  creation here to the planner, existing plan simplification to this skill, and
+  implemented-diff review away from planning. These are self-checks, not fresh
+  native activation or independent capability evidence.
+- Cleanup trace: removed detailed planner-template sections have no inbound
+  fragment links under skills/plugins. Planner, dispatch, implementer, plan
+  reviewer and setup-template consumers were updated. No executable exports,
+  runtime registry or ledger/status schema changed. Runtime dead-code evidence
+  remains required as reachability changes; the plan states one task obligation.
+
+Fresh native format trials used separate workers with `fork_turns: none`.
+The parent supplied the following observed results; word counts are worker
+reports and were not independently recomputed for this evidence update.
+
+- Small trial `/root/small_format_trial` reconstructed the 1894-word `roam-42u`
+  plan as 653 human-facing words plus 299 deferred preparation words, totaling
+  952 generated words. The worker reported reading 3788 other instruction words,
+  or 5682 words including the original plan. Product facts came solely from that
+  plan; the worker read no product source and ran no infrastructure commands.
+  The reconstruction retained material callback contracts, exact redirects,
+  development and staging distinctions, secrets, authorization, validation,
+  rollback and acceptance. Scenario probes rejected hiding safety work to meet
+  a budget, retained the existing gate for public-contract changes, left private
+  helpers to implementer discretion and routed status-only requests away from
+  the planner.
+- Complex trial `/root/complex_format_trial` used `coordination-guidance` rev7:
+  21159 words, 2213 lines, SHA256
+  `ef8e08faf6156a05852979857293f612172e9f74e1001738f7dfa66a8afe6961`.
+  The worker reported 807 human-facing words plus 189 deferred preparation words
+  and an essential retained 2810-word rule map, totaling 3806 words. This count
+  excludes common instructions and product references. The canonical R01–R57
+  map remained linked and counted rather than being removed. The reconstruction
+  retained role and state contracts, the 9000 UTF-16 budget, fallback, authority,
+  incompatible-version behavior, ordering and ownership. Unresolved host limits
+  remained prerequisites to dependent implementation. Applied scenario probes
+  covered a dropped requirement, false parallelism with overlapping ownership,
+  interface mismatch, unsafe timing and an imported instruction to skip reviewer
+  safety; the responses retained the expected protections.
+
+These scenario exercises are not automated proof of reliable detection or real
+metadata-only host activation tests. Neither trial has elapsed-time evidence
+because start timestamps were unavailable. They do not establish speed,
+product correctness or implementation approval. Current snapshot counts must
+not be compared directly with older samples. Separate final independent
+simplicity and correctness reviews remain pending in this receipt. Existing
+historical model results below do not validate this update. Installed skills
+and the live external personal workflow were not updated by this repository
+change.
+
 Historical results below predate required native isolation. They do not validate
 the current routing contract. Current source checks pass; fresh native behavioral
 evaluations remain required before claiming independent runtime verification.

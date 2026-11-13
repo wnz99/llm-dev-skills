@@ -60,7 +60,13 @@ invoke an external provider solely to enforce these defaults.
 ### 1. Establish what must work
 
 Read the plan and its requirements. Identify required behavior, existing
-contracts, and concrete expected extensions. Inspect relevant repository paths
+contracts and acceptance by their canonical IDs rather than demanding repeated
+definitions. Assess total planning plus deferred preparation cost: moving routine
+detail is useful only if safeguards and design decisions remain reviewable.
+For follow-up, focus on the delta, impacted contracts and unresolved findings;
+qualify unchanged evidence by state, scope and relevant consumers. This pass
+remains separate from the fresh correctness review and cannot approve its gate.
+Identify concrete expected extensions. Inspect relevant repository paths
 when available to verify reuse opportunities and ownership; keep investigation
 focused on proposed changes. If evidence is unavailable, state the limitation
 and distinguish conditional suggestions from confirmed findings. Ask only about

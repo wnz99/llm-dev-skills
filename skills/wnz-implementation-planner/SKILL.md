@@ -104,16 +104,15 @@ the same path. This adds no separate artifact, research worker or review gate.
 
 1. Read [implementation-plan-template.md](references/implementation-plan-template.md)
    in full before writing or revising. It owns structure analysis, the output
-   template, reference rules and self-review. Use its exact applicable sections:
-   human-readable features/effects and design first, conditional ASCII diagrams
-   and data-flow analysis next, then detailed execution instructions. Keep the
-   overview and task details consistent through stable feature IDs.
+   template, detail boundary, reference rules and compact self-review receipt.
+   Use its applicable sections and canonical requirement/contract IDs; keep
+   routine task preparation with the existing implementer near dispatch.
 2. Read [engineering-quality.md](references/engineering-quality.md) before
    design decisions and self-review. Prefer deletion and existing contracts;
    reject unsupported abstractions without weakening production requirements.
 3. Apply `wnz-dead-code` in **audit** mode to affected paths and consumers.
-   Translate its evidence into per-step cleanup scope, ownership, consumer
-   updates and post-cleanup checks. Record no-code-impact steps specifically;
+   Translate its evidence into one task-specific cleanup obligation, ownership,
+   consumer updates and post-cleanup checks, with explicit exceptions;
    planning never deletes candidates. Missing evidence remains an explicit gap.
 4. When a repository graph can reduce dependency or blast-radius uncertainty,
    read [repository-graph-evidence.md](references/repository-graph-evidence.md).

@@ -17,8 +17,10 @@ authorization or source equality. A replacement dispatch gets a new assignment.
 
 ## Dispatch envelope
 
-Reference the planner's full bounded task section; do not maintain a second
-semantic brief. Select the role and its result slots from the table below.
+Reference the planner's compact task section and its canonical requirement,
+contract, acceptance and evidence anchors; do not maintain a second semantic
+brief. Routine preparation follows task-dispatch. Select the role and its
+result slots from the table below.
 The four directly invoked skills receive `delegated_only: true`; auxiliary
 explorers, investigators and verifiers use `not applicable: auxiliary role`.
 Only code review receives `INDEPENDENT_REVIEWER_LEAF`. Include exact permitted

@@ -314,8 +314,9 @@ completion; a real gap fails the requirements verdict.
 
 ## Task Loop
 
-For every planned task, repeat this loop. The implementer executes that task's
-checkbox micro-steps internally; the coordinator dispatches, accepts metadata,
+For every planned task, repeat this loop. The implementer prepares routine
+details from current source and executes internal steps; the coordinator
+dispatches, accepts metadata,
 enforces independent verdicts and records the task once.
 
 ### 1. Re-read The Plan
