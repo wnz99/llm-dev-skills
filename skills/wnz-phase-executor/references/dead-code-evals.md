@@ -6,7 +6,7 @@ actual plan and pass/fail evidence. Planning alone must not mutate source.
 
 | Case | Input | Pass criteria |
 | --- | --- | --- |
-| Replacement | Plan a two-task replacement of an internal wrapper with a direct repository method. The wrapper remains exported and has an identity-only test. | Every checkbox step includes a scoped cleanup check/result; ownership covers wrapper/export/test removal and verification of live consumers. |
+| Replacement | Plan a two-task replacement of an internal wrapper with a direct repository method. The wrapper remains exported and has an identity-only test. | One cleanup obligation per task covers wrapper/export/test removal and verification of live consumers; execution records changed reachability and qualified reuse without repetitive plan fields. |
 | Dynamic API | A scanner flags a callback reached through configuration and a documented external API. | Plan retains supported entrypoints with evidence; no speculative deletion or compatibility layer. |
 | Verification-only step | A step runs checks and does not edit code. | Record a specific no-code-impact result or reuse relevant prior reachability evidence; do not rerun a whole-repository scan merely to fill the step. |
 | New orphan after edit | A task replaces its final caller, leaving an unused helper outside assigned ownership. | Controller resolves the cleanup scope before completion; task does not silently delete outside ownership or report complete. |

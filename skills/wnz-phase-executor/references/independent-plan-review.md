@@ -88,6 +88,13 @@ parallel execution, or unrelated scope changes.
 
 ## Two-round resolution cap per cycle
 
+For follow-up reviews supply the delta, impacted canonical contract/acceptance
+IDs and unresolved findings alongside the current plan and original requirements.
+Reuse unchanged evidence only after qualifying its state, scope and relevant
+consumers; inspect impacted areas fresh. This narrows repeated work without
+combining separate fresh simplicity and correctness passes, resetting caps or
+carrying approval onto a materially changed semantic revision.
+
 1. Round 1 reviews the design and may return `REVISE` once. Validate every
    finding through a fresh planner against requirements and repository evidence.
    Have it correct substantiated design gaps within scope and record

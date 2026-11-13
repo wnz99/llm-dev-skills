@@ -94,8 +94,9 @@ assumptions. Evaluate:
   fix; retain required acceptance proof and genuine preservation/safety gates;
 - migration, compatibility, rollback, and data-loss risks;
 - whether the verification strategy can prove observable behavior;
-- scoped dead-code detection and cleanup in every step, including ownership
-  of removals and verification of affected consumers;
+- one task-specific cleanup obligation with reachability evidence, removal
+  ownership, affected-consumer verification and explicit exceptions; execution
+  still supplies evidence for changed reachability, without repetitive plan fields;
 - documentation and repository-governance obligations; and
 - hidden product or authorization choices that the plan guesses.
 

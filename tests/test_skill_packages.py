@@ -51,18 +51,17 @@ class SkillPackageTests(unittest.TestCase):
         template = text.split("````markdown\n", 1)[1].split("\n````", 1)[0]
         headings = re.findall(r"^## (.+)$", template, re.MULTILINE)
         self.assertEqual(headings, [
-            "Features and effects", "High-level design and rationale",
-            "Design diagrams", "Data-flow analysis", "Execution instructions",
+            "Outcome and scope", "Approach and material contracts",
+            "Decisions and discretion", "Tasks and dependencies", "Self-review receipt",
         ])
-        overview, execution = template.split("## Execution instructions", 1)
-        self.assertIn("### F1:", overview)
-        self.assertIn("Effect on the code:", overview)
-        self.assertIn("Risks and safeguards:", overview)
-        self.assertNotIn("### Execution topology", overview)
-        for field in ("### Acceptance criteria traceability", "### Execution topology",
-                      "**Delivers:**", "**Files:**", "**Interfaces:**",
-                      "**Dead-code scope:**", "**Review target:**"):
+        overview, execution = template.split("## Tasks and dependencies", 1)
+        for field in ("R1:", "A1 (R1):", "C1:", "Evidence:"):
+            self.assertIn(field, overview)
+        for field in ("Deliverable/acceptance:", "Ownership:", "Dependencies:",
+                      "Contracts:", "Safeguards and review:", "Cleanup:"):
             self.assertIn(field, execution)
+        self.assertEqual(template.count("- Cleanup:"), 1)
+        self.assertNotIn("**Step 1:", template)
 
     def test_installed_packages_resolve_local_resources(self):
         # Missing moved resources break installed behavior even if repo siblings exist.
