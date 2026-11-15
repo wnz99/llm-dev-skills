@@ -2,66 +2,64 @@
 
 A collection of Agent Skills for developers using coding agents to plan and execute changes, review and debug code, improve tests and documentation, coordinate agents, and prepare releases. These skills target agents that support the [Agent Skills](https://agentskills.io/) format or can load `SKILL.md` folders.
 
-## Get started
-
-For a first code review with Codex, you need Git and an installed, authenticated
-Codex client that supports fresh native review workers with isolated context.
-Review the selected packages' `SKILL.md` files and bundled files before allowing
-them to run tools. For Claude Code setup, other installation methods, and full
-dependency requirements, use the [installation handbook](docs/installation-handbook.md).
-
-Clone the repository and install the review skill with its two required skills:
-
-```sh
-git clone https://github.com/wnz99/llm-dev-skills.git
-cd llm-dev-skills
-mkdir -p "$HOME/.agents/skills"
-for skill in wnz-code-reviewer wnz-dead-code wnz-independent-review; do
-  if [ -e "$HOME/.agents/skills/$skill" ] || [ -L "$HOME/.agents/skills/$skill" ]; then
-    printf 'Already installed; compare before updating: %s\n' "$skill"
-    continue
-  fi
-  cp -R "skills/$skill" "$HOME/.agents/skills/$skill"
-done
-```
-
-Existing packages are preserved. Follow the
-[update guide](docs/installation-handbook.md#update-without-losing-local-changes)
-to reconcile an older or modified installation.
-
-Start a new Codex session in a Git repository with changes to review. Ask it to
-list the three installed skills and their resolved paths, then request:
-
-> Use wnz-code-reviewer to review my local changes.
-
-Success means the client discovers all three skills and returns an independent
-review with findings, scope, verification evidence, and a verdict. Missing
-dependencies or unsupported worker isolation must be reported as an incomplete
-review. See [discovery troubleshooting](docs/installation-handbook.md#verify-discovery-and-use)
-if a skill is missing.
-
-## Choose a workflow
+## What you can do
 
 Choose the smallest workflow that fits the task:
 
-- **Update installed WNZ skills:** `wnz-update`; current machine by default.
-- **Check unfinished work and GSD drift:** `wnz-repo-health`.
-- **Review changes:** `wnz-code-reviewer`; request `wnz-cross-review-pr` when
-  you want two model perspectives.
-- **Open a PR/MR or prepare its description:** `wnz-ship`. WNZ workflows
-  delegate creation here; review comments and bounded release notes retain
-  their domain owners.
-- **Debug or get another model's help:** `wnz-llm-assist`.
+- **Clarify an idea before planning:** `wnz-grill-me`.
 - **Plan and execute substantial work:** `wnz-phase-executor`, which uses the
   planner, plan reviewer, task implementer, code reviewer, and dead-code skills.
   Unclear material requirements prompt an offer to use `wnz-grill-me` before drafting.
-- **Clarify an idea before planning:** `wnz-grill-me`.
-- **Keep independent workers aligned and moving:** `wnz-agent-coordinator`;
-  preserve their existing execution workflows and coordinate shared boundaries.
+- **Review changes:** `wnz-code-reviewer`; request `wnz-cross-review-pr` when
+  you want two model perspectives.
+- **Debug or get another model's help:** `wnz-llm-assist`.
 - **Improve a focused area:** a language clean-code skill, `wnz-test-quality`,
   `wnz-doc-write-expert`, or `wnz-ascii-diagrams`.
+- **Open a PR/MR or prepare its description:** `wnz-ship`. WNZ workflows
+  delegate creation here; review comments and bounded release notes retain
+  their domain owners.
+- **Keep independent workers aligned and moving:** `wnz-agent-coordinator`;
+  preserve their existing execution workflows and coordinate shared boundaries.
+- **Check unfinished work and GSD drift:** `wnz-repo-health`.
+- **Update installed WNZ skills:** `wnz-update`; current machine by default.
 
 Each skill's `SKILL.md` defines its scope and prerequisites.
+
+## Get started
+
+You need Git, Node.js 22.20 or later with `npx`, and an installed, authenticated
+Claude Code or Codex client. Review the selected skills and bundled files
+before allowing them to run tools.
+
+Install the complete collection for both clients with the
+[Skills CLI](https://github.com/vercel-labs/skills):
+
+```sh
+npx skills add wnz99/llm-dev-skills -g --agent codex claude-code --skill '*'
+```
+
+This includes the skills' required companion skills. Use symlink installation
+to share one canonical copy between clients; avoid `--copy`.
+For a single client, keep only its name after `--agent`. To choose individual
+skills, omit `--skill '*'` and select their required dependencies too.
+For an existing installation, follow the
+[update guide](docs/installation-handbook.md#update-without-losing-local-changes)
+before replacing packages with local changes. The
+[installation handbook](docs/installation-handbook.md) covers manual installation
+without Node.js, dependency requirements, and troubleshooting.
+
+Start a new client session and ask it to list the installed WNZ skills and their
+resolved paths. Then name the skill for your task, for example:
+
+> Use wnz-grill-me to clarify the requirements for a CSV import feature.
+
+Success means the client discovers `wnz-grill-me` and starts a focused
+requirements interview. Choose another workflow above when you need planning,
+implementation, debugging, review, documentation, or release help. Review modes
+and coordinated execution require native workers with the identity and context
+isolation each skill specifies; missing prerequisites must block the affected work.
+See [discovery troubleshooting](docs/installation-handbook.md#verify-discovery-and-use)
+if a skill is missing.
 
 ## Skills
 

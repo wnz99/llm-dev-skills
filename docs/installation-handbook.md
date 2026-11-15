@@ -9,7 +9,7 @@ The skills work independently of the dashboard.
 Use an installed, authenticated Claude Code or Codex client. Review the
 selected skill's `SKILL.md` and bundled files before allowing it to run tools.
 You need Git to clone this repository; the optional Skills CLI needs Node.js
-and `npx`. Manual installation needs neither Node.js nor Bun.
+22.20 or later and `npx`. Manual installation needs neither Node.js nor Bun.
 
 Clone the canonical source to a persistent location:
 
@@ -93,13 +93,13 @@ and create agent discovery links. Inspect its current help before installing:
 ```sh
 npx skills --help
 npx skills add wnz99/llm-dev-skills --list
-npx skills add wnz99/llm-dev-skills -g --agent universal claude-code \
+npx skills add wnz99/llm-dev-skills -g --agent codex claude-code \
   --skill wnz-code-reviewer wnz-dead-code wnz-independent-review
 ```
 
-The `universal` target keeps the canonical copy in
-`~/.agents/skills/` and adds Claude's discovery link; Codex reads the canonical
-location directly. Check the proposed paths before accepting. Avoid `--copy`
+The `codex` target uses `~/.agents/skills/`; selecting `claude-code` too adds
+Claude's discovery link when you choose symlink installation. Check the
+proposed paths before accepting. Avoid `--copy`
 when you want both clients to share one copy. To select the whole collection,
 replace the entire `--skill` clause with `--skill '*'`. Individual selection uses
 `--skill`, not an assumed repository subpath.
