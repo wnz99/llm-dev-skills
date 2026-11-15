@@ -1,6 +1,67 @@
 # LLM Development Skills
 
-A collection of Agent Skills for cross-model code review, debugging, validation, and focused clean-code refactoring. These skills target agents that support the [Agent Skills](https://agentskills.io/) format or can load `SKILL.md` folders.
+A collection of Agent Skills for developers using coding agents to plan and execute changes, review and debug code, improve tests and documentation, coordinate agents, and prepare releases. These skills target agents that support the [Agent Skills](https://agentskills.io/) format or can load `SKILL.md` folders.
+
+## Get started
+
+For a first code review with Codex, you need Git and an installed, authenticated
+Codex client that supports fresh native review workers with isolated context.
+Review the selected packages' `SKILL.md` files and bundled files before allowing
+them to run tools. For Claude Code setup, other installation methods, and full
+dependency requirements, use the [installation handbook](docs/installation-handbook.md).
+
+Clone the repository and install the review skill with its two required skills:
+
+```sh
+git clone https://github.com/wnz99/llm-dev-skills.git
+cd llm-dev-skills
+mkdir -p "$HOME/.agents/skills"
+for skill in wnz-code-reviewer wnz-dead-code wnz-independent-review; do
+  if [ -e "$HOME/.agents/skills/$skill" ] || [ -L "$HOME/.agents/skills/$skill" ]; then
+    printf 'Already installed; compare before updating: %s\n' "$skill"
+    continue
+  fi
+  cp -R "skills/$skill" "$HOME/.agents/skills/$skill"
+done
+```
+
+Existing packages are preserved. Follow the
+[update guide](docs/installation-handbook.md#update-without-losing-local-changes)
+to reconcile an older or modified installation.
+
+Start a new Codex session in a Git repository with changes to review. Ask it to
+list the three installed skills and their resolved paths, then request:
+
+> Use wnz-code-reviewer to review my local changes.
+
+Success means the client discovers all three skills and returns an independent
+review with findings, scope, verification evidence, and a verdict. Missing
+dependencies or unsupported worker isolation must be reported as an incomplete
+review. See [discovery troubleshooting](docs/installation-handbook.md#verify-discovery-and-use)
+if a skill is missing.
+
+## Choose a workflow
+
+Choose the smallest workflow that fits the task:
+
+- **Update installed WNZ skills:** `wnz-update`; current machine by default.
+- **Check unfinished work and GSD drift:** `wnz-repo-health`.
+- **Review changes:** `wnz-code-reviewer`; request `wnz-cross-review-pr` when
+  you want two model perspectives.
+- **Open a PR/MR or prepare its description:** `wnz-ship`. WNZ workflows
+  delegate creation here; review comments and bounded release notes retain
+  their domain owners.
+- **Debug or get another model's help:** `wnz-llm-assist`.
+- **Plan and execute substantial work:** `wnz-phase-executor`, which uses the
+  planner, plan reviewer, task implementer, code reviewer, and dead-code skills.
+  Unclear material requirements prompt an offer to use `wnz-grill-me` before drafting.
+- **Clarify an idea before planning:** `wnz-grill-me`.
+- **Keep independent workers aligned and moving:** `wnz-agent-coordinator`;
+  preserve their existing execution workflows and coordinate shared boundaries.
+- **Improve a focused area:** a language clean-code skill, `wnz-test-quality`,
+  `wnz-doc-write-expert`, or `wnz-ascii-diagrams`.
+
+Each skill's `SKILL.md` defines its scope and prerequisites.
 
 ## Skills
 
@@ -30,34 +91,6 @@ A collection of Agent Skills for cross-model code review, debugging, validation,
 | [wnz-pr-release-notes](skills/wnz-pr-release-notes/) | Prepare and maintain bounded, evidence-based release notes in GitHub pull request descriptions while honoring repository-specific release conventions |
 | [wnz-ship](skills/wnz-ship/) | Open PRs/MRs with evidence-based multilingual descriptions, adaptable templates, and command examples for GitHub, GitLab, Azure DevOps and Bitbucket Cloud |
 
-## Get started
-
-Follow the [installation handbook](docs/installation-handbook.md) to install
-skills for Claude Code and Codex, include required dependencies, verify
-client discovery, and update without losing local changes.
-
-Choose the smallest workflow that fits the task:
-
-- **Update installed WNZ skills:** `wnz-update`; current machine by default.
-- **Check unfinished work and GSD drift:** `wnz-repo-health`.
-- **Review changes:** `wnz-code-reviewer`; request `wnz-cross-review-pr` when
-  you want two model perspectives.
-- **Open a PR/MR or prepare its description:** `wnz-ship`. WNZ workflows
-  delegate creation here; review comments and bounded release notes retain
-  their domain owners.
-- **Debug or get another model's help:** `wnz-llm-assist`.
-- **Plan and execute substantial work:** `wnz-phase-executor`, which uses the
-  planner, plan reviewer, task implementer, code reviewer, and dead-code skills.
-  Unclear material requirements prompt an offer to use `wnz-grill-me` before drafting.
-- **Clarify an idea before planning:** `wnz-grill-me`.
-- **Keep independent workers aligned and moving:** `wnz-agent-coordinator`;
-  preserve their existing execution workflows and coordinate shared boundaries.
-- **Improve a focused area:** a language clean-code skill, `wnz-test-quality`,
-  `wnz-doc-write-expert`, or `wnz-ascii-diagrams`.
-
-Name the skill in your request, for example: “Use wnz-code-reviewer to review
-my local changes.” Each skill's `SKILL.md` defines its scope and prerequisites.
-
 ## Optional Flow Status dashboard
 
 [Flow Status](plugins/flow-status/README.md) is a read-only Herdr dashboard
@@ -68,6 +101,14 @@ ticket or provider credentials.
 The [handbook's optional plugin guide](docs/installation-handbook.md#optional-flow-status-plugin)
 covers installation, global or per-repository workflow setup, and opening the
 panel. Skills work without the plugin.
+
+## Help
+
+For installation problems, first check
+[skill discovery troubleshooting](docs/installation-handbook.md#verify-discovery-and-use).
+For questions or bugs, [open an issue](https://github.com/wnz99/llm-dev-skills/issues)
+with the affected skill, client, steps to reproduce, and relevant error output.
+Remove credentials and other private information before posting.
 
 ## Contributing
 
