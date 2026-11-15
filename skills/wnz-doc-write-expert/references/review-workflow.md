@@ -72,7 +72,9 @@ review-and-fix requests follow the ordering in `SKILL.md` under Review mode.
 - Update affected indexes, anchors, and inbound links.
 - Avoid unrelated tone rewrites and whitespace churn, except within a
   readability request.
-- Separate broad restructuring from correctness fixes and obtain approval first.
+- Apply the whole-file editing checks and authorization boundaries in `SKILL.md`.
+  Consolidate or reorder related content within the authorized scope; obtain
+  approval for document moves, splits, or replacements unless already requested.
 
 ## 6. Cold-read and verify
 

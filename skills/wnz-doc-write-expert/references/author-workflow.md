@@ -87,6 +87,10 @@ Write directly to the governed target file. Match local style and terminology. P
 
 ## 6. Validate factual and corpus correctness
 
+Apply the skill's whole-file editing checks even for scoped updates. Read the
+complete result and check its organization, repetition, and reading order,
+while respecting the task's authorization boundaries.
+
 Recheck every material claim against its source. Run relevant lightweight commands when a document promises a command, path, schema, or procedure. Validate frontmatter, links, indexes, and required structure using project-local tooling when available.
 
 Parse every YAML frontmatter block with a real YAML parser before completion;

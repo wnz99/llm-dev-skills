@@ -68,7 +68,7 @@ For mixed review-and-fix requests, the independent reviewer returns findings
 first; the authorized author then applies scoped corrections without a
 permission pause. Keep review read-only and author edits separate; do not
 create a fresh review gate for every microedit. Any requested follow-up review
-uses fresh routing. Report first and obtain approval before material structural
+uses fresh routing. Apply the authorization boundaries below to structural
 changes.
 
 ### Hybrid mode
@@ -79,11 +79,13 @@ Do not use either mode for fixed generated documentation when the repository man
 
 Authorization is determined once from the request: `review`, `audit`, or
 `check` alone is read-only; `update`, `fix`, `refresh`, or `rewrite` authorizes
-scoped correctness and conformance edits. A readability request, to improve
-readability, fluency or clarity, also authorizes changing voice and sentence
-structure within its scope. Document moves, splits, replacement,
-and other material structural changes require approval unless explicitly
-requested.
+scoped correctness and conformance edits, including related consolidation and
+section reordering needed to keep the file coherent. A readability request
+also authorizes rewriting and reorganizing the affected file for clarity.
+Preserve explicit limits such as a single-section edit or exact wording change.
+Document moves, splits across files, and blank-page replacements require
+approval unless already requested. Never use readability cleanup to change
+policy, behavior, or factual meaning.
 
 ## Model policy
 
@@ -121,6 +123,61 @@ not decide the issue.
 7. **Preserve navigability.** Update relevant indexes and inbound links whenever adding, moving, splitting, or renaming documents.
 8. **Build understanding progressively.** Introduce data, references, terminology, identifiers, and technical detail only after the reader has the context needed to understand why they matter. Technical depth is welcome; unexplained prerequisites and premature implementation detail are not.
 9. **Cold-read before completion.** Test whether a reader without session context can take the intended action safely.
+
+## Whole-file editing
+
+Every edit starts and ends with the whole file. Read it in full before choosing
+where a change belongs, including for a small correction. Identify the intended
+reader, reading order, existing coverage, and the section that owns the topic.
+
+Integrate changes into that structure rather than appending another paragraph
+or section by default. Within the authorized scope, merge repeated explanations,
+reorder sections when prerequisites appear too late, and rewrite disconnected
+passages into a clear progression. Inspecting the whole file does not require
+rewriting unrelated text; keep the extent of the edit proportional to the task.
+
+Remove accumulated AI writing noise: generic introductions, repeated summaries,
+inflated claims, unnecessary headings, conversational history, and paragraphs
+that repeat an instruction without adding useful context. Prefer concrete
+actions and explanations. Keep necessary warnings near the steps they govern;
+consolidation must preserve facts, qualifications, commands, and reader outcomes.
+
+After editing, read the entire file again for flow, terminology, duplication,
+and contradictions. Check links and anchors affected by moved or renamed
+sections. Judge the result as one document, not just a correct diff.
+
+## README guidance
+
+Treat the README as the human-readable entry point to the repository. Help a
+newcomer understand the project, complete a first useful action, and find the
+right detailed guide.
+
+- Explain what the project does, who it serves, and why it is useful before
+  introducing internal terminology or implementation details.
+- Put prerequisites before installation. Provide the shortest complete quick
+  start, with one realistic usage example and expected output or another clear
+  way to verify success. Keep essential limitations beside the relevant steps.
+- Summarize the main capabilities and link to detailed feature documentation.
+  Keep extended configuration, command reference, architecture, advanced
+  workflows, and troubleshooting in their owning documents, normally under
+  `docs/`. Reuse existing guides before creating new ones.
+- Organize links by reader task with descriptive labels and relative repository
+  paths. Distinguish learning tutorials, task-specific how-to guides, technical
+  reference, and conceptual explanations when the project needs those forms.
+- Include clear routes to help, contributing or development instructions, and
+  the license where applicable. Separate contributor setup from normal usage.
+- Choose sections to fit the project rather than filling a universal template.
+  A useful default order is purpose, quick start, capabilities, documentation,
+  then help and contributing. There is no fixed line-count target: relocate
+  detail instead of deleting information merely to shorten the README.
+
+Before completion, follow the quick start as far as the available environment
+allows, check documentation links, and read the README as a newcomer without
+session context. Report any steps that could not be verified.
+
+This guidance draws on [GitHub's README guidance](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes),
+[Make a README](https://www.makeareadme.com/), and
+[Diátaxis](https://diataxis.fr/).
 
 ## Language and register
 
